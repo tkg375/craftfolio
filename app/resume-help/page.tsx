@@ -1,13 +1,23 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import ResumeScorerClient from "./ResumeScorerClient";
 import { getSession } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Resume Help — Craftfolio",
-  description: "Score, rewrite, and tailor your resume with AI. ATS checker, cover letter generator, and career pivot — all in one place.",
+  description: "Score, rewrite, and tailor your resume with AI.",
 };
 
 export default async function ResumeHelpPage() {
   const session = await getSession();
-  return <ResumeScorerClient isLoggedIn={!!session} />;
+  if (!session) redirect("/login");
+  return (
+    <div className="min-h-screen" style={{ background: "var(--bg-page)" }}>
+      <div className="max-w-2xl mx-auto px-4 py-10">
+        <ResumeScorerClient isLoggedIn={true} />
+      </div>
+    </div>
+  );
 }

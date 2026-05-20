@@ -106,7 +106,7 @@ function ResumePreview({ text, template }: { text: string; template: ResumeTempl
   const accentColor = luminance > 180 ? "#1e293b" : template.accentHex;
 
   return (
-    <div className="rounded-xl p-6 overflow-auto max-h-[600px] text-sm text-slate-600 leading-relaxed space-y-1" style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}>
+    <div className="rounded-xl p-6 overflow-auto max-h-[600px] text-sm text-slate-400 leading-relaxed space-y-1" style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}>
       {lines.map((line, i) => {
         const trimmed = line.trim();
         if (!trimmed) return <div key={i} className="h-2" />;
@@ -120,19 +120,19 @@ function ResumePreview({ text, template }: { text: string; template: ResumeTempl
             </p>
           );
         }
-        if (trimmed.startsWith("•")) return <p key={i} className="pl-4 text-slate-700">{trimmed}</p>;
-        if (i === 0) return <p key={i} className="text-lg font-bold text-slate-900 text-center">{trimmed}</p>;
-        if (i === 1) return <p key={i} className="text-xs text-slate-600 text-center mb-1">{trimmed}</p>;
+        if (trimmed.startsWith("•")) return <p key={i} className="pl-4 text-slate-400">{trimmed}</p>;
+        if (i === 0) return <p key={i} className="text-lg font-bold text-slate-100 text-center">{trimmed}</p>;
+        if (i === 1) return <p key={i} className="text-xs text-slate-400 text-center mb-1">{trimmed}</p>;
         const prevTrimmed = lines.slice(0, i).reverse().find(l => l.trim())?.trim() ?? "";
         const prevIsBullet = prevTrimmed.startsWith("•");
         const prevIsHeader = /^[A-Z][A-Z\s&\/\-]{2,}$/.test(prevTrimmed);
         if (currentSection === "PROJECTS" || currentSection === "CERTIFICATIONS") {
-          return <p key={i} className={`font-semibold text-slate-700 ${prevIsHeader ? "" : "mt-3"}`}>{trimmed}</p>;
+          return <p key={i} className={`font-semibold text-slate-400 ${prevIsHeader ? "" : "mt-3"}`}>{trimmed}</p>;
         }
         if (currentSection === "EXPERIENCE" && !prevIsHeader && !prevIsBullet) {
-          return <p key={i} className="font-semibold text-slate-700 mt-3">{trimmed}</p>;
+          return <p key={i} className="font-semibold text-slate-400 mt-3">{trimmed}</p>;
         }
-        return <p key={i} className="text-slate-700">{trimmed}</p>;
+        return <p key={i} className="text-slate-400">{trimmed}</p>;
       })}
     </div>
   );
@@ -151,12 +151,12 @@ function StepIndicator({ step }: { step: number }) {
             <div className="flex flex-col items-center">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
                 done ? "bg-green-500 text-white" : active ? "text-white" : "bg-white/10 text-slate-500"
-              }`} style={active ? { background: "linear-gradient(135deg, #B91C1C, #DC2626)" } : {}}>
+              }`} style={active ? { background: "linear-gradient(135deg, #5b21b6, #7c3aed)" } : {}}>
                 {done ? (
                   <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
                 ) : num}
               </div>
-              <span className={`text-xs mt-1 font-medium whitespace-nowrap ${active ? "text-slate-900" : done ? "text-green-600" : "text-slate-500"}`}>{label}</span>
+              <span className={`text-xs mt-1 font-medium whitespace-nowrap ${active ? "text-slate-100" : done ? "text-green-600" : "text-slate-500"}`}>{label}</span>
             </div>
             {i < steps.length - 1 && (
               <div className={`w-16 h-px mb-5 mx-1 transition-all ${done ? "bg-green-500" : "bg-white/10"}`} />
@@ -429,7 +429,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
           />
           <text x="48" y="52" textAnchor="middle" fill="#0f172a" fontSize="20" fontWeight="700">{score}</text>
         </svg>
-        <span className="text-xs text-slate-700 mt-1 font-medium">{label}</span>
+        <span className="text-xs text-slate-400 mt-1 font-medium">{label}</span>
       </div>
     );
   }
@@ -442,14 +442,14 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
 
         <div className="rounded-2xl p-6 space-y-5" style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}>
           <div>
-            <h2 className="text-lg font-bold text-slate-900 mb-1">Upload your resume</h2>
-            <p className="text-sm text-slate-600">We&apos;ll use this for every tool in the next step.</p>
+            <h2 className="text-lg font-bold text-slate-100 mb-1">Upload your resume</h2>
+            <p className="text-sm text-slate-400">We&apos;ll use this for every tool in the next step.</p>
           </div>
 
           {/* Drop zone */}
           <div
             className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${
-              dragOver ? "border-red-400 bg-red-400/10" : "border-slate-600 hover:border-slate-400"
+              dragOver ? "border-violet-400 bg-violet-400/10" : "border-slate-600 hover:border-slate-400"
             }`}
             onDragOver={e => { e.preventDefault(); setDragOver(true); }}
             onDragLeave={() => setDragOver(false)}
@@ -458,7 +458,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
           >
             <input ref={fileRef} type="file" accept=".pdf" className="hidden"
               onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])} />
-            <svg width="36" height="36" fill="none" viewBox="0 0 24 24" className="text-red-400/70 mx-auto mb-3">
+            <svg width="36" height="36" fill="none" viewBox="0 0 24 24" className="text-violet-400/70 mx-auto mb-3">
               <path stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
             </svg>
@@ -466,17 +466,17 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
               <p className="text-sm font-semibold text-violet-400">{fileName}</p>
             ) : (
               <>
-                <p className="text-sm font-semibold text-slate-600">Drop your PDF resume here or click to upload</p>
+                <p className="text-sm font-semibold text-slate-400">Drop your PDF resume here or click to upload</p>
                 <p className="text-xs text-slate-500 mt-1">PDF files up to 10MB</p>
               </>
             )}
           </div>
 
           {/* Paste toggle */}
-          <div className="flex items-center gap-3 text-slate-600 text-sm">
+          <div className="flex items-center gap-3 text-slate-400 text-sm">
             <div className="flex-1 h-px bg-white/10" />
             <button type="button" onClick={() => setShowPasteBox(v => !v)}
-              className="hover:text-slate-900 transition-colors underline underline-offset-2 decoration-dotted">
+              className="hover:text-slate-100 transition-colors underline underline-offset-2 decoration-dotted">
               or click here to paste text
             </button>
             <div className="flex-1 h-px bg-white/10" />
@@ -489,20 +489,20 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
               placeholder="Paste your resume text here..."
               rows={8}
               autoFocus
-              className="w-full rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none placeholder-slate-500"
+              className="w-full rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none placeholder-slate-500"
               style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}
             />
           )}
 
           {error && (
-            <p className="text-red-400 text-sm">{error}</p>
+            <p className="text-violet-400 text-sm">{error}</p>
           )}
 
           <button
             onClick={() => { if (hasResume) setStep(2); }}
             disabled={!hasResume}
             className="w-full font-semibold py-3.5 rounded-xl text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base flex items-center justify-center gap-2"
-            style={{ background: "linear-gradient(135deg, #B91C1C, #DC2626)" }}
+            style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}
           >
             Continue
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6"/></svg>
@@ -520,8 +520,8 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
 
         <div className="space-y-4">
           <div className="mb-2">
-            <h2 className="text-lg font-bold text-slate-900">What would you like to do?</h2>
-            <p className="text-sm text-slate-600 mt-1">Pick one — you can always come back and try the others.</p>
+            <h2 className="text-lg font-bold text-slate-100">What would you like to do?</h2>
+            <p className="text-sm text-slate-400 mt-1">Pick one — you can always come back and try the others.</p>
           </div>
 
           {/* Mode cards */}
@@ -530,21 +530,21 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
             <button
               onClick={() => setMode("score")}
               className={`w-full text-left rounded-2xl p-5 transition-all border-2 ${
-                mode === "score" ? "border-red-500" : "border-transparent"
+                mode === "score" ? "border-violet-500" : "border-transparent"
               }`}
-              style={{ background: "var(--bg-alt)", ...(mode === "score" ? { boxShadow: "0 0 0 1px #DC2626" } : {}) }}
+              style={{ background: "var(--bg-alt)", ...(mode === "score" ? { boxShadow: "0 0 0 1px #7c3aed" } : {}) }}
             >
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(220,38,38,0.12)" }}>
-                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" className="text-red-500"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(124,58,237,0.15)" }}>
+                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" className="text-violet-500"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                 </div>
                 <div>
-                  <p className="font-bold text-slate-900">Score &amp; analyze my resume</p>
-                  <p className="text-sm text-slate-600 mt-0.5">Get ATS, keyword, impact, and overall scores plus actionable suggestions.</p>
+                  <p className="font-bold text-slate-100">Score &amp; analyze my resume</p>
+                  <p className="text-sm text-slate-400 mt-0.5">Get ATS, keyword, impact, and overall scores plus actionable suggestions.</p>
                 </div>
                 {mode === "score" && (
                   <div className="ml-auto flex-shrink-0">
-                    <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
+                    <div className="w-5 h-5 rounded-full bg-violet-600 flex items-center justify-center">
                       <svg width="11" height="11" fill="none" viewBox="0 0 24 24"><path stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
                     </div>
                   </div>
@@ -556,21 +556,21 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
             <button
               onClick={() => setMode("job")}
               className={`w-full text-left rounded-2xl p-5 transition-all border-2 ${
-                mode === "job" ? "border-red-500" : "border-transparent"
+                mode === "job" ? "border-violet-500" : "border-transparent"
               }`}
-              style={{ background: "var(--bg-alt)", ...(mode === "job" ? { boxShadow: "0 0 0 1px #DC2626" } : {}) }}
+              style={{ background: "var(--bg-alt)", ...(mode === "job" ? { boxShadow: "0 0 0 1px #7c3aed" } : {}) }}
             >
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(220,38,38,0.12)" }}>
-                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" className="text-red-500"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(124,58,237,0.15)" }}>
+                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" className="text-violet-500"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 </div>
                 <div>
-                  <p className="font-bold text-slate-900">Match to a specific job</p>
-                  <p className="text-sm text-slate-600 mt-0.5">Paste a job URL and we&apos;ll score your resume against that posting, highlight gaps, and generate a tailored cover letter.</p>
+                  <p className="font-bold text-slate-100">Match to a specific job</p>
+                  <p className="text-sm text-slate-400 mt-0.5">Paste a job URL and we&apos;ll score your resume against that posting, highlight gaps, and generate a tailored cover letter.</p>
                 </div>
                 {mode === "job" && (
                   <div className="ml-auto flex-shrink-0">
-                    <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
+                    <div className="w-5 h-5 rounded-full bg-violet-600 flex items-center justify-center">
                       <svg width="11" height="11" fill="none" viewBox="0 0 24 24"><path stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
                     </div>
                   </div>
@@ -582,21 +582,21 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
             <button
               onClick={() => setMode("pivot")}
               className={`w-full text-left rounded-2xl p-5 transition-all border-2 ${
-                mode === "pivot" ? "border-red-500" : "border-transparent"
+                mode === "pivot" ? "border-violet-500" : "border-transparent"
               }`}
-              style={{ background: "var(--bg-alt)", ...(mode === "pivot" ? { boxShadow: "0 0 0 1px #DC2626" } : {}) }}
+              style={{ background: "var(--bg-alt)", ...(mode === "pivot" ? { boxShadow: "0 0 0 1px #7c3aed" } : {}) }}
             >
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(220,38,38,0.12)" }}>
-                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" className="text-red-500"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(124,58,237,0.15)" }}>
+                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" className="text-violet-500"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 </div>
                 <div>
-                  <p className="font-bold text-slate-900">Pivot my career</p>
-                  <p className="text-sm text-slate-600 mt-0.5">Switching industries or roles? We&apos;ll rewrite your resume to target a completely different career.</p>
+                  <p className="font-bold text-slate-100">Pivot my career</p>
+                  <p className="text-sm text-slate-400 mt-0.5">Switching industries or roles? We&apos;ll rewrite your resume to target a completely different career.</p>
                 </div>
                 {mode === "pivot" && (
                   <div className="ml-auto flex-shrink-0">
-                    <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
+                    <div className="w-5 h-5 rounded-full bg-violet-600 flex items-center justify-center">
                       <svg width="11" height="11" fill="none" viewBox="0 0 24 24"><path stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
                     </div>
                   </div>
@@ -608,21 +608,21 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
             <button
               onClick={() => setMode("careers")}
               className={`w-full text-left rounded-2xl p-5 transition-all border-2 ${
-                mode === "careers" ? "border-red-500" : "border-transparent"
+                mode === "careers" ? "border-violet-500" : "border-transparent"
               }`}
-              style={{ background: "var(--bg-alt)", ...(mode === "careers" ? { boxShadow: "0 0 0 1px #DC2626" } : {}) }}
+              style={{ background: "var(--bg-alt)", ...(mode === "careers" ? { boxShadow: "0 0 0 1px #7c3aed" } : {}) }}
             >
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(220,38,38,0.12)" }}>
-                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" className="text-red-500"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(124,58,237,0.15)" }}>
+                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" className="text-violet-500"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
                 </div>
                 <div>
-                  <p className="font-bold text-slate-900">Explore career options</p>
-                  <p className="text-sm text-slate-600 mt-0.5">Not sure what&apos;s next? AI will analyze your resume and suggest the best roles for your background.</p>
+                  <p className="font-bold text-slate-100">Explore career options</p>
+                  <p className="text-sm text-slate-400 mt-0.5">Not sure what&apos;s next? AI will analyze your resume and suggest the best roles for your background.</p>
                 </div>
                 {mode === "careers" && (
                   <div className="ml-auto flex-shrink-0">
-                    <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
+                    <div className="w-5 h-5 rounded-full bg-violet-600 flex items-center justify-center">
                       <svg width="11" height="11" fill="none" viewBox="0 0 24 24"><path stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
                     </div>
                   </div>
@@ -634,14 +634,14 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
           {/* Mode-specific inputs */}
           {mode === "job" && (
             <div className="rounded-2xl p-5 space-y-3" style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}>
-              <label className="block text-sm font-semibold text-slate-700">Job Posting URL</label>
+              <label className="block text-sm font-semibold text-slate-400">Job Posting URL</label>
               <div className="flex gap-2">
                 <input
                   type="url"
                   value={jobUrl}
                   onChange={e => { setJobUrl(e.target.value); setUrlFetched(false); setShowPasteFallback(false); setUrlFetchError(null); setJobDescription(""); }}
                   placeholder="https://jobs.example.com/software-engineer"
-                  className="flex-1 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-500"
+                  className="flex-1 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder-slate-500"
                   style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}
                 />
                 <button
@@ -649,7 +649,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                   onClick={handleFetchJobUrl}
                   disabled={fetchingUrl || !jobUrl.trim()}
                   className="px-4 py-3 rounded-xl font-semibold text-sm text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap flex items-center gap-2"
-                  style={{ background: "linear-gradient(135deg, #B91C1C, #DC2626)" }}
+                  style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}
                 >
                   {fetchingUrl ? (
                     <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Fetching...</>
@@ -658,7 +658,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                   ) : "Fetch Job"}
                 </button>
               </div>
-              {urlFetchError && <p className="text-xs text-red-400">{urlFetchError}</p>}
+              {urlFetchError && <p className="text-xs text-violet-400">{urlFetchError}</p>}
               {urlFetched && <p className="text-xs text-green-400">Job description loaded successfully.</p>}
               {showPasteFallback && (
                 <textarea
@@ -666,7 +666,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                   onChange={e => setJobDescription(e.target.value)}
                   placeholder="Open the job posting, select all text, copy, and paste it here..."
                   rows={5}
-                  className="w-full rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none placeholder-slate-500"
+                  className="w-full rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none placeholder-slate-500"
                   style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}
                 />
               )}
@@ -675,13 +675,13 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
 
           {mode === "pivot" && (
             <div className="rounded-2xl p-5 space-y-3" style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}>
-              <label className="block text-sm font-semibold text-slate-700">What career do you want to pivot to?</label>
+              <label className="block text-sm font-semibold text-slate-400">What career do you want to pivot to?</label>
               <input
                 type="text"
                 value={targetProfession}
                 onChange={e => { setTargetProfession(e.target.value); setPivotResume(null); setPivotError(null); }}
                 placeholder="e.g. Software Engineer, Project Manager, Nurse, Sales Rep..."
-                className="w-full rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-500"
+                className="w-full rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder-slate-500"
                 style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}
               />
             </div>
@@ -691,7 +691,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
           <div className="flex gap-3 pt-1">
             <button
               onClick={() => setStep(1)}
-              className="px-5 py-3 rounded-xl font-semibold text-sm text-slate-700 hover:text-slate-900 transition-colors flex items-center gap-2"
+              className="px-5 py-3 rounded-xl font-semibold text-sm text-slate-400 hover:text-slate-100 transition-colors flex items-center gap-2"
               style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}
             >
               <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6"/></svg>
@@ -703,7 +703,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                 onClick={handleAnalyze}
                 disabled={loading}
                 className="flex-1 font-semibold py-3 rounded-xl text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm flex items-center justify-center gap-2"
-                style={{ background: "linear-gradient(135deg, #B91C1C, #DC2626)" }}
+                style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}
               >
                 {loading ? (
                   <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Analyzing...</>
@@ -718,7 +718,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                 onClick={handleAnalyze}
                 disabled={loading || (!urlFetched && !jobDescription.trim())}
                 className="flex-1 font-semibold py-3 rounded-xl text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm flex items-center justify-center gap-2"
-                style={{ background: "linear-gradient(135deg, #B91C1C, #DC2626)" }}
+                style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}
               >
                 {loading ? (
                   <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Analyzing...</>
@@ -733,7 +733,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                 onClick={() => { void handleCareerPivot(); }}
                 disabled={pivoting || !targetProfession.trim()}
                 className="flex-1 font-semibold py-3 rounded-xl text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm flex items-center justify-center gap-2"
-                style={{ background: "linear-gradient(135deg, #B91C1C, #DC2626)" }}
+                style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}
               >
                 {pivoting ? (
                   <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Rewriting...</>
@@ -748,7 +748,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                 onClick={handleAnalyze}
                 disabled={loading}
                 className="flex-1 font-semibold py-3 rounded-xl text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm flex items-center justify-center gap-2"
-                style={{ background: "linear-gradient(135deg, #B91C1C, #DC2626)" }}
+                style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}
               >
                 {loading ? (
                   <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Analyzing...</>
@@ -766,7 +766,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
           </div>
 
           {error && (
-            <div className="p-4 rounded-xl text-red-400 text-sm" style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.25)" }}>
+            <div className="p-4 rounded-xl text-violet-400 text-sm" style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.25)" }}>
               {error}
               {(error.includes("sign in") || error.includes("Sign up")) && (
                 <Link href={`/register?redirect=${encodeURIComponent(pathname)}`} className="mt-2 inline-block font-semibold underline">Create free account</Link>
@@ -785,12 +785,12 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
       <StepIndicator step={3} />
 
       <div className="flex justify-between items-center mb-6">
-        <h2 className="font-bold text-slate-900 text-xl">
+        <h2 className="font-bold text-slate-100 text-xl">
           {mode === "pivot" ? "Career Pivot Results" : mode === "careers" ? "Career Options" : "Your Resume Analysis"}
         </h2>
         <button
           onClick={() => { setStep(2); setAnalysis(null); setPivotResume(null); setImprovedResume(null); setCoverLetter(null); }}
-          className="text-sm font-medium text-slate-600 hover:text-slate-900 flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors"
+          className="text-sm font-medium text-slate-400 hover:text-slate-100 flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors"
           style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}
         >
           <svg width="13" height="13" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6"/></svg>
@@ -803,11 +803,11 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
         {pivotResume && (
           <div ref={pivotResultRef} className="rounded-xl p-6" style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
-              <p className="text-sm font-semibold text-slate-900">Resume pivoted to: <span className="text-red-400">{pivotingCareerTitle ?? targetProfession}</span></p>
+              <p className="text-sm font-semibold text-slate-100">Resume pivoted to: <span className="text-violet-400">{pivotingCareerTitle ?? targetProfession}</span></p>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => { navigator.clipboard.writeText(pivotResume); setPivotCopied(true); setTimeout(() => setPivotCopied(false), 2000); }}
-                  className="flex items-center gap-1.5 text-sm font-medium text-slate-700 px-3 py-1.5 rounded-lg transition-colors"
+                  className="flex items-center gap-1.5 text-sm font-medium text-slate-400 px-3 py-1.5 rounded-lg transition-colors"
                   style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}
                 >
                   {pivotCopied ? <><svg width="14" height="14" fill="none" viewBox="0 0 24 24" className="text-green-500"><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>Copied!</> : <><svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Copy</>}
@@ -823,7 +823,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
               </div>
             </div>
             <ResumePreview text={pivotResume} template={selectedTemplate} />
-            {pivotError && <p className="text-red-400 text-sm mt-3">{pivotError}</p>}
+            {pivotError && <p className="text-violet-400 text-sm mt-3">{pivotError}</p>}
           </div>
         )}
 
@@ -831,38 +831,38 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
         {analysis && (
           <>
             <div ref={scoresRef} className="rounded-xl p-6" style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}>
-              <h2 className="font-bold text-slate-900 mb-6 text-lg">Your Scores</h2>
+              <h2 className="font-bold text-slate-100 mb-6 text-lg">Your Scores</h2>
               <div className="flex justify-around flex-wrap gap-6">
                 <ScoreCircle score={analysis.overallScore} label="Overall Score" color="#7C3AED" />
                 <ScoreCircle score={analysis.atsScore} label="ATS Score" color="#4F46E5" />
                 <ScoreCircle score={analysis.keywordMatch} label="Keyword Match" color="#059669" />
-                <ScoreCircle score={analysis.impactScore} label="Impact Score" color="#DC2626" />
+                <ScoreCircle score={analysis.impactScore} label="Impact Score" color="#7c3aed" />
               </div>
-              <p className="text-slate-700 text-sm mt-6 text-center leading-relaxed">{analysis.summary}</p>
+              <p className="text-slate-400 text-sm mt-6 text-center leading-relaxed">{analysis.summary}</p>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="rounded-xl p-6" style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}>
-                <h2 className="font-bold text-slate-900 mb-3 text-base">Keywords Found</h2>
+                <h2 className="font-bold text-slate-100 mb-3 text-base">Keywords Found</h2>
                 <div className="flex flex-wrap gap-2">
                   {analysis.foundKeywords.filter(kw => kw.length <= 60).map((kw, i) => (
                     <span key={i} className="text-xs bg-green-500/20 text-green-800 px-2 py-1 rounded-full font-extrabold">{kw}</span>
                   ))}
-                  {analysis.foundKeywords.length === 0 && <p className="text-sm text-slate-600">No keywords matched</p>}
+                  {analysis.foundKeywords.length === 0 && <p className="text-sm text-slate-400">No keywords matched</p>}
                 </div>
               </div>
               <div className="rounded-xl p-6" style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}>
-                <h2 className="font-bold text-slate-900 mb-3 text-base">Missing Keywords</h2>
+                <h2 className="font-bold text-slate-100 mb-3 text-base">Missing Keywords</h2>
                 {(() => {
                   const pills = analysis.missingKeywords.filter(kw => kw.length <= 60);
                   const notes = analysis.missingKeywords.filter(kw => kw.length > 60);
                   return (
                     <>
                       <div className="flex flex-wrap gap-2">
-                        {pills.map((kw, i) => <span key={i} className="text-xs bg-red-500/20 text-red-800 px-2 py-1 rounded-full font-extrabold">{kw}</span>)}
-                        {pills.length === 0 && notes.length === 0 && <p className="text-sm text-slate-600">No missing keywords</p>}
+                        {pills.map((kw, i) => <span key={i} className="text-xs bg-violet-600/20 text-red-800 px-2 py-1 rounded-full font-extrabold">{kw}</span>)}
+                        {pills.length === 0 && notes.length === 0 && <p className="text-sm text-slate-400">No missing keywords</p>}
                       </div>
-                      {notes.map((note, i) => <p key={i} className="text-xs text-slate-700 mt-3 leading-relaxed">{note}</p>)}
+                      {notes.map((note, i) => <p key={i} className="text-xs text-slate-400 mt-3 leading-relaxed">{note}</p>)}
                     </>
                   );
                 })()}
@@ -871,28 +871,28 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="rounded-xl p-6" style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}>
-                <h2 className="font-bold text-slate-900 mb-4 text-base">Strengths</h2>
+                <h2 className="font-bold text-slate-100 mb-4 text-base">Strengths</h2>
                 <div className="space-y-3">
                   {analysis.strengths.map((s, i) => (
                     <div key={i} className="flex gap-2 items-start">
                       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="text-green-500 mt-0.5 flex-shrink-0"><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
                       <div>
-                        <p className="text-sm font-semibold text-slate-700">{s.point}</p>
-                        <p className="text-xs text-slate-700 mt-0.5">{s.explanation}</p>
+                        <p className="text-sm font-semibold text-slate-400">{s.point}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">{s.explanation}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
               <div className="rounded-xl p-6" style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}>
-                <h2 className="font-bold text-slate-900 mb-4 text-base">Weaknesses</h2>
+                <h2 className="font-bold text-slate-100 mb-4 text-base">Weaknesses</h2>
                 <div className="space-y-3">
                   {analysis.weaknesses.map((w, i) => (
                     <div key={i} className="flex gap-2 items-start">
-                      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="text-red-500 mt-0.5 flex-shrink-0"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="text-violet-500 mt-0.5 flex-shrink-0"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
                       <div>
-                        <p className="text-sm font-semibold text-slate-700">{w.point}</p>
-                        <p className="text-xs text-slate-700 mt-0.5">{w.explanation}</p>
+                        <p className="text-sm font-semibold text-slate-400">{w.point}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">{w.explanation}</p>
                       </div>
                     </div>
                   ))}
@@ -901,15 +901,15 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
             </div>
 
             <div className="rounded-xl p-6" style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}>
-              <h2 className="font-bold text-slate-900 mb-4 text-lg">Improvement Suggestions</h2>
+              <h2 className="font-bold text-slate-100 mb-4 text-lg">Improvement Suggestions</h2>
               <div className="divide-y divide-white/10">
                 {analysis.suggestions.map((s, i) => (
                   <div key={i} className="py-3 first:pt-0 last:pb-0">
                     <span className={`inline-block text-xs font-bold px-2 py-0.5 rounded-full capitalize mb-1.5 ${
-                      s.priority === "high" ? "bg-red-500/20 text-red-400" : s.priority === "medium" ? "bg-orange-500/20 text-orange-400" : "bg-blue-500/20 text-blue-600"
+                      s.priority === "high" ? "bg-violet-600/20 text-violet-400" : s.priority === "medium" ? "bg-orange-500/20 text-orange-400" : "bg-blue-500/20 text-blue-600"
                     }`}>{s.priority}</span>
-                    <p className="text-sm font-semibold text-slate-700">{s.action}</p>
-                    <p className="text-xs text-slate-700 mt-0.5 leading-relaxed">{s.explanation}</p>
+                    <p className="text-sm font-semibold text-slate-400">{s.action}</p>
+                    <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{s.explanation}</p>
                   </div>
                 ))}
               </div>
@@ -926,12 +926,12 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                   style={{ background: "var(--bg-alt)" }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(220,38,38,0.12)" }}>
-                      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="text-red-500"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(124,58,237,0.15)" }}>
+                      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="text-violet-500"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     </div>
                     <div>
-                      <p className="font-bold text-slate-900 text-sm">Generate New Resume</p>
-                      <p className="text-xs text-slate-600">Fully rewritten with every suggestion applied</p>
+                      <p className="font-bold text-slate-100 text-sm">Generate New Resume</p>
+                      <p className="text-xs text-slate-400">Fully rewritten with every suggestion applied</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
@@ -946,7 +946,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                         onClick={() => setShowTemplatePicker(true)}
                         disabled={rewriting}
                         className="mt-3 w-full sm:w-auto font-semibold px-6 py-3 rounded-xl text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm flex items-center justify-center gap-2"
-                        style={{ background: "linear-gradient(135deg, #B91C1C, #DC2626)" }}
+                        style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}
                       >
                         {rewriting ? (
                           <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Generating...</>
@@ -958,12 +958,12 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                       <div className="mt-3">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
                           <div>
-                            <p className="text-sm font-semibold text-slate-900">Your new resume is ready</p>
-                            <p className="text-xs text-slate-600 mt-0.5">Template: {selectedTemplate.name}</p>
+                            <p className="text-sm font-semibold text-slate-100">Your new resume is ready</p>
+                            <p className="text-xs text-slate-400 mt-0.5">Template: {selectedTemplate.name}</p>
                           </div>
                           <div className="flex flex-wrap gap-2">
                             <button onClick={() => { navigator.clipboard.writeText(improvedResume); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-                              className="flex items-center gap-1.5 text-sm font-medium text-slate-700 px-3 py-1.5 rounded-lg transition-colors" style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}>
+                              className="flex items-center gap-1.5 text-sm font-medium text-slate-400 px-3 py-1.5 rounded-lg transition-colors" style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}>
                               {copied ? <><svg width="14" height="14" fill="none" viewBox="0 0 24 24" className="text-green-500"><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>Copied!</> : <><svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Copy</>}
                             </button>
                             <button onClick={() => exportResumePdf(improvedResume!, selectedTemplate)}
@@ -971,13 +971,13 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                               <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
                               Download PDF
                             </button>
-                            <button onClick={() => { setImprovedResume(null); setShowTemplatePicker(true); }} className="text-sm font-medium text-slate-700 px-3 py-1.5">Change Template</button>
+                            <button onClick={() => { setImprovedResume(null); setShowTemplatePicker(true); }} className="text-sm font-medium text-slate-400 px-3 py-1.5">Change Template</button>
                           </div>
                         </div>
                         <ResumePreview text={improvedResume} template={selectedTemplate} />
                       </div>
                     )}
-                    {rewriteError && <p className="text-red-400 text-sm mt-3">{rewriteError}</p>}
+                    {rewriteError && <p className="text-violet-400 text-sm mt-3">{rewriteError}</p>}
                   </div>
                 )}
               </div>
@@ -990,12 +990,12 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                   style={{ background: "var(--bg-alt)" }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(220,38,38,0.12)" }}>
-                      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="text-red-500"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(124,58,237,0.15)" }}>
+                      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="text-violet-500"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                     </div>
                     <div>
-                      <p className="font-bold text-slate-900 text-sm">Generate Cover Letter</p>
-                      <p className="text-xs text-slate-600">Tailored to this job and your resume</p>
+                      <p className="font-bold text-slate-100 text-sm">Generate Cover Letter</p>
+                      <p className="text-xs text-slate-400">Tailored to this job and your resume</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
@@ -1017,34 +1017,34 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                           onClick={handleGenerateCoverLetter}
                           disabled={generatingCover}
                           className="mt-3 w-full sm:w-auto font-semibold px-6 py-3 rounded-xl text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm flex items-center justify-center gap-2"
-                          style={{ background: "linear-gradient(135deg, #B91C1C, #DC2626)" }}
+                          style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}
                         >
                           {generatingCover ? (
                             <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Writing...</>
                           ) : (
-                            <>Generate Cover Letter <span className="text-xs bg-blue-400 text-slate-900 px-2 py-0.5 rounded-full font-medium">1 credit</span></>
+                            <>Generate Cover Letter <span className="text-xs bg-blue-400 text-slate-100 px-2 py-0.5 rounded-full font-medium">1 credit</span></>
                           )}
                         </button>
-                        {coverError && <p className="text-red-400 text-sm mt-3">{coverError}</p>}
+                        {coverError && <p className="text-violet-400 text-sm mt-3">{coverError}</p>}
                       </>
                     ) : (
                       <div className="mt-3">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-                          <p className="text-sm font-semibold text-slate-900">Your cover letter is ready</p>
+                          <p className="text-sm font-semibold text-slate-100">Your cover letter is ready</p>
                           <div className="flex flex-wrap gap-2">
                             <button onClick={() => { navigator.clipboard.writeText(coverLetter); setCoverCopied(true); setTimeout(() => setCoverCopied(false), 2000); }}
-                              className="flex items-center gap-1.5 text-sm font-medium text-slate-700 px-3 py-1.5 rounded-lg transition-colors" style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}>
+                              className="flex items-center gap-1.5 text-sm font-medium text-slate-400 px-3 py-1.5 rounded-lg transition-colors" style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}>
                               {coverCopied ? <><svg width="14" height="14" fill="none" viewBox="0 0 24 24" className="text-green-500"><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>Copied!</> : <><svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Copy</>}
                             </button>
                             <button onClick={() => exportCoverLetterPdf(coverLetter!)}
-                              className="flex items-center gap-1.5 text-sm font-medium text-white px-3 py-1.5 rounded-lg hover:opacity-90 transition-colors" style={{ background: "#DC2626" }}>
+                              className="flex items-center gap-1.5 text-sm font-medium text-white px-3 py-1.5 rounded-lg hover:opacity-90 transition-colors" style={{ background: "#7c3aed" }}>
                               <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
                               Download PDF
                             </button>
-                            <button onClick={() => setCoverLetter(null)} className="text-sm font-medium text-slate-700 px-3 py-1.5">Regenerate</button>
+                            <button onClick={() => setCoverLetter(null)} className="text-sm font-medium text-slate-400 px-3 py-1.5">Regenerate</button>
                           </div>
                         </div>
-                        <div className="rounded-xl p-5 text-sm text-slate-600 leading-relaxed whitespace-pre-wrap font-serif" style={{ background: "rgba(0,0,0,0.02)", border: "1px solid var(--border-subtle)" }}>
+                        <div className="rounded-xl p-5 text-sm text-slate-400 leading-relaxed whitespace-pre-wrap font-serif" style={{ background: "rgba(0,0,0,0.02)", border: "1px solid var(--border-subtle)" }}>
                           {coverLetter}
                         </div>
                       </div>
@@ -1064,14 +1064,14 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                 }).map((opt, i) => (
                   <div key={i} className="rounded-xl p-4" style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}>
                     <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="font-bold text-slate-900 text-sm leading-snug">{opt.title}</h3>
+                      <h3 className="font-bold text-slate-100 text-sm leading-snug">{opt.title}</h3>
                       <span className={`text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0 ${
                         opt.fit === "strong" ? "bg-green-100 text-green-700" : opt.fit === "good" ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700"
                       }`}>
                         {opt.fit === "strong" ? "Strong fit" : opt.fit === "good" ? "Good fit" : "Stretch"}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-600 leading-relaxed mb-3">{opt.why}</p>
+                    <p className="text-xs text-slate-400 leading-relaxed mb-3">{opt.why}</p>
                     {opt.keywordsToAdd.length > 0 && (
                       <div className="mb-3">
                         <p className="text-xs font-semibold text-slate-500 mb-1.5">Add to resume:</p>
@@ -1087,7 +1087,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                       onClick={() => { void handleCareerPivot(opt.title); }}
                       disabled={pivoting}
                       className="w-full mt-1 text-xs font-semibold py-2 rounded-lg text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-1.5"
-                      style={{ background: "linear-gradient(135deg, #B91C1C, #DC2626)" }}
+                      style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}
                     >
                       {pivoting && pivotingCareerTitle === opt.title ? (
                         <><svg className="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Generating...</>
@@ -1108,10 +1108,10 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
           <div className="rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl" style={{ background: "var(--bg-secondary)" }}>
             <div className="sticky top-0 rounded-t-2xl px-6 pt-6 pb-4 flex items-center justify-between" style={{ background: "var(--bg-secondary)", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">Choose a Resume Template</h2>
-                <p className="text-sm text-slate-700 mt-0.5">All templates are ATS-safe and HR-compliant.</p>
+                <h2 className="text-lg font-bold text-slate-100">Choose a Resume Template</h2>
+                <p className="text-sm text-slate-400 mt-0.5">All templates are ATS-safe and HR-compliant.</p>
               </div>
-              <button onClick={() => setShowTemplatePicker(false)} className="text-slate-700 hover:text-slate-900 transition">
+              <button onClick={() => setShowTemplatePicker(false)} className="text-slate-400 hover:text-slate-100 transition">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
               </button>
             </div>
@@ -1149,10 +1149,10 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                   </div>
                   <div className="px-4 py-3 border-t" style={{ borderColor: "rgba(0,0,0,0.06)", background: selectedTemplate.id === t.id ? `${t.accentHex}18` : "rgba(0,0,0,0.04)" }}>
                     <div className="flex items-center justify-between mb-0.5">
-                      <span className="font-bold text-sm text-slate-900">{t.name}</span>
-                      {selectedTemplate.id === t.id && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-slate-900" style={{ background: t.accentHex }}>✓ Selected</span>}
+                      <span className="font-bold text-sm text-slate-100">{t.name}</span>
+                      {selectedTemplate.id === t.id && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-slate-100" style={{ background: t.accentHex }}>✓ Selected</span>}
                     </div>
-                    <p className="text-[11px] text-slate-700 leading-snug">{t.tagline}</p>
+                    <p className="text-[11px] text-slate-400 leading-snug">{t.tagline}</p>
                     <p className="text-[10px] font-semibold mt-1" style={{ color: t.accentHex }}>{t.bestFor}</p>
                   </div>
                 </button>
@@ -1164,7 +1164,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                 style={{ background: `linear-gradient(135deg, ${selectedTemplate.accentHex}cc, ${selectedTemplate.accentHex})` }}>
                 Generate with {selectedTemplate.name} →
               </button>
-              <p className="text-center text-xs text-slate-600 mt-2">Uses 1 credit</p>
+              <p className="text-center text-xs text-slate-400 mt-2">Uses 1 credit</p>
             </div>
           </div>
         </div>
