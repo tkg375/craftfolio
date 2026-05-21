@@ -15,7 +15,7 @@ export default async function ResumeHelpPage() {
   if (!session) redirect("/login");
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-page)" }}>
-      <div className="max-w-2xl mx-auto px-4 py-10">
+      <div className="max-w-4xl mx-auto px-6 py-10">
         <ResumeScorerClient isLoggedIn={true} />
       </div>
     </div>
