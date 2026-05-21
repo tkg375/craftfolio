@@ -20,25 +20,11 @@ export async function POST(req: NextRequest) {
   }
 
   switch (event.type) {
-    case "checkout.session.completed": {
-      const cs = event.data.object as Stripe.Checkout.Session;
-      const userId = cs.metadata?.userId;
-      if (!userId) break;
-
-      if (cs.metadata?.type === "credit") {
-        await db.user.update({ where: { id: userId }, data: { credits: { increment: 1 } } });
-      }
-
-      if (cs.metadata?.type === "pro" && cs.subscription) {
-        await db.user.update({
-          where: { id: userId },
-          data: {
-            plan: "pro",
-            stripeSubscriptionId: String(cs.subscription),
-            subscriptionStatus: "active",
-          },
-        });
-      }
+    case "payment_intent.succeeded": {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      const userId = pi.metadata?.userId;
+      if (!userId || pi.metadata?.type !== "credit") break;
+      await db.user.update({ where: { id: userId }, data: { credits: { increment: 1 } } });
       break;
     }
 

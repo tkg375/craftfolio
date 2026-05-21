@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json() as { type: "credit" | "pro" };
   const stripe = getStripe();
 
-  // Ensure customer exists
+  // Ensure Stripe customer exists
   let customerId = session.stripeCustomerId;
   if (!customerId) {
     const customer = await stripe.customers.create({ email: session.email });
@@ -23,37 +23,40 @@ export async function POST(req: NextRequest) {
   }
 
   if (body.type === "credit") {
-    const checkout = await stripe.checkout.sessions.create({
+    // One-time $1 payment intent
+    const intent = await stripe.paymentIntents.create({
+      amount: 100,
+      currency: "usd",
       customer: customerId,
-      mode: "payment",
-      line_items: [{
-        price_data: {
-          currency: "usd",
-          product_data: { name: "1 Resume Analysis Credit", description: "One AI-powered resume analysis on Craftfolio" },
-          unit_amount: 100,
-        },
-        quantity: 1,
-      }],
       metadata: { userId: session.id, type: "credit" },
-      success_url: `${BASE_URL}/dashboard?credit=1`,
-      cancel_url: `${BASE_URL}/resume-help`,
+      automatic_payment_methods: { enabled: true },
+      description: "1 Resume Analysis Credit — Craftfolio",
     });
-    return NextResponse.json({ url: checkout.url });
+    return NextResponse.json({ clientSecret: intent.client_secret, type: "credit" });
   }
 
   if (body.type === "pro") {
     const priceId = process.env.STRIPE_PRO_PRICE_ID;
     if (!priceId) return NextResponse.json({ error: "Pro plan not configured" }, { status: 500 });
 
-    const checkout = await stripe.checkout.sessions.create({
+    // Subscription via SetupIntent first, then create subscription server-side after payment confirms
+    const sub = await stripe.subscriptions.create({
       customer: customerId,
-      mode: "subscription",
-      line_items: [{ price: priceId, quantity: 1 }],
-      metadata: { userId: session.id, type: "pro" },
-      success_url: `${BASE_URL}/dashboard?upgraded=1`,
-      cancel_url: `${BASE_URL}/dashboard`,
+      items: [{ price: priceId }],
+      payment_behavior: "default_incomplete",
+      payment_settings: { save_default_payment_method: "on_subscription" },
+      expand: ["latest_invoice.payment_intent"],
     });
-    return NextResponse.json({ url: checkout.url });
+
+    const invoice = sub.latest_invoice as import("stripe").Stripe.Invoice & {
+      payment_intent: import("stripe").Stripe.PaymentIntent;
+    };
+
+    return NextResponse.json({
+      clientSecret: invoice.payment_intent?.client_secret,
+      subscriptionId: sub.id,
+      type: "pro",
+    });
   }
 
   return NextResponse.json({ error: "Invalid type" }, { status: 400 });

@@ -2,6 +2,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+const PaymentModal = dynamic(() => import("@/components/PaymentModal"), { ssr: false });
 
 type Analysis = { id: string; type: string; title: string | null; createdAt: string };
 type User = { id: string; email: string; plan: string; credits: number; subscriptionStatus?: string | null };
@@ -156,9 +158,7 @@ function AnalysisRow({ analysis }: { analysis: Analysis }) {
 
 function ProfileTab({ user, isPro, onLogout }: { user: User; isPro: boolean; onLogout: () => void }) {
   const [billingLoading, setBillingLoading] = useState(false);
-  const [upgradeLoading, setUpgradeLoading] = useState(false);
-  const [buyLoading, setBuyLoading] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [payModal, setPayModal] = useState<"credit" | "pro" | null>(null);
 
   async function openPortal() {
     setBillingLoading(true);
@@ -168,32 +168,15 @@ function ProfileTab({ user, isPro, onLogout }: { user: User; isPro: boolean; onL
     else setBillingLoading(false);
   }
 
-  async function upgradeToPro() {
-    setUpgradeLoading(true);
-    const res = await fetch("/api/stripe/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "pro" }),
-    });
-    const data = await res.json() as { url?: string };
-    if (data.url) window.location.href = data.url;
-    else setUpgradeLoading(false);
-  }
-
-  async function buyCredit() {
-    setBuyLoading(true);
-    const res = await fetch("/api/stripe/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "credit" }),
-    });
-    const data = await res.json() as { url?: string };
-    if (data.url) window.location.href = data.url;
-    else setBuyLoading(false);
-  }
-
   return (
     <div className="space-y-4 max-w-md">
+      {payModal && (
+        <PaymentModal
+          type={payModal}
+          onClose={() => setPayModal(null)}
+          onSuccess={() => setPayModal(null)}
+        />
+      )}
       {/* Account info */}
       <div className="rounded-2xl p-6 space-y-4" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
         <h2 className="font-bold" style={{ color: "var(--text-primary)" }}>Account</h2>
@@ -245,15 +228,15 @@ function ProfileTab({ user, isPro, onLogout }: { user: User; isPro: boolean; onL
         ) : (
           <>
             <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>Upgrade to Pro for unlimited analyses at $5/month, or buy individual credits for $1 each.</p>
-            <button onClick={upgradeToPro} disabled={upgradeLoading}
-              className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50"
+            <button onClick={() => setPayModal("pro")}
+              className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
               style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 16px rgba(124,58,237,0.35)" }}>
-              {upgradeLoading ? "Redirecting..." : "Upgrade to Pro — $5/month"}
+              Upgrade to Pro — $5/month
             </button>
-            <button onClick={buyCredit} disabled={buyLoading}
-              className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-50"
+            <button onClick={() => setPayModal("credit")}
+              className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80"
               style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
-              {buyLoading ? "Redirecting..." : "Buy 1 credit — $1.00"}
+              Buy 1 credit — $1.00
             </button>
           </>
         )}
