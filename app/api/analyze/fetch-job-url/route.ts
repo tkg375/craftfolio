@@ -164,6 +164,20 @@ function detectPlatform(url: string): "workday" | "greenhouse" | "lever" | "ashb
   } catch { return null; }
 }
 
+async function fetchWithScrapingAnt(url: string): Promise<string | null> {
+  const apiKey = process.env.SCRAPINGANT_API_KEY;
+  if (!apiKey) return null;
+  try {
+    const params = new URLSearchParams({ url, "x-api-key": apiKey, js_rendering: "true", browser: "false" });
+    const res = await fetch(`https://api.scrapingant.com/v2/general?${params}`, { signal: AbortSignal.timeout(30000) });
+    if (!res.ok) return null;
+    const html = await res.text();
+    const ldText = extractLdJsonJobPosting(html);
+    if (ldText) return ldText;
+    return stripHtml(html) || null;
+  } catch { return null; }
+}
+
 async function fetchWithLambda(url: string): Promise<string | null> {
   const lambdaUrl = process.env.BROWSER_LAMBDA_URL;
   if (!lambdaUrl) return null;
@@ -235,7 +249,11 @@ export async function POST(req: NextRequest) {
     }
   } catch { /* fall through */ }
 
-  // Step 3: Lambda + Chromium fallback
+  // Step 3: ScrapingAnt fallback (JS rendering + residential proxies)
+  const antText = await fetchWithScrapingAnt(url);
+  if (antText && looksLikeJobContent(antText)) return NextResponse.json({ text: antText });
+
+  // Step 4: Lambda + Chromium fallback
   const pageText = await fetchWithLambda(url);
   if (pageText && looksLikeJobContent(pageText)) return NextResponse.json({ text: pageText });
 
