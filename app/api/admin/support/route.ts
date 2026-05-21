@@ -1,0 +1,35 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth";
+import { db } from "@/lib/db";
+
+export const dynamic = "force-dynamic";
+
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+
+export async function GET() {
+  if (!ADMIN_EMAIL) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const session = await getSession();
+  if (!session || session.email !== ADMIN_EMAIL) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  const messages = await db.supportMessage.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 100,
+  });
+
+  return NextResponse.json({ messages });
+}
+
+export async function PATCH(req: NextRequest) {
+  if (!ADMIN_EMAIL) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const session = await getSession();
+  if (!session || session.email !== ADMIN_EMAIL) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  let body: { id?: string; read?: boolean };
+  try { body = await req.json() as typeof body; }
+  catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
+
+  if (!body.id) return NextResponse.json({ error: "id required" }, { status: 400 });
+
+  await db.supportMessage.update({ where: { id: body.id }, data: { read: body.read ?? true } });
+  return NextResponse.json({ success: true });
+}

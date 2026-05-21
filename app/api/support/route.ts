@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
@@ -20,22 +21,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Input too long" }, { status: 400 });
   }
 
-  try {
-    const supportEmail = process.env.SUPPORT_EMAIL ?? "support@craftfolio.co";
-    await sendEmail({
-      to: supportEmail,
-      subject: `Craftfolio Support: ${name.trim()}`,
-      html: `
-        <p><strong>From:</strong> ${escHtml(name.trim())} &lt;${escHtml(email.trim())}&gt;</p>
-        <p><strong>Message:</strong></p>
-        <p style="white-space:pre-wrap">${escHtml(message.trim())}</p>
-      `,
-    });
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error("Support email error:", err);
-    return NextResponse.json({ error: "Failed to send message. Please try again." }, { status: 500 });
-  }
+  // Always save to DB first so no message is ever lost
+  await db.supportMessage.create({
+    data: { name: name.trim(), email: email.trim(), message: message.trim() },
+  });
+
+  // Attempt email notification — non-fatal if it fails
+  const supportEmail = process.env.SUPPORT_EMAIL ?? "tgordon1@icloud.com";
+  sendEmail({
+    to: supportEmail,
+    subject: `Craftfolio Support: ${name.trim()}`,
+    html: `
+      <p><strong>From:</strong> ${escHtml(name.trim())} &lt;${escHtml(email.trim())}&gt;</p>
+      <p><strong>Message:</strong></p>
+      <p style="white-space:pre-wrap">${escHtml(message.trim())}</p>
+    `,
+  }).catch(err => console.error("Support email notification failed:", err));
+
+  return NextResponse.json({ success: true });
 }
 
 function escHtml(s: string) {
