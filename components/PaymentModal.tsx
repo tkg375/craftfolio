@@ -60,7 +60,7 @@ function CheckoutForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <PaymentElement />
+      <PaymentElement options={{ layout: "accordion" }} />
       {error && <p className="text-sm text-red-400">{error}</p>}
       <div className="flex gap-3">
         <button type="button" onClick={onCancel}
