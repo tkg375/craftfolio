@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 type Analysis = { id: string; type: string; title: string | null; createdAt: string };
-type User = { id: string; email: string; plan: string; credits: number };
+type User = { id: string; email: string; plan: string; credits: number; subscriptionStatus?: string | null };
 
 const TYPE_LABELS: Record<string, string> = {
   resume: "ATS Analysis",
@@ -27,8 +27,8 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-page)" }}>
       {/* Nav */}
-      <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-4"
-        style={{ background: "rgba(8,8,15,0.90)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)" }}>
+      <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-5"
+        style={{ background: "rgba(8,8,15,0.90)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)", overflow: "visible" }}>
         <Link href="/" className="flex items-center" style={{ overflow: "visible" }}>
           <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "var(--text-primary)", lineHeight: 1.4, display: "block" }}>Craftfolio</span>
         </Link>
@@ -38,6 +38,11 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
             style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 14px rgba(124,58,237,0.35)" }}>
             Analyze Resume
           </Link>
+          <button onClick={handleLogout}
+            className="text-sm font-medium px-4 py-2 rounded-xl transition-all"
+            style={{ color: "var(--text-muted)", background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+            Sign Out
+          </button>
         </div>
       </nav>
 
@@ -66,7 +71,7 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
           <div className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <StatCard label="Plan" value={isPro ? "Pro" : "Free"} accent={isPro} />
-              <StatCard label="Credits Remaining" value={String(user.credits)} />
+              <StatCard label="Credits Remaining" value={isPro ? "Unlimited" : String(user.credits)} accent={isPro} />
               <StatCard label="Analyses Run" value={String(analyses.length)} />
             </div>
 
@@ -115,34 +120,7 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
 
         {/* Profile */}
         {tab === "profile" && (
-          <div className="space-y-4 max-w-md">
-            <div className="rounded-2xl p-6 space-y-4" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-              <h2 className="font-bold" style={{ color: "var(--text-primary)" }}>Account Info</h2>
-              <div>
-                <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>Email</p>
-                <p className="text-sm" style={{ color: "var(--text-primary)" }}>{user.email}</p>
-              </div>
-              <div>
-                <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>Plan</p>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full"
-                  style={isPro
-                    ? { background: "rgba(124,58,237,0.20)", color: "var(--accent-light)", border: "1px solid rgba(124,58,237,0.30)" }
-                    : { background: "rgba(255,255,255,0.06)", color: "var(--text-muted)", border: "1px solid var(--border)" }}>
-                  {isPro ? "Pro" : "Free"}
-                </span>
-              </div>
-              <div>
-                <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>Credits</p>
-                <p className="text-sm" style={{ color: "var(--text-primary)" }}>{user.credits} remaining</p>
-              </div>
-            </div>
-
-            <button onClick={handleLogout}
-              className="w-full py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-80"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
-              Sign Out
-            </button>
-          </div>
+          <ProfileTab user={user} isPro={isPro} onLogout={handleLogout} />
         )}
       </div>
     </div>
@@ -162,11 +140,130 @@ function AnalysisRow({ analysis }: { analysis: Analysis }) {
   const label = TYPE_LABELS[analysis.type] ?? analysis.type;
   const date = new Date(analysis.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   return (
-    <div className="flex items-center justify-between px-4 py-3 rounded-xl" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+    <Link href={`/analyses/${analysis.id}`}
+      className="flex items-center justify-between px-4 py-3 rounded-xl transition-all hover:scale-[1.01]"
+      style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
       <div>
         <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>{analysis.title ?? label}</p>
         <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>{label} · {date}</p>
       </div>
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" style={{ color: "var(--text-muted)", flexShrink: 0 }}>
+        <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6"/>
+      </svg>
+    </Link>
+  );
+}
+
+function ProfileTab({ user, isPro, onLogout }: { user: User; isPro: boolean; onLogout: () => void }) {
+  const [billingLoading, setBillingLoading] = useState(false);
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
+  const [buyLoading, setBuyLoading] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  async function openPortal() {
+    setBillingLoading(true);
+    const res = await fetch("/api/stripe/portal", { method: "POST" });
+    const data = await res.json() as { url?: string; error?: string };
+    if (data.url) window.location.href = data.url;
+    else setBillingLoading(false);
+  }
+
+  async function upgradeToPro() {
+    setUpgradeLoading(true);
+    const res = await fetch("/api/stripe/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "pro" }),
+    });
+    const data = await res.json() as { url?: string };
+    if (data.url) window.location.href = data.url;
+    else setUpgradeLoading(false);
+  }
+
+  async function buyCredit() {
+    setBuyLoading(true);
+    const res = await fetch("/api/stripe/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "credit" }),
+    });
+    const data = await res.json() as { url?: string };
+    if (data.url) window.location.href = data.url;
+    else setBuyLoading(false);
+  }
+
+  return (
+    <div className="space-y-4 max-w-md">
+      {/* Account info */}
+      <div className="rounded-2xl p-6 space-y-4" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+        <h2 className="font-bold" style={{ color: "var(--text-primary)" }}>Account</h2>
+        <div>
+          <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>Email</p>
+          <p className="text-sm" style={{ color: "var(--text-primary)" }}>{user.email}</p>
+        </div>
+        <div>
+          <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>Plan</p>
+          <span className="text-xs font-bold px-2.5 py-1 rounded-full"
+            style={isPro
+              ? { background: "rgba(124,58,237,0.20)", color: "var(--accent-light)", border: "1px solid rgba(124,58,237,0.30)" }
+              : { background: "rgba(255,255,255,0.06)", color: "var(--text-muted)", border: "1px solid var(--border)" }}>
+            {isPro ? "Pro — Unlimited" : "Free"}
+          </span>
+        </div>
+        {!isPro && (
+          <div>
+            <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>Credits</p>
+            <p className="text-sm" style={{ color: "var(--text-primary)" }}>{user.credits} remaining</p>
+          </div>
+        )}
+      </div>
+
+      {/* Subscription management */}
+      <div className="rounded-2xl p-6 space-y-3" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+        <h2 className="font-bold mb-4" style={{ color: "var(--text-primary)" }}>Subscription</h2>
+
+        {isPro ? (
+          <>
+            <div className="flex items-center gap-3 p-3 rounded-xl mb-4" style={{ background: "rgba(124,58,237,0.10)", border: "1px solid rgba(124,58,237,0.25)" }}>
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" style={{ color: "#a78bfa", flexShrink: 0 }}><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <div>
+                <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Pro — $5/month</p>
+                <p className="text-xs" style={{ color: "var(--text-muted)" }}>Unlimited analyses · {user.subscriptionStatus === "active" ? "Active" : user.subscriptionStatus ?? "Active"}</p>
+              </div>
+            </div>
+            <button onClick={openPortal} disabled={billingLoading}
+              className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-50"
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
+              {billingLoading ? "Loading..." : "Manage billing / Change payment method"}
+            </button>
+            <button onClick={openPortal} disabled={billingLoading}
+              className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-50"
+              style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.20)", color: "#f87171" }}>
+              {billingLoading ? "Loading..." : "Cancel subscription"}
+            </button>
+          </>
+        ) : (
+          <>
+            <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>Upgrade to Pro for unlimited analyses at $5/month, or buy individual credits for $1 each.</p>
+            <button onClick={upgradeToPro} disabled={upgradeLoading}
+              className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50"
+              style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 16px rgba(124,58,237,0.35)" }}>
+              {upgradeLoading ? "Redirecting..." : "Upgrade to Pro — $5/month"}
+            </button>
+            <button onClick={buyCredit} disabled={buyLoading}
+              className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-50"
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
+              {buyLoading ? "Redirecting..." : "Buy 1 credit — $1.00"}
+            </button>
+          </>
+        )}
+      </div>
+
+      <button onClick={onLogout}
+        className="w-full py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-80"
+        style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
+        Sign Out
+      </button>
     </div>
   );
 }

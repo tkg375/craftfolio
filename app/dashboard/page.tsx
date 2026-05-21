@@ -19,7 +19,7 @@ export default async function DashboardPage() {
 
   return (
     <DashboardClient
-      user={{ id: session.id, email: session.email, plan: session.plan, credits: session.credits }}
+      user={{ id: session.id, email: session.email, plan: session.plan, credits: session.credits, subscriptionStatus: session.subscriptionStatus }}
       analyses={analyses.map(a => ({ ...a, createdAt: a.createdAt.toISOString() }))}
     />
   );

@@ -19,7 +19,7 @@ export default async function HomePage() {
     <div className="min-h-screen" style={{ background: "var(--bg-page)" }}>
 
       {/* Nav */}
-      <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-4" style={{ background: "rgba(8,8,15,0.80)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)" }}>
+      <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-5" style={{ background: "rgba(8,8,15,0.80)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)", overflow: "visible" }}>
         <div className="flex items-center" style={{ overflow: "visible" }}>
           <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "var(--text-primary)", lineHeight: 1.4, display: "block" }}>Craftfolio</span>
         </div>
@@ -110,6 +110,62 @@ export default async function HomePage() {
             style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 8px 32px rgba(124,58,237,0.45)" }}>
             Create free account →
           </Link>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="py-24 px-4" style={{ borderTop: "1px solid var(--border)" }}>
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>Simple pricing</h2>
+            <p className="text-lg" style={{ color: "var(--text-muted)" }}>Pay as you go, or go unlimited.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            {/* Pay per credit */}
+            <div className="rounded-2xl p-8 flex flex-col" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+              <p className="text-sm font-bold mb-2" style={{ color: "var(--text-muted)" }}>PAY AS YOU GO</p>
+              <div className="flex items-end gap-1 mb-1">
+                <span className="text-5xl font-black" style={{ color: "var(--text-primary)" }}>$1</span>
+                <span className="text-base mb-2" style={{ color: "var(--text-muted)" }}>/credit</span>
+              </div>
+              <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>One credit = one AI analysis. Buy only what you need.</p>
+              <ul className="space-y-2 mb-8 flex-1">
+                {["ATS scoring", "Keyword gap analysis", "Strengths & weaknesses", "No subscription required"].map(f => (
+                  <li key={f} className="flex items-center gap-2 text-sm" style={{ color: "var(--text-muted)" }}>
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" style={{ color: "#a78bfa", flexShrink: 0 }}><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/register" className="block text-center font-bold py-3 rounded-xl text-white transition-all hover:opacity-90"
+                style={{ background: "rgba(124,58,237,0.25)", border: "1px solid rgba(124,58,237,0.4)", color: "#a78bfa" }}>
+                Get started free
+              </Link>
+            </div>
+
+            {/* Pro */}
+            <div className="rounded-2xl p-8 flex flex-col relative overflow-hidden" style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.15), rgba(167,139,250,0.08))", border: "1px solid rgba(124,58,237,0.35)" }}>
+              <div className="absolute top-4 right-4 text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: "rgba(124,58,237,0.30)", color: "#c4b5fd" }}>BEST VALUE</div>
+              <p className="text-sm font-bold mb-2" style={{ color: "#a78bfa" }}>PRO</p>
+              <div className="flex items-end gap-1 mb-1">
+                <span className="text-5xl font-black" style={{ color: "var(--text-primary)" }}>$5</span>
+                <span className="text-base mb-2" style={{ color: "var(--text-muted)" }}>/month</span>
+              </div>
+              <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>Unlimited analyses every month. Cancel anytime.</p>
+              <ul className="space-y-2 mb-8 flex-1">
+                {["Unlimited ATS analyses", "Full resume rewrites", "Tailored cover letters", "Career pivot tool", "Priority processing", "Cancel anytime"].map(f => (
+                  <li key={f} className="flex items-center gap-2 text-sm" style={{ color: "var(--text-muted)" }}>
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" style={{ color: "#a78bfa", flexShrink: 0 }}><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/register" className="block text-center font-bold py-3 rounded-xl text-white transition-all hover:scale-105"
+                style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 8px 24px rgba(124,58,237,0.40)" }}>
+                Start Pro — $5/mo
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

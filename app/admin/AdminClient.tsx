@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 
 type User = {
   id: string;
@@ -88,9 +89,15 @@ export default function AdminClient() {
       )}
 
       <div className="max-w-5xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-black mb-1" style={{ color: "var(--text-primary)" }}>Admin</h1>
-          <p style={{ color: "var(--text-muted)" }}>{users.length} users total</p>
+        <div className="flex items-start justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-black mb-1" style={{ color: "var(--text-primary)" }}>Admin</h1>
+            <p style={{ color: "var(--text-muted)" }}>{users.length} users total</p>
+          </div>
+          <Link href="/" className="text-sm font-medium px-4 py-2 rounded-xl transition-all"
+            style={{ color: "var(--text-muted)", background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+            ← Home
+          </Link>
         </div>
 
         <input
@@ -112,7 +119,7 @@ export default function AdminClient() {
                   <div className="flex-1 min-w-0">
                     <p className="font-bold truncate" style={{ color: "var(--text-primary)" }}>{user.email}</p>
                     <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>
-                      Joined {new Date(user.createdAt).toLocaleDateString()} · {user.credits} credits
+                      Joined {new Date(user.createdAt).toLocaleDateString()} · {user.plan === "pro" ? "Unlimited credits" : `${user.credits} credits`}
                     </p>
                   </div>
 
