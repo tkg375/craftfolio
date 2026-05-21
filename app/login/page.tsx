@@ -21,7 +21,7 @@ export default function LoginPage() {
     });
     const data = await res.json() as { error?: string };
     if (!res.ok) { setError(data.error ?? "Something went wrong"); setLoading(false); return; }
-    router.push("/resume-help");
+    router.push("/dashboard");
     router.refresh();
   }
 

@@ -15,7 +15,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export default function DashboardClient({ user, analyses }: { user: User; analyses: Analysis[] }) {
-  const [tab, setTab] = useState<"overview" | "history" | "profile">("overview");
+  const [tab, setTab] = useState<"overview" | "profile">("overview");
   const router = useRouter();
 
   async function handleLogout() {
@@ -57,7 +57,7 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
 
         {/* Tabs */}
         <div className="flex gap-1 mb-8 p-1 rounded-xl w-fit" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-          {(["overview", "history", "profile"] as const).map(t => (
+          {(["overview", "profile"] as const).map(t => (
             <button key={t} onClick={() => setTab(t)}
               className="px-5 py-2 rounded-lg text-sm font-semibold capitalize transition-all"
               style={tab === t
@@ -104,20 +104,6 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
                 </div>
               )}
             </div>
-          </div>
-        )}
-
-        {/* History */}
-        {tab === "history" && (
-          <div>
-            <h2 className="font-bold mb-4" style={{ color: "var(--text-primary)" }}>All Analyses</h2>
-            {analyses.length === 0 ? (
-              <EmptyState />
-            ) : (
-              <div className="space-y-2">
-                {analyses.map(a => <AnalysisRow key={a.id} analysis={a} />)}
-              </div>
-            )}
           </div>
         )}
 
