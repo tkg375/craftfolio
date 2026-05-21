@@ -50,18 +50,39 @@ function stripHtml(html: string): string {
 
 // ── Platform-specific handlers ─────────────────────────────────────────────
 
+type LdJsonJobPosting = {
+  "@type"?: string;
+  title?: string;
+  description?: string;
+  hiringOrganization?: { name?: string };
+  jobLocation?: { address?: { addressLocality?: string; addressRegion?: string } };
+};
+
+function extractLdJsonJobPosting(html: string): string | null {
+  const scriptRe = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let match: RegExpExecArray | null;
+  while ((match = scriptRe.exec(html)) !== null) {
+    try {
+      const raw = JSON.parse(match[1]);
+      const candidates: LdJsonJobPosting[] = Array.isArray(raw) ? raw : (raw["@graph"] ?? [raw]);
+      for (const item of candidates) {
+        if (item["@type"] !== "JobPosting") continue;
+        const description = decodeHtmlEntities((item.description ?? "").replace(/<[^>]*>/g, " ").replace(/\s{2,}/g, " ").trim());
+        if (!description) continue;
+        const location = [item.jobLocation?.address?.addressLocality, item.jobLocation?.address?.addressRegion].filter(Boolean).join(", ");
+        return `${item.title ?? ""}\n${item.hiringOrganization?.name ?? ""}${location ? " — " + location : ""}\n\n${description}`.slice(0, 8000);
+      }
+    } catch { /* not valid JSON */ }
+  }
+  return null;
+}
+
 async function fetchWorkday(url: string): Promise<string | null> {
   try {
     const res = await fetch(url, { headers: BROWSER_HEADERS, redirect: "follow", signal: AbortSignal.timeout(10000) });
     if (!res.ok) return null;
     const html = await res.text();
-    const match = html.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/i);
-    if (!match) return null;
-    const data = JSON.parse(match[1]) as { title?: string; description?: string; hiringOrganization?: { name?: string }; jobLocation?: { address?: { addressLocality?: string; addressRegion?: string } } };
-    const description = decodeHtmlEntities((data.description ?? "").replace(/<[^>]*>/g, " ").replace(/\s{2,}/g, " ").trim());
-    if (!description) return null;
-    const location = [data.jobLocation?.address?.addressLocality, data.jobLocation?.address?.addressRegion].filter(Boolean).join(", ");
-    return `${data.title ?? ""}\n${data.hiringOrganization?.name ?? ""}${location ? " — " + location : ""}\n\n${description}`.slice(0, 8000);
+    return extractLdJsonJobPosting(html);
   } catch { return null; }
 }
 
@@ -202,11 +223,13 @@ export async function POST(req: NextRequest) {
     if (text && looksLikeJobContent(text)) return NextResponse.json({ text });
   }
 
-  // Step 2: generic plain fetch
+  // Step 2: generic plain fetch — try ld+json first, then stripped HTML
   try {
     const res = await fetch(url, { headers: BROWSER_HEADERS, redirect: "follow", signal: AbortSignal.timeout(10000) });
     if (res.ok) {
       const html = await res.text();
+      const ldText = extractLdJsonJobPosting(html);
+      if (ldText && looksLikeJobContent(ldText)) return NextResponse.json({ text: ldText });
       const pageText = stripHtml(html);
       if (looksLikeJobContent(pageText)) return NextResponse.json({ text: pageText });
     }
