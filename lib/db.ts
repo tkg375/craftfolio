@@ -2,14 +2,15 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const globalForPrisma = globalThis as unknown as { prisma?: any };
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-function getDb() {
-  if (globalForPrisma.prisma) return globalForPrisma.prisma as PrismaClient;
-  const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-  const client = new PrismaClient({ adapter });
-  if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = client;
-  return client;
+function createClient() {
+  const url = process.env.DATABASE_URL;
+  if (!url) throw new Error("DATABASE_URL is not set");
+  const adapter = new PrismaPg({ connectionString: url });
+  return new PrismaClient({ adapter });
 }
 
-export const db = getDb();
+export const db = globalForPrisma.prisma ?? createClient();
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
