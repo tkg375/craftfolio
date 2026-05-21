@@ -63,7 +63,8 @@ function extractLdJsonJobPosting(html: string): string | null {
   let match: RegExpExecArray | null;
   while ((match = scriptRe.exec(html)) !== null) {
     try {
-      const raw = JSON.parse(match[1]);
+      // eslint-disable-next-line no-control-regex
+      const raw = JSON.parse(match[1].replace(/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/g, " "));
       const candidates: LdJsonJobPosting[] = Array.isArray(raw) ? raw : (raw["@graph"] ?? [raw]);
       for (const item of candidates) {
         if (item["@type"] !== "JobPosting") continue;
@@ -174,7 +175,16 @@ async function fetchWithScrapingAnt(url: string): Promise<string | null> {
     const html = await res.text();
     const ldText = extractLdJsonJobPosting(html);
     if (ldText) return ldText;
-    return stripHtml(html) || null;
+    // stripHtml caps at 8000 chars from the top — for ScrapingAnt, search the full text
+    const fullText = decodeHtmlEntities(
+      html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+          .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+          .replace(/<[^>]*>/g, " ")
+          .replace(/\s{2,}/g, " ")
+          .trim()
+    );
+    if (fullText.length > 200) return fullText.slice(0, 12000);
+    return null;
   } catch { return null; }
 }
 
