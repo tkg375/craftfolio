@@ -43,7 +43,7 @@ export default function RegisterPage() {
 
         <div className="rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
           <div className="flex flex-wrap gap-2 mb-5">
-            {["3 free analyses", "All tools included", "No card needed"].map(f => (
+            {["3 free analyses", "No card needed"].map(f => (
               <span key={f} className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(124,58,237,0.15)", color: "var(--accent-light)", border: "1px solid rgba(124,58,237,0.25)" }}>{f}</span>
             ))}
           </div>

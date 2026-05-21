@@ -1,13 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-function createPrismaClient() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const globalForPrisma = globalThis as unknown as { prisma?: any };
+
+function getDb() {
+  if (globalForPrisma.prisma) return globalForPrisma.prisma as PrismaClient;
   const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-  return new PrismaClient({ adapter });
+  const client = new PrismaClient({ adapter });
+  if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = client;
+  return client;
 }
 
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
-
-export const db = globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+export const db = getDb();
