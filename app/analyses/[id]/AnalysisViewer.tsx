@@ -1,6 +1,70 @@
 "use client";
 import Link from "next/link";
 
+function downloadTextAsPdf(text: string, filename: string, serif = false) {
+  import("jspdf").then(({ jsPDF }) => {
+    const doc = new jsPDF({ unit: "pt", format: "letter" });
+    const marginX = 72, marginY = 72;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const maxWidth = pageWidth - marginX * 2;
+    let y = marginY;
+    doc.setFont(serif ? "times" : "helvetica", "normal");
+    doc.setFontSize(11);
+    doc.setTextColor(30, 41, 59);
+    text.split("\n").forEach(line => {
+      const wrapped = doc.splitTextToSize(line || " ", maxWidth);
+      wrapped.forEach((wl: string) => {
+        if (y > pageHeight - marginY) { doc.addPage(); y = marginY; }
+        doc.text(wl, marginX, y);
+        y += 16;
+      });
+    });
+    doc.save(filename);
+  });
+}
+
+function downloadAnalysisAsPdf(a: ResumeResult) {
+  import("jspdf").then(({ jsPDF }) => {
+    const doc = new jsPDF({ unit: "pt", format: "letter" });
+    const mx = 50, pw = doc.internal.pageSize.getWidth(), ph = doc.internal.pageSize.getHeight();
+    const mw = pw - mx * 2;
+    let y = 50;
+
+    const line = (text: string, size = 11, bold = false, color: [number,number,number] = [30,41,59]) => {
+      if (y > ph - 50) { doc.addPage(); y = 50; }
+      doc.setFont("helvetica", bold ? "bold" : "normal");
+      doc.setFontSize(size);
+      doc.setTextColor(...color);
+      const wrapped = doc.splitTextToSize(text, mw);
+      wrapped.forEach((wl: string) => { doc.text(wl, mx, y); y += size * 1.4; });
+    };
+
+    const gap = (n = 8) => { y += n; };
+
+    line("Resume Analysis — Craftfolio", 18, true, [124,58,237]);
+    gap(12);
+
+    line(`Overall: ${a.overallScore}  ATS: ${a.atsScore}  Keywords: ${a.keywordMatch}  Impact: ${a.impactScore}`, 12, true);
+    gap(6);
+    line(a.summary, 11, false, [71,85,105]);
+    gap(14);
+
+    line("STRENGTHS", 10, true, [124,58,237]); gap(4);
+    a.strengths.forEach(s => { line(`• ${s.point}`, 11, true); line(`  ${s.explanation}`, 10, false, [71,85,105]); gap(4); });
+    gap(10);
+
+    line("WEAKNESSES", 10, true, [124,58,237]); gap(4);
+    a.weaknesses.forEach(w => { line(`• ${w.point}`, 11, true); line(`  ${w.explanation}`, 10, false, [71,85,105]); gap(4); });
+    gap(10);
+
+    line("SUGGESTIONS", 10, true, [124,58,237]); gap(4);
+    a.suggestions.forEach(s => { line(`[${s.priority.toUpperCase()}] ${s.action}`, 11, true); line(`  ${s.explanation}`, 10, false, [71,85,105]); gap(4); });
+
+    doc.save("resume-analysis.pdf");
+  });
+}
+
 type ResumeResult = {
   overallScore: number; atsScore: number; keywordMatch: number; impactScore: number;
   foundKeywords: string[]; missingKeywords: string[];
@@ -67,7 +131,15 @@ export default function AnalysisViewer({
           return (
             <div className="space-y-6">
               <div className="rounded-xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-                <h2 className="font-bold text-slate-100 mb-6 text-lg">Scores</h2>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="font-bold text-slate-100 text-lg">Scores</h2>
+                  <button onClick={() => downloadAnalysisAsPdf(a)}
+                    className="text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                    style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.30)", color: "#a78bfa" }}>
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
+                    Download PDF
+                  </button>
+                </div>
                 <div className="flex justify-around flex-wrap gap-6">
                   <ScoreCircle score={a.overallScore} label="Overall" color="#7C3AED" />
                   <ScoreCircle score={a.atsScore} label="ATS Score" color="#4F46E5" />
@@ -158,13 +230,18 @@ export default function AnalysisViewer({
           const r = result as { rewritten: string };
           return (
             <div className="rounded-xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-              <div className="flex justify-end mb-4">
-                <button
-                  onClick={() => navigator.clipboard.writeText(r.rewritten)}
+              <div className="flex justify-end gap-2 mb-4">
+                <button onClick={() => navigator.clipboard.writeText(r.rewritten)}
                   className="text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
                   style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
                   <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                   Copy
+                </button>
+                <button onClick={() => downloadTextAsPdf(r.rewritten, "resume-rewrite.pdf")}
+                  className="text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                  style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.30)", color: "#a78bfa" }}>
+                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
+                  Download PDF
                 </button>
               </div>
               <div className="rounded-xl p-6 overflow-auto max-h-[600px] text-sm leading-relaxed whitespace-pre-wrap"
@@ -180,13 +257,18 @@ export default function AnalysisViewer({
           const r = result as { coverLetter: string };
           return (
             <div className="rounded-xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-              <div className="flex justify-end mb-4">
-                <button
-                  onClick={() => navigator.clipboard.writeText(r.coverLetter)}
+              <div className="flex justify-end gap-2 mb-4">
+                <button onClick={() => navigator.clipboard.writeText(r.coverLetter)}
                   className="text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
                   style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
                   <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                   Copy
+                </button>
+                <button onClick={() => downloadTextAsPdf(r.coverLetter, "cover-letter.pdf", true)}
+                  className="text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                  style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.30)", color: "#a78bfa" }}>
+                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
+                  Download PDF
                 </button>
               </div>
               <div className="rounded-xl p-6 overflow-auto max-h-[600px] text-sm leading-relaxed whitespace-pre-wrap"
