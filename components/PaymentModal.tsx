@@ -111,7 +111,7 @@ export default function PaymentModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
       style={{ background: "rgba(0,0,0,0.70)", backdropFilter: "blur(8px)" }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="w-full max-w-md rounded-2xl p-6 shadow-2xl" style={{ background: "#0d0d1a", border: "1px solid rgba(124,58,237,0.30)" }}>
+      <div className="w-full max-w-md rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto" style={{ background: "#0d0d1a", border: "1px solid rgba(124,58,237,0.30)" }}>
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-lg font-black" style={{ color: "#f1f5f9" }}>
