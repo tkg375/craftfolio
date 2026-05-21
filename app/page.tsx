@@ -20,15 +20,14 @@ export default async function HomePage() {
 
       {/* Nav */}
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-4" style={{ background: "rgba(8,8,15,0.80)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)" }}>
-        <div className="flex items-center gap-3">
-          <img src="/Gemini_Generated_Image_uy8dlsuy8dlsuy8d.jpeg" alt="Craftfolio" className="h-10 w-auto rounded-lg" />
+        <div className="flex items-center">
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "var(--text-primary)", lineHeight: 1 }}>Craftfolio</span>
         </div>
         <div className="flex items-center gap-3">
           {session ? (
             <>
-              <Link href="/dashboard" className="text-sm font-medium transition" style={{ color: "var(--text-muted)" }}>Dashboard</Link>
-              <Link href="/resume-help" className="text-sm font-bold px-4 py-2 rounded-full text-white" style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 14px rgba(124,58,237,0.35)" }}>
-                Open Tool
+              <Link href="/dashboard" className="text-sm font-bold px-4 py-2 rounded-full text-white" style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 14px rgba(124,58,237,0.35)" }}>
+                Dashboard
               </Link>
             </>
           ) : (
@@ -52,7 +51,7 @@ export default async function HomePage() {
         <div className="relative max-w-4xl mx-auto">
           {/* Logo */}
           <div className="flex justify-center mb-6">
-            <img src="/Gemini_Generated_Image_uy8dlsuy8dlsuy8d.jpeg" alt="Craftfolio" className="h-40 w-auto rounded-2xl" style={{ boxShadow: "0 16px 48px rgba(124,58,237,0.30)" }} />
+            <span style={{ fontFamily: "AmbarPearl", fontSize: "5rem", color: "var(--text-primary)", lineHeight: 1, filter: "drop-shadow(0 8px 32px rgba(124,58,237,0.45))" }}>Craftfolio</span>
           </div>
 
           <h1 className="text-6xl sm:text-7xl font-black leading-[1.02] tracking-tight mb-6" style={{ color: "var(--text-primary)" }}>
@@ -122,7 +121,7 @@ export default async function HomePage() {
       {/* Footer */}
       <footer className="py-8 px-6 text-center text-sm" style={{ borderTop: "1px solid var(--border)", color: "var(--text-dim)" }}>
         <div className="flex items-center justify-center mb-2">
-          <img src="/Gemini_Generated_Image_uy8dlsuy8dlsuy8d.jpeg" alt="Craftfolio" className="h-8 w-auto rounded-md" />
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "1.5rem", color: "var(--text-dim)", lineHeight: 1 }}>Craftfolio</span>
         </div>
         <p>© {new Date().getFullYear()} Craftfolio. All rights reserved.</p>
       </footer>
