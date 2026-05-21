@@ -29,21 +29,23 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-page)" }}>
       {/* Nav */}
-      <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-5"
+      <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5"
         style={{ background: "rgba(8,8,15,0.90)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)", overflow: "visible" }}>
-        <Link href="/" className="flex items-center" style={{ overflow: "visible" }}>
-          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "var(--text-primary)", lineHeight: 1.4, display: "block" }}>Craftfolio</span>
+        <Link href="/" className="flex items-center shrink-0" style={{ overflow: "visible" }}>
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "clamp(1.4rem, 5vw, 2rem)", color: "#a78bfa", lineHeight: 1.4, display: "block" }}>Craftfolio</span>
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Link href="/resume-help"
-            className="text-sm font-bold px-4 py-2 rounded-full text-white"
+            className="font-bold px-3 sm:px-4 py-2 rounded-full text-white text-xs sm:text-sm whitespace-nowrap"
             style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 14px rgba(124,58,237,0.35)" }}>
-            Analyze Resume
+            <span className="hidden sm:inline">Analyze Resume</span>
+            <span className="sm:hidden">Analyze</span>
           </Link>
           <button onClick={handleLogout}
-            className="text-sm font-medium px-4 py-2 rounded-xl transition-all"
+            className="text-xs sm:text-sm font-medium px-3 sm:px-4 py-2 rounded-xl transition-all whitespace-nowrap"
             style={{ color: "var(--text-muted)", background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-            Sign Out
+            <span className="hidden sm:inline">Sign Out</span>
+            <svg className="sm:hidden" width="16" height="16" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
           </button>
         </div>
       </nav>
