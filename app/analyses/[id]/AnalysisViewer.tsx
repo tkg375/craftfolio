@@ -107,7 +107,7 @@ export default function AnalysisViewer({
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-5"
         style={{ background: "rgba(8,8,15,0.90)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)", overflow: "visible" }}>
         <Link href="/" style={{ overflow: "visible" }}>
-          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "var(--text-primary)", lineHeight: 1.4, display: "block" }}>Craftfolio</span>
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "#a78bfa", lineHeight: 1.4, display: "block" }}>Craftfolio</span>
         </Link>
         <Link href="/dashboard" className="text-sm font-medium px-4 py-2 rounded-xl transition-all"
           style={{ color: "var(--text-muted)", background: "var(--bg-card)", border: "1px solid var(--border)" }}>
@@ -117,11 +117,17 @@ export default function AnalysisViewer({
 
       <div className="max-w-4xl mx-auto px-4 pt-28 pb-16">
         <div className="mb-6">
-          <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>{date}</p>
+          <p className="text-xs font-semibold mb-1" suppressHydrationWarning style={{ color: "var(--text-muted)" }}>{date}</p>
           <h1 className="text-2xl font-black" style={{ color: "var(--text-primary)" }}>
-            {type === "resume" && "ATS Analysis"}
-            {type === "resume_rewrite" && "Resume Rewrite"}
-            {type === "cover_letter" && "Cover Letter"}
+            {{
+              resume: "ATS Analysis",
+              resume_job: "Job Match Analysis",
+              resume_rewrite: "Resume Rewrite",
+              "resume-rewrite": "Resume Rewrite",
+              career_pivot: "Career Pivot",
+              cover_letter: "Cover Letter",
+              "cover-letter": "Cover Letter",
+            }[type] ?? "Analysis"}
           </h1>
         </div>
 
