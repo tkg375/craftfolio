@@ -713,7 +713,7 @@ COVER LETTER RULES:
 FORMATTING:
 - Plain text only — no markdown, no bold, no bullets
 - Full blank line between each paragraph
-- Start directly with the date line using today's date: ${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}, then a blank line, then "Hiring Manager" salutation
+- Start directly with the date line using today's date: ${new Date(new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}, then a blank line, then "Hiring Manager" salutation
 
 Target Job Description:
 ${jobDescription}

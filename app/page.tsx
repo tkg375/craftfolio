@@ -55,12 +55,6 @@ export default async function HomePage() {
         <div className="absolute top-40 right-1/4 w-64 h-64 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(124,58,237,0.10)" }} />
 
         <div className="relative max-w-4xl mx-auto">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8 text-xs font-semibold uppercase tracking-widest" style={{ background: "rgba(124,58,237,0.12)", color: "var(--accent-light)", border: "1px solid rgba(124,58,237,0.25)" }}>
-            <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
-            AI Resume Intelligence
-          </div>
-
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <div className="w-20 h-20 rounded-2xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #a78bfa 100%)", boxShadow: "0 16px 48px rgba(124,58,237,0.50), inset 0 1px 0 rgba(255,255,255,0.15)" }}>

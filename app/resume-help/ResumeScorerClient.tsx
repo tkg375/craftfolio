@@ -106,7 +106,7 @@ function ResumePreview({ text, template }: { text: string; template: ResumeTempl
   const accentColor = luminance > 180 ? "#1e293b" : template.accentHex;
 
   return (
-    <div className="rounded-xl p-6 overflow-auto max-h-[600px] text-sm text-slate-400 leading-relaxed space-y-1" style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}>
+    <div className="rounded-xl p-6 overflow-auto max-h-[600px] text-sm leading-relaxed space-y-1" style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.10)", color: "#1e293b" }}>
       {lines.map((line, i) => {
         const trimmed = line.trim();
         if (!trimmed) return <div key={i} className="h-2" />;
@@ -120,19 +120,19 @@ function ResumePreview({ text, template }: { text: string; template: ResumeTempl
             </p>
           );
         }
-        if (trimmed.startsWith("•")) return <p key={i} className="pl-4 text-slate-400">{trimmed}</p>;
-        if (i === 0) return <p key={i} className="text-lg font-bold text-slate-100 text-center">{trimmed}</p>;
-        if (i === 1) return <p key={i} className="text-xs text-slate-400 text-center mb-1">{trimmed}</p>;
+        if (trimmed.startsWith("•")) return <p key={i} {trimmed}>{trimmed}</p>;
+        if (i === 0) return <p key={i} className="text-lg font-bold text-center" style={{ color: "#0f172a" }}>{trimmed}</p>;
+        if (i === 1) return <p key={i} className="text-xs text-center mb-1" style={{ color: "#475569" }}>{trimmed}</p>;
         const prevTrimmed = lines.slice(0, i).reverse().find(l => l.trim())?.trim() ?? "";
         const prevIsBullet = prevTrimmed.startsWith("•");
         const prevIsHeader = /^[A-Z][A-Z\s&\/\-]{2,}$/.test(prevTrimmed);
         if (currentSection === "PROJECTS" || currentSection === "CERTIFICATIONS") {
-          return <p key={i} className={`font-semibold text-slate-400 ${prevIsHeader ? "" : "mt-3"}`}>{trimmed}</p>;
+          return <p key={i} className={`font-semibold ${prevIsHeader ? "" : "mt-3"}`} style={{ color: "#0f172a" }}>{trimmed}</p>;
         }
         if (currentSection === "EXPERIENCE" && !prevIsHeader && !prevIsBullet) {
-          return <p key={i} className="font-semibold text-slate-400 mt-3">{trimmed}</p>;
+          return <p key={i} className="font-semibold mt-3" style={{ color: "#0f172a" }}>{trimmed}</p>;
         }
-        return <p key={i} className="text-slate-400">{trimmed}</p>;
+        return <p key={i} style={{ color: "#334155" }}>{trimmed}</p>;
       })}
     </div>
   );
