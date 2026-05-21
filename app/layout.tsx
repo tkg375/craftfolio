@@ -8,14 +8,6 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 export const metadata: Metadata = {
   title: "Craftfolio — AI Resume Tools",
   description: "Score, rewrite, and tailor your resume with AI. Get matched to jobs, generate cover letters, and explore career options.",
-  icons: {
-    icon: [
-      { url: "/icon.png", type: "image/png", sizes: "32x32" },
-    ],
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
-  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
