@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
         currency: "usd",
         customer: customerId,
         metadata: { userId: session.id, type: "credit" },
-        automatic_payment_methods: { enabled: true },
+        automatic_payment_methods: { enabled: true, allow_redirects: "never" },
         description: "1 Resume Analysis Credit — Craftfolio",
       });
       return NextResponse.json({ clientSecret: intent.client_secret, type: "credit" });
