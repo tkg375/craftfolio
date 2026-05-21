@@ -6,10 +6,8 @@ import { db } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim();
-  if (!ADMIN_EMAIL) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const session = await getSession();
-  if (!session || session.email.trim() !== ADMIN_EMAIL) {
+      const session = await getSession();
+  if (!session || session.email !== 'tgordon1@icloud.com') {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

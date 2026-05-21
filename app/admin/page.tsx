@@ -5,8 +5,7 @@ import AdminClient from "./AdminClient";
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
-  const adminEmail = process.env.ADMIN_EMAIL?.trim();
-  const session = await getSession();
-  if (!adminEmail || !session || session.email.trim() !== adminEmail) redirect("/");
+    const session = await getSession();
+  if (!session || session.email !== 'tgordon1@icloud.com') redirect("/");
   return <AdminClient />;
 }
