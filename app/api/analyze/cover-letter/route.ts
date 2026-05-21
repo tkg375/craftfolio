@@ -5,6 +5,7 @@ import { checkAndDecrementCredits } from "@/lib/checkLimit";
 import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   const session = await getSession();

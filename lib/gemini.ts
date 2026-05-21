@@ -1,4 +1,4 @@
-const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_MODEL = "gemini-3.5-flash";
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1/models/${GEMINI_MODEL}:generateContent`;
 
 async function callGemini(apiKey: string, parts: unknown[]): Promise<string> {
@@ -6,7 +6,7 @@ async function callGemini(apiKey: string, parts: unknown[]): Promise<string> {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ contents: [{ parts }] }),
-    signal: AbortSignal.timeout(55000),
+    signal: AbortSignal.timeout(25000),
   });
 
   if (!res.ok) {

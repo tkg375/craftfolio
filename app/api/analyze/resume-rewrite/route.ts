@@ -7,6 +7,7 @@ import { getTemplatePromptAddendum } from "@/lib/resume-templates";
 import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
