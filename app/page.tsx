@@ -21,12 +21,7 @@ export default async function HomePage() {
       {/* Nav */}
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-4" style={{ background: "rgba(8,8,15,0.80)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)" }}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 14px rgba(124,58,237,0.45)" }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
-              <path d="M9 12h6M9 8h6M9 16h4M5 20h14a2 2 0 002-2V6l-5-5H5a2 2 0 00-2 2v15a2 2 0 002 2z" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <span className="font-black text-lg tracking-tight" style={{ color: "var(--text-primary)" }}>Craftfolio</span>
+          <img src="/Gemini_Generated_Image_uy8dlsuy8dlsuy8d.jpeg" alt="Craftfolio" className="h-10 w-auto rounded-lg" />
         </div>
         <div className="flex items-center gap-3">
           {session ? (
@@ -56,12 +51,8 @@ export default async function HomePage() {
 
         <div className="relative max-w-4xl mx-auto">
           {/* Logo */}
-          <div className="flex justify-center mb-8">
-            <div className="w-20 h-20 rounded-2xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #a78bfa 100%)", boxShadow: "0 16px 48px rgba(124,58,237,0.50), inset 0 1px 0 rgba(255,255,255,0.15)" }}>
-              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" className="text-white drop-shadow-lg">
-                <path d="M9 12h6M9 8h6M9 16h4M5 20h14a2 2 0 002-2V6l-5-5H5a2 2 0 00-2 2v15a2 2 0 002 2z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
+          <div className="flex justify-center mb-6">
+            <img src="/Gemini_Generated_Image_uy8dlsuy8dlsuy8d.jpeg" alt="Craftfolio" className="h-40 w-auto rounded-2xl" style={{ boxShadow: "0 16px 48px rgba(124,58,237,0.30)" }} />
           </div>
 
           <h1 className="text-6xl sm:text-7xl font-black leading-[1.02] tracking-tight mb-6" style={{ color: "var(--text-primary)" }}>
@@ -130,13 +121,8 @@ export default async function HomePage() {
 
       {/* Footer */}
       <footer className="py-8 px-6 text-center text-sm" style={{ borderTop: "1px solid var(--border)", color: "var(--text-dim)" }}>
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <div className="w-5 h-5 rounded-md flex items-center justify-center" style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)" }}>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" className="text-white">
-              <path d="M9 12h6M9 8h6M9 16h4M5 20h14a2 2 0 002-2V6l-5-5H5a2 2 0 00-2 2v15a2 2 0 002 2z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <span className="font-bold" style={{ color: "var(--text-muted)" }}>Craftfolio</span>
+        <div className="flex items-center justify-center mb-2">
+          <img src="/Gemini_Generated_Image_uy8dlsuy8dlsuy8d.jpeg" alt="Craftfolio" className="h-8 w-auto rounded-md" />
         </div>
         <p>© {new Date().getFullYear()} Craftfolio. All rights reserved.</p>
       </footer>

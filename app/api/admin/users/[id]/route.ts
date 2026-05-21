@@ -6,11 +6,13 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "tgordon1@icloud.com";
 
 export const dynamic = "force-dynamic";
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session || session.email !== ADMIN_EMAIL) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
+
+  const { id } = await params;
 
   let body: { plan?: string; credits?: number; addCredits?: number };
   try { body = await req.json() as typeof body; }
@@ -24,7 +26,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   if (addCredits !== undefined) data.credits = { increment: addCredits };
 
   const user = await db.user.update({
-    where: { id: params.id },
+    where: { id },
     data,
     select: { id: true, email: true, plan: true, credits: true },
   });
