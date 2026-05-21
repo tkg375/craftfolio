@@ -26,7 +26,29 @@ export default async function ResumeHelpPage() {
           ← Dashboard
         </Link>
       </nav>
-      <div className="max-w-4xl mx-auto px-6 pt-24 pb-10">
+      {/* Hero header */}
+      <div className="relative pt-28 pb-10 px-6 text-center overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.12) 0%, transparent 65%)" }} />
+        <div className="relative max-w-2xl mx-auto">
+          <h1 className="text-3xl sm:text-4xl font-black mb-3 leading-tight" style={{ color: "var(--text-primary)" }}>
+            Everything you need to get hired —<br className="hidden sm:block" /> in one place
+          </h1>
+          <p className="text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>
+            Upload your resume, paste a job link, and get an ATS score, keyword gap analysis, impact score, career recommendations, a tailored cover letter, and a fully rewritten resume — instantly.
+          </p>
+          {/* Feature pills */}
+          <div className="flex flex-wrap justify-center gap-2 mt-5">
+            {["ATS Score","Keyword Gap","Impact Score","Career Options","Cover Letter","Full Rewrite","Career Pivot","5 Templates"].map(f => (
+              <span key={f} className="text-xs font-semibold px-3 py-1 rounded-full"
+                style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)", color: "var(--accent-light)" }}>
+                {f}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 pb-10">
         <ResumeScorerClient isLoggedIn={true} />
       </div>
     </div>
