@@ -19,10 +19,12 @@ const appearance = {
 
 function CheckoutForm({
   type,
+  clientSecret,
   onSuccess,
   onCancel,
 }: {
   type: "credit" | "pro";
+  clientSecret: string;
   onSuccess: () => void;
   onCancel: () => void;
 }) {
@@ -40,11 +42,13 @@ function CheckoutForm({
     const { error: submitErr } = await elements.submit();
     if (submitErr) { setError(submitErr.message ?? "Payment failed"); setLoading(false); return; }
 
-    const { error: confirmErr } = await stripe.confirmPayment({
-      elements,
-      confirmParams: { return_url: `${window.location.origin}/dashboard?paid=1` },
-      redirect: "if_required",
-    });
+    // Use confirmPayment for payment intents, confirmSetup for setup intents
+    const isSetup = clientSecret?.startsWith("seti_") || clientSecret?.includes("_secret_seti");
+    const confirmFn = isSetup
+      ? stripe.confirmSetup({ elements, confirmParams: { return_url: `${window.location.origin}/dashboard?paid=1` }, redirect: "if_required" })
+      : stripe.confirmPayment({ elements, confirmParams: { return_url: `${window.location.origin}/dashboard?paid=1` }, redirect: "if_required" });
+
+    const { error: confirmErr } = await confirmFn;
 
     if (confirmErr) {
       setError(confirmErr.message ?? "Payment failed");
@@ -141,7 +145,7 @@ export default function PaymentModal({
 
         {clientSecret && (
           <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
-            <CheckoutForm type={type} onSuccess={handleSuccess} onCancel={onClose} />
+            <CheckoutForm type={type} clientSecret={clientSecret} onSuccess={handleSuccess} onCancel={onClose} />
           </Elements>
         )}
       </div>

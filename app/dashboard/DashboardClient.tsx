@@ -170,7 +170,7 @@ function ProfileTab({ user, isPro, onLogout }: { user: User; isPro: boolean; onL
   }
 
   return (
-    <div className="space-y-4 max-w-md">
+    <div className="space-y-4">
       {payModal && (
         <PaymentModal
           type={payModal}
@@ -179,31 +179,33 @@ function ProfileTab({ user, isPro, onLogout }: { user: User; isPro: boolean; onL
         />
       )}
       {/* Account info */}
-      <div className="rounded-2xl p-6 space-y-4" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-        <h2 className="font-bold" style={{ color: "var(--text-primary)" }}>Account</h2>
-        <div>
-          <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>Email</p>
-          <p className="text-sm" style={{ color: "var(--text-primary)" }}>{user.email}</p>
-        </div>
-        <div>
-          <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>Plan</p>
-          <span className="text-xs font-bold px-2.5 py-1 rounded-full"
-            style={isPro
-              ? { background: "rgba(124,58,237,0.20)", color: "var(--accent-light)", border: "1px solid rgba(124,58,237,0.30)" }
-              : { background: "rgba(255,255,255,0.06)", color: "var(--text-muted)", border: "1px solid var(--border)" }}>
-            {isPro ? "Pro — Unlimited" : "Free"}
-          </span>
-        </div>
-        {!isPro && (
+      <div className="grid sm:grid-cols-2 gap-4 items-start">
+        {/* Account info */}
+        <div className="rounded-2xl p-6 space-y-4" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+          <h2 className="font-bold" style={{ color: "var(--text-primary)" }}>Account</h2>
           <div>
-            <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>Credits</p>
-            <p className="text-sm" style={{ color: "var(--text-primary)" }}>{user.credits} remaining</p>
+            <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>Email</p>
+            <p className="text-sm break-all" style={{ color: "var(--text-primary)" }}>{user.email}</p>
           </div>
-        )}
-      </div>
+          <div>
+            <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>Plan</p>
+            <span className="text-xs font-bold px-2.5 py-1 rounded-full"
+              style={isPro
+                ? { background: "rgba(124,58,237,0.20)", color: "var(--accent-light)", border: "1px solid rgba(124,58,237,0.30)" }
+                : { background: "rgba(255,255,255,0.06)", color: "var(--text-muted)", border: "1px solid var(--border)" }}>
+              {isPro ? "Pro — Unlimited" : "Free"}
+            </span>
+          </div>
+          {!isPro && (
+            <div>
+              <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>Credits</p>
+              <p className="text-sm" style={{ color: "var(--text-primary)" }}>{user.credits} remaining</p>
+            </div>
+          )}
+        </div>
 
-      {/* Subscription management */}
-      <div className="rounded-2xl p-6 space-y-3" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+        {/* Subscription management */}
+        <div className="rounded-2xl p-6 space-y-3" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
         <h2 className="font-bold mb-4" style={{ color: "var(--text-primary)" }}>Subscription</h2>
 
         {isPro ? (
@@ -241,7 +243,8 @@ function ProfileTab({ user, isPro, onLogout }: { user: User; isPro: boolean; onL
             </button>
           </>
         )}
-      </div>
+        </div>
+      </div>{/* end grid */}
 
       <button onClick={onLogout}
         className="w-full py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-80"
