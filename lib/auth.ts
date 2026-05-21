@@ -25,8 +25,11 @@ export function verifySessionToken(token: string): string | null {
     const payload = decoded.slice(0, lastDot);
     const sig = decoded.slice(lastDot + 1);
     if (sign(payload) !== sig) return null;
-    const [userId] = payload.split(":");
-    return userId ?? null;
+    const [userId, tsStr] = payload.split(":");
+    if (!userId || !tsStr) return null;
+    const issuedAt = parseInt(tsStr, 10);
+    if (Date.now() - issuedAt > MAX_AGE * 1000) return null;
+    return userId;
   } catch {
     return null;
   }

@@ -39,3 +39,8 @@ model RateLimit {
   attempts Int      @default(1)
   resetAt  DateTime
 }
+
+model WebhookEvent {
+  stripeEventId String   @id
+  processedAt   DateTime @default(now())
+}

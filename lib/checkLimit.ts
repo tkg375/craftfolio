@@ -7,10 +7,15 @@ export async function checkAndDecrementCredits(userId: string): Promise<{ allowe
 
   if (user.plan === "pro") return { allowed: true };
 
-  if (user.credits <= 0) {
+  // Atomic conditional decrement — only succeeds if credits > 0, preventing race conditions
+  const updated = await db.user.updateMany({
+    where: { id: userId, credits: { gt: 0 } },
+    data: { credits: { decrement: 1 } },
+  });
+
+  if (updated.count === 0) {
     return { allowed: false, reason: "You've used all your free analyses. Upgrade to Pro for unlimited access." };
   }
 
-  await db.user.update({ where: { id: userId }, data: { credits: { decrement: 1 } } });
   return { allowed: true };
 }

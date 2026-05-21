@@ -9,8 +9,9 @@ export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const limitResult = await checkAndDecrementCredits(session?.id ?? "");
+  const limitResult = await checkAndDecrementCredits(session.id);
   if (!limitResult.allowed) {
     return NextResponse.json({ error: limitResult.reason ?? "Limit reached" }, { status: 402 });
   }
@@ -37,22 +38,18 @@ export async function POST(req: NextRequest) {
   try {
     analysis = await scoreResume(apiKey, resumeText, jobDescription, resumePdfBase64);
   } catch (err) {
-    if (session?.id) {
-      await db.user.update({ where: { id: session.id }, data: { credits: { increment: 1 } } });
-    }
+    await db.user.update({ where: { id: session.id }, data: { credits: { increment: 1 } } });
     console.error("Gemini error:", err);
     return NextResponse.json({ error: "Analysis failed. Please try again." }, { status: 500 });
   }
 
-  if (session?.id) {
-    await db.analysis.create({
-      data: {
-        userId: session.id,
-        type: mode === "job" ? "resume_job" : "resume",
-        result: analysis as object,
-      },
-    });
-  }
+  await db.analysis.create({
+    data: {
+      userId: session.id,
+      type: mode === "job" ? "resume_job" : "resume",
+      result: analysis as object,
+    },
+  });
 
   return NextResponse.json({ analysis });
 }

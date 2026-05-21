@@ -1,4 +1,13 @@
 const GEMINI_MODEL = "gemini-3.5-flash";
+
+function parseJson<T>(raw: string): T {
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    console.error("Failed to parse Gemini JSON:", raw.slice(0, 500));
+    throw new Error("Invalid response from AI. Please try again.");
+  }
+}
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1/models/${GEMINI_MODEL}:generateContent`;
 
 async function callGemini(apiKey: string, parts: unknown[]): Promise<string> {
@@ -126,7 +135,7 @@ Flag every section that fails any of these criteria. Be specific — name the se
   parts.push({ text: resumeText ? `${prompt}\n\nResume:\n${resumeText}` : prompt });
 
   const raw = await callGemini(apiKey, parts);
-  return JSON.parse(raw) as ResumeAnalysis;
+  return parseJson<ResumeAnalysis>(raw);
 }
 
 export async function rewriteResume(
@@ -305,7 +314,7 @@ Be thorough. Flag real risks to the signing party.`;
   parts.push({ text: text ? `${prompt}\n\nNDA:\n${text}` : prompt });
 
   const raw = await callGemini(apiKey, parts);
-  return JSON.parse(raw) as ContractAnalysis;
+  return parseJson<ContractAnalysis>(raw);
 }
 
 export async function analyzeEmploymentContract(
@@ -336,7 +345,7 @@ Be thorough. Flag real employment risks.`;
   parts.push({ text: text ? `${prompt}\n\nEmployment Contract:\n${text}` : prompt });
 
   const raw = await callGemini(apiKey, parts);
-  return JSON.parse(raw) as ContractAnalysis;
+  return parseJson<ContractAnalysis>(raw);
 }
 
 export async function analyzeLease(
@@ -367,7 +376,7 @@ Be thorough. Flag real tenant risks.`;
   parts.push({ text: text ? `${prompt}\n\nLease Agreement:\n${text}` : prompt });
 
   const raw = await callGemini(apiKey, parts);
-  return JSON.parse(raw) as ContractAnalysis;
+  return parseJson<ContractAnalysis>(raw);
 }
 
 export async function analyzeCourtDocument(
@@ -429,7 +438,7 @@ Be thorough. This helps non-lawyers understand serious legal documents.`;
   parts.push({ text: text ? `${prompt}\n\nCourt Document:\n${text}` : prompt });
 
   const raw = await callGemini(apiKey, parts);
-  return JSON.parse(raw) as CourtDocumentAnalysis;
+  return parseJson<CourtDocumentAnalysis>(raw);
 }
 
 export interface CourtDisputeOpportunity {
@@ -513,7 +522,7 @@ Be thorough and accurate. Consumer protection law expertise is critical here.`;
   parts.push({ text: text ? `${prompt}\n\nLetter:\n${text}` : prompt });
 
   const raw = await callGemini(apiKey, parts);
-  return JSON.parse(raw) as CollectionLetterAnalysis;
+  return parseJson<CollectionLetterAnalysis>(raw);
 }
 
 export interface CollectionLetterAnalysis {
@@ -545,7 +554,7 @@ Be thorough — non-competes can devastate careers if signed blindly.`;
   const parts: unknown[] = [];
   if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
   parts.push({ text: text ? `${prompt}\n\nNon-Compete Agreement:\n${text}` : prompt });
-  return JSON.parse(await callGemini(apiKey, parts)) as ContractAnalysis;
+  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
 }
 
 export async function analyzeSeveranceAgreement(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
@@ -558,7 +567,7 @@ Highlight the 21-day consideration period prominently if found or missing.`;
   const parts: unknown[] = [];
   if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
   parts.push({ text: text ? `${prompt}\n\nSeverance Agreement:\n${text}` : prompt });
-  return JSON.parse(await callGemini(apiKey, parts)) as ContractAnalysis;
+  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
 }
 
 export async function analyzeBusinessPurchaseAgreement(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
@@ -570,7 +579,7 @@ missingClauses: indemnification cap (often 10-15% of purchase price), basket/ded
   const parts: unknown[] = [];
   if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
   parts.push({ text: text ? `${prompt}\n\nBusiness Purchase Agreement:\n${text}` : prompt });
-  return JSON.parse(await callGemini(apiKey, parts)) as ContractAnalysis;
+  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
 }
 
 export async function analyzeHoaDocuments(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
@@ -582,7 +591,7 @@ missingClauses: reserve fund adequacy disclosure, alternative dispute resolution
   const parts: unknown[] = [];
   if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
   parts.push({ text: text ? `${prompt}\n\nHOA Document:\n${text}` : prompt });
-  return JSON.parse(await callGemini(apiKey, parts)) as ContractAnalysis;
+  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
 }
 
 export async function analyzePromissoryNote(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
@@ -594,7 +603,7 @@ missingClauses: clear APR disclosure, prepayment rights, default cure period and
   const parts: unknown[] = [];
   if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
   parts.push({ text: text ? `${prompt}\n\nPromissory Note / Loan Agreement:\n${text}` : prompt });
-  return JSON.parse(await callGemini(apiKey, parts)) as ContractAnalysis;
+  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
 }
 
 export async function analyzePowerOfAttorney(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
@@ -607,7 +616,7 @@ Note that POA requirements vary significantly by state — flag any missing stat
   const parts: unknown[] = [];
   if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
   parts.push({ text: text ? `${prompt}\n\nPower of Attorney:\n${text}` : prompt });
-  return JSON.parse(await callGemini(apiKey, parts)) as ContractAnalysis;
+  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
 }
 
 export async function analyzeInsurancePolicy(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
@@ -619,7 +628,7 @@ missingClauses: replacement cost vs ACV clearly stated, grace period for late pr
   const parts: unknown[] = [];
   if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
   parts.push({ text: text ? `${prompt}\n\nInsurance Policy:\n${text}` : prompt });
-  return JSON.parse(await callGemini(apiKey, parts)) as ContractAnalysis;
+  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
 }
 
 export async function analyzeVehiclePurchaseAgreement(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
@@ -631,7 +640,7 @@ missingClauses: itemized breakdown of all fees, VIN and odometer statement, righ
   const parts: unknown[] = [];
   if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
   parts.push({ text: text ? `${prompt}\n\nVehicle Purchase Agreement:\n${text}` : prompt });
-  return JSON.parse(await callGemini(apiKey, parts)) as ContractAnalysis;
+  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
 }
 
 export async function analyzeMedicalBill(apiKey: string, text?: string, pdfBase64?: string, imageMimeType?: string): Promise<MedicalBillAnalysis> {
@@ -654,7 +663,7 @@ Return only raw JSON.`;
   if (pdfBase64) parts.push({ inlineData: { mimeType: imageMimeType || "application/pdf", data: pdfBase64 } });
   parts.push({ text: text ? `${prompt}\n\nMedical Bill:\n${text}` : prompt });
   const raw = await callGemini(apiKey, parts);
-  return JSON.parse(raw) as MedicalBillAnalysis;
+  return parseJson<MedicalBillAnalysis>(raw);
 }
 
 export interface MedicalBillAnalysis {

@@ -30,7 +30,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex justify-center mb-6">
-            <span style={{ fontFamily: "AmbarPearl", fontSize: "2.5rem", color: "var(--text-primary)", lineHeight: 1 }}>Craftfolio</span>
+            <span style={{ fontFamily: "AmbarPearl", fontSize: "2.5rem", color: "#a78bfa", lineHeight: 1 }}>Craftfolio</span>
           </Link>
           <h1 className="text-2xl font-black mb-1" style={{ color: "var(--text-primary)" }}>Welcome back</h1>
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>Sign in to your account</p>

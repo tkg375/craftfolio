@@ -288,6 +288,7 @@ export default async function HomePage() {
               <a href="#about" className="hover:text-white transition-colors">About</a>
               <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
               <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+              <Link href="/support" className="hover:text-white transition-colors">Support</Link>
             </div>
           </div>
           <p className="text-center text-xs mt-6" style={{ color: "var(--text-dim)" }}>© {new Date().getFullYear()} Craftfolio. All rights reserved.</p>

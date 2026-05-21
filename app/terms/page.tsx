@@ -8,7 +8,7 @@ export default function TermsPage() {
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-5"
         style={{ background: "rgba(8,8,15,0.90)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)", overflow: "visible" }}>
         <Link href="/" style={{ overflow: "visible" }}>
-          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "var(--text-primary)", lineHeight: 1.4, display: "block" }}>Craftfolio</span>
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "#a78bfa", lineHeight: 1.4, display: "block" }}>Craftfolio</span>
         </Link>
         <Link href="/" className="text-sm font-medium px-4 py-2 rounded-xl transition-all"
           style={{ color: "var(--text-muted)", background: "var(--bg-card)", border: "1px solid var(--border)" }}>
@@ -31,13 +31,16 @@ export default function TermsPage() {
             { title: "7. Disclaimer of Warranties", body: "The service is provided without warranties of any kind. We do not guarantee that using Craftfolio will result in employment or that analyses will be accurate for all job applications." },
             { title: "8. Limitation of Liability", body: "To the maximum extent permitted by law, Craftfolio shall not be liable for any indirect, incidental, or consequential damages arising from your use of the service." },
             { title: "9. Changes to Terms", body: "We may update these terms from time to time. Continued use of the service after changes constitutes acceptance of the revised terms." },
-            { title: "10. Contact", body: "Questions about these terms? Email us at support@craftfolio.co." },
           ].map(({ title, body }) => (
             <div key={title}>
               <h2 className="font-bold mb-2 text-base" style={{ color: "var(--text-primary)" }}>{title}</h2>
               <p>{body}</p>
             </div>
           ))}
+          <div>
+            <h2 className="font-bold mb-2 text-base" style={{ color: "var(--text-primary)" }}>10. Contact</h2>
+            <p>Questions about these terms? <Link href="/support" style={{ color: "#a78bfa" }} className="underline hover:opacity-80">Click here</Link> to contact support.</p>
+          </div>
         </div>
       </div>
     </div>

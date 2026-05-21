@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
 
   const { email, password } = body;
   if (!email || !password) return NextResponse.json({ error: "Email and password required" }, { status: 400 });
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
 
   const user = await db.user.findUnique({ where: { email: email.toLowerCase() } });
   if (!user) return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });

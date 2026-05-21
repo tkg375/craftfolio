@@ -155,7 +155,9 @@ async function fetchWithLambda(url: string): Promise<string | null> {
     });
     if (!res.ok) return null;
     const data = await res.json() as { text?: string };
-    return data.text ?? null;
+    const text = data.text ?? null;
+    if (text && text.length > 200_000) return text.slice(0, 8000);
+    return text;
   } catch { return null; }
 }
 
@@ -177,6 +179,11 @@ export async function POST(req: NextRequest) {
     await db.rateLimit.upsert({ where: { key: rateLimitKey }, create: { key: rateLimitKey, attempts: 1, resetAt }, update: { attempts: 1, resetAt } });
   } else {
     await db.rateLimit.update({ where: { key: rateLimitKey }, data: { attempts: { increment: 1 } } });
+  }
+
+  // Prune expired rate limit rows periodically (1% chance per request) to prevent unbounded growth
+  if (Math.random() < 0.01) {
+    db.rateLimit.deleteMany({ where: { resetAt: { lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } } }).catch(() => {});
   }
 
   let body: { url?: string };

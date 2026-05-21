@@ -11,8 +11,9 @@ export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const limitResult = await checkAndDecrementCredits(session?.id ?? "");
+  const limitResult = await checkAndDecrementCredits(session.id);
   if (!limitResult.allowed) {
     return NextResponse.json({ error: limitResult.reason ?? "Limit reached" }, { status: 402 });
   }
@@ -58,22 +59,18 @@ export async function POST(req: NextRequest) {
     const raw = await rewriteResume(apiKey, sanitizedAnalysis, jobDescription, originalResume, resumePdfBase64, templateAddendum, targetProfession);
     rewritten = raw.replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim();
   } catch (err) {
-    if (session?.id) {
-      await db.user.update({ where: { id: session.id }, data: { credits: { increment: 1 } } });
-    }
+    await db.user.update({ where: { id: session.id }, data: { credits: { increment: 1 } } });
     console.error("Rewrite error:", err);
     return NextResponse.json({ error: "Rewrite failed. Please try again." }, { status: 500 });
   }
 
-  if (session?.id) {
-    await db.analysis.create({
-      data: {
-        userId: session.id,
-        type: targetProfession ? "career_pivot" : "resume_rewrite",
-        result: { rewritten: rewritten.slice(0, 50_000) },
-      },
-    });
-  }
+  await db.analysis.create({
+    data: {
+      userId: session.id,
+      type: targetProfession ? "career_pivot" : "resume_rewrite",
+      result: { rewritten: rewritten.slice(0, 50_000) },
+    },
+  });
 
   return NextResponse.json({ rewritten });
 }

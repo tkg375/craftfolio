@@ -19,11 +19,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
+  // Idempotency check — Stripe retries webhooks on failure; skip already-processed events
+  const processed = await db.webhookEvent.findUnique({ where: { stripeEventId: event.id } });
+  if (processed) return NextResponse.json({ received: true });
+  await db.webhookEvent.create({ data: { stripeEventId: event.id } });
+
   switch (event.type) {
     case "payment_intent.succeeded": {
       const pi = event.data.object as Stripe.PaymentIntent;
       const userId = pi.metadata?.userId;
       if (!userId || pi.metadata?.type !== "credit") break;
+      const user = await db.user.findUnique({ where: { id: userId }, select: { id: true } });
+      if (!user) { console.error("Stripe webhook: user not found for credit payment"); break; }
       await db.user.update({ where: { id: userId }, data: { credits: { increment: 1 } } });
       break;
     }
