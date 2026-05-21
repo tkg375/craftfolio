@@ -1,16 +1,16 @@
 import { AwsClient } from "aws4fetch";
 
-const aws = new AwsClient({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  region: process.env.AWS_REGION ?? "us-east-1",
-  service: "ses",
-});
-
 const FROM = "Craftfolio <noreply@craftfolio.co>";
-const SES_ENDPOINT = `https://email.${process.env.AWS_REGION ?? "us-east-1"}.amazonaws.com/v2/email/outbound-emails`;
 
 export async function sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
+  const region = process.env.AWS_REGION ?? "us-east-1";
+  const aws = new AwsClient({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    region,
+    service: "ses",
+  });
+  const SES_ENDPOINT = `https://email.${region}.amazonaws.com/v2/email/outbound-emails`;
   const body = JSON.stringify({
     FromEmailAddress: FROM,
     Destination: { ToAddresses: [to] },
