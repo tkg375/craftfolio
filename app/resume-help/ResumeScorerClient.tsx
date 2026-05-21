@@ -422,12 +422,12 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
     return (
       <div className="flex flex-col items-center">
         <svg width="96" height="96" viewBox="0 0 96 96">
-          <circle cx="48" cy="48" r={radius} fill="none" stroke="#e2e8f0" strokeWidth="8"/>
+          <circle cx="48" cy="48" r={radius} fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="8"/>
           <circle cx="48" cy="48" r={radius} fill="none" stroke={color} strokeWidth="8"
             strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round"
             transform="rotate(-90 48 48)" style={{ transition: "stroke-dashoffset 0.8s ease" }}
           />
-          <text x="48" y="52" textAnchor="middle" fill="#0f172a" fontSize="20" fontWeight="700">{score}</text>
+          <text x="48" y="52" textAnchor="middle" fill="#f1f5f9" fontSize="20" fontWeight="700">{score}</text>
         </svg>
         <span className="text-xs text-slate-400 mt-1 font-medium">{label}</span>
       </div>
@@ -846,7 +846,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                 <h2 className="font-bold text-slate-100 mb-3 text-base">Keywords Found</h2>
                 <div className="flex flex-wrap gap-2">
                   {analysis.foundKeywords.filter(kw => kw.length <= 60).map((kw, i) => (
-                    <span key={i} className="text-xs bg-green-500/20 text-green-800 px-2 py-1 rounded-full font-extrabold">{kw}</span>
+                    <span key={i} className="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded-full font-extrabold">{kw}</span>
                   ))}
                   {analysis.foundKeywords.length === 0 && <p className="text-sm text-slate-400">No keywords matched</p>}
                 </div>
@@ -859,7 +859,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                   return (
                     <>
                       <div className="flex flex-wrap gap-2">
-                        {pills.map((kw, i) => <span key={i} className="text-xs bg-violet-600/20 text-red-800 px-2 py-1 rounded-full font-extrabold">{kw}</span>)}
+                        {pills.map((kw, i) => <span key={i} className="text-xs bg-violet-500/20 text-violet-300 px-2 py-1 rounded-full font-extrabold">{kw}</span>)}
                         {pills.length === 0 && notes.length === 0 && <p className="text-sm text-slate-400">No missing keywords</p>}
                       </div>
                       {notes.map((note, i) => <p key={i} className="text-xs text-slate-400 mt-3 leading-relaxed">{note}</p>)}
