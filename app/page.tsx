@@ -35,7 +35,7 @@ export default async function HomePage() {
 
         {/* Logo */}
         <Link href="/" style={{ overflow: "visible", flexShrink: 0 }}>
-          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "var(--text-primary)", lineHeight: 1.4, display: "block" }}>Craftfolio</span>
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "clamp(1.5rem, 5vw, 2rem)", color: "#a78bfa", lineHeight: 1.4, display: "block" }}>Craftfolio</span>
         </Link>
 
         {/* Centered nav links */}
@@ -66,12 +66,12 @@ export default async function HomePage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative flex flex-col items-center justify-center text-center px-4 pt-40 pb-28 overflow-hidden">
+      <section className="relative flex flex-col items-center justify-center text-center px-4 pt-32 sm:pt-40 pb-20 sm:pb-28 overflow-hidden">
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%)" }} />
         <div className="absolute top-40 left-1/4 w-64 h-64 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(167,139,250,0.08)" }} />
         <div className="absolute top-40 right-1/4 w-64 h-64 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(124,58,237,0.10)" }} />
         <div className="relative max-w-4xl mx-auto">
-          <h1 className="text-6xl sm:text-7xl font-black leading-[1.02] tracking-tight mb-6" style={{ color: "var(--text-primary)" }}>
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.02] tracking-tight mb-6" style={{ color: "var(--text-primary)" }}>
             Resumes that get{" "}
             <span style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", backgroundImage: "linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #c4b5fd 100%)" }}>
               interviews
@@ -94,10 +94,10 @@ export default async function HomePage() {
       </section>
 
       {/* Features */}
-      <section className="py-24 px-4" style={{ borderTop: "1px solid var(--border)" }}>
+      <section className="py-16 sm:py-24 px-4" style={{ borderTop: "1px solid var(--border)" }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>Everything in one place</h2>
+            <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>Everything in one place</h2>
             <p className="text-lg" style={{ color: "var(--text-muted)" }}>Six tools. One upload. Zero guessing.</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -118,10 +118,10 @@ export default async function HomePage() {
       </section>
 
       {/* How it Works */}
-      <section id="how-it-works" className="py-24 px-4" style={{ borderTop: "1px solid var(--border)" }}>
+      <section id="how-it-works" className="py-16 sm:py-24 px-4" style={{ borderTop: "1px solid var(--border)" }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>How it works</h2>
+            <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>How it works</h2>
             <p className="text-lg" style={{ color: "var(--text-muted)" }}>Three steps. Under a minute. Results that actually help.</p>
           </div>
           <div className="grid sm:grid-cols-3 gap-8">
@@ -169,10 +169,10 @@ export default async function HomePage() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="py-24 px-4" style={{ borderTop: "1px solid var(--border)" }}>
+      <section id="pricing" className="py-16 sm:py-24 px-4" style={{ borderTop: "1px solid var(--border)" }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>Simple pricing</h2>
+            <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>Simple pricing</h2>
             <p className="text-lg" style={{ color: "var(--text-muted)" }}>Pay as you go, or go unlimited.</p>
           </div>
           <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
@@ -223,10 +223,10 @@ export default async function HomePage() {
       </section>
 
       {/* FAQs */}
-      <section id="faqs" className="py-24 px-4" style={{ borderTop: "1px solid var(--border)" }}>
+      <section id="faqs" className="py-16 sm:py-24 px-4" style={{ borderTop: "1px solid var(--border)" }}>
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>Frequently asked questions</h2>
+            <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>Frequently asked questions</h2>
             <p className="text-lg" style={{ color: "var(--text-muted)" }}>Everything you need to know before you start.</p>
           </div>
           <div className="space-y-3">
@@ -247,10 +247,10 @@ export default async function HomePage() {
       </section>
 
       {/* About */}
-      <section id="about" className="py-24 px-4" style={{ borderTop: "1px solid var(--border)" }}>
+      <section id="about" className="py-16 sm:py-24 px-4" style={{ borderTop: "1px solid var(--border)" }}>
         <div className="max-w-3xl mx-auto text-center">
           <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(124,58,237,0.06) 0%, transparent 70%)" }} />
-          <h2 className="text-4xl font-black mb-6" style={{ color: "var(--text-primary)" }}>About Craftfolio</h2>
+          <h2 className="text-3xl sm:text-4xl font-black mb-6" style={{ color: "var(--text-primary)" }}>About Craftfolio</h2>
           <p className="text-lg leading-relaxed mb-6" style={{ color: "var(--text-muted)" }}>
             Craftfolio was built because the job market is broken. Applicant Tracking Systems reject qualified candidates before any human sees their resume — and most people have no idea it's happening.
           </p>
@@ -258,22 +258,16 @@ export default async function HomePage() {
             We use AI to give every job seeker the same edge that expensive resume writers charge hundreds of dollars for: a clear score, specific fixes, a rewritten resume, and a tailored cover letter — all in under a minute.
           </p>
           <p className="text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>
-            No legal background required. No waiting. No fluff. Just clear, actionable insight that gets you to the interview.
+            No waiting. No fluff. Just clear, actionable insight that gets you to the interview.
           </p>
-          <div className="mt-10">
-            <Link href="/register" className="inline-block font-bold px-8 py-4 rounded-2xl text-white text-base transition-all hover:scale-105"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 8px 32px rgba(124,58,237,0.45)" }}>
-              Get started free →
-            </Link>
-          </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-24 px-4 text-center" style={{ borderTop: "1px solid var(--border)" }}>
+      <section className="py-16 sm:py-24 px-4 text-center" style={{ borderTop: "1px solid var(--border)" }}>
         <div className="relative max-w-2xl mx-auto">
           <div className="absolute inset-0 rounded-3xl pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(124,58,237,0.12) 0%, transparent 70%)" }} />
-          <h2 className="text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>Ready to get hired?</h2>
+          <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>Ready to get hired?</h2>
           <p className="mb-8" style={{ color: "var(--text-muted)" }}>Create your free account and analyze your first resume in minutes.</p>
           <Link href="/register" className="inline-block font-bold px-10 py-4 rounded-2xl text-white text-base transition-all hover:scale-105"
             style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 8px 32px rgba(124,58,237,0.45)" }}>
