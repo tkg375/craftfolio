@@ -120,7 +120,7 @@ function ResumePreview({ text, template }: { text: string; template: ResumeTempl
             </p>
           );
         }
-        if (trimmed.startsWith("•")) return <p key={i} {trimmed}>{trimmed}</p>;
+        if (trimmed.startsWith("•")) return <p key={i} className="pl-4" style={{ color: "#334155" }}>{trimmed}</p>;
         if (i === 0) return <p key={i} className="text-lg font-bold text-center" style={{ color: "#0f172a" }}>{trimmed}</p>;
         if (i === 1) return <p key={i} className="text-xs text-center mb-1" style={{ color: "#475569" }}>{trimmed}</p>;
         const prevTrimmed = lines.slice(0, i).reverse().find(l => l.trim())?.trim() ?? "";
