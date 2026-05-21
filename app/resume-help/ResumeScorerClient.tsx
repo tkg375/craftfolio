@@ -286,6 +286,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
           resumeText: resumeText || undefined,
           jobDescription: jobDescription || undefined,
           resumePdfBase64: resumePdfBase64 || undefined,
+          mode,
         }),
       });
       const data = await res.json() as { error?: string; analysis?: ResumeAnalysis };

@@ -10,8 +10,12 @@ type User = { id: string; email: string; plan: string; credits: number; subscrip
 
 const TYPE_LABELS: Record<string, string> = {
   resume: "ATS Analysis",
+  resume_job: "Job Match Analysis",
+  resume_rewrite: "Full Rewrite",
   "resume-rewrite": "Full Rewrite",
+  career_pivot: "Career Pivot",
   "cover-letter": "Cover Letter",
+  cover_letter: "Cover Letter",
 };
 
 export default function DashboardClient({ user, analyses }: { user: User; analyses: Analysis[] }) {

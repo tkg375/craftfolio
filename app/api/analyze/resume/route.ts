@@ -15,11 +15,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: limitResult.reason ?? "Limit reached" }, { status: 402 });
   }
 
-  let body: { resumeText?: string; jobDescription?: string; resumePdfBase64?: string };
-  try { body = await req.json() as { resumeText?: string; jobDescription?: string; resumePdfBase64?: string }; }
+  let body: { resumeText?: string; jobDescription?: string; resumePdfBase64?: string; mode?: string };
+  try { body = await req.json() as { resumeText?: string; jobDescription?: string; resumePdfBase64?: string; mode?: string }; }
   catch { return NextResponse.json({ error: "Invalid request body" }, { status: 400 }); }
 
-  const { resumeText, jobDescription, resumePdfBase64 } = body;
+  const { resumeText, jobDescription, resumePdfBase64, mode } = body;
 
   if (resumePdfBase64 && resumePdfBase64.length > 14_000_000)
     return NextResponse.json({ error: "PDF too large. Maximum size is 10MB." }, { status: 400 });
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     await db.analysis.create({
       data: {
         userId: session.id,
-        type: "resume",
+        type: mode === "job" ? "resume_job" : "resume",
         result: analysis as object,
       },
     });

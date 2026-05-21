@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     await db.analysis.create({
       data: {
         userId: session.id,
-        type: "resume_rewrite",
+        type: targetProfession ? "career_pivot" : "resume_rewrite",
         result: { rewritten: rewritten.slice(0, 50_000) },
       },
     });
