@@ -82,13 +82,14 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <div>
                     <p className="font-bold mb-1" style={{ color: "var(--text-primary)" }}>Upgrade to Pro</p>
-                    <p className="text-sm" style={{ color: "var(--text-muted)" }}>Unlimited analyses, priority processing, and all premium features.</p>
+                    <p className="text-sm" style={{ color: "var(--text-muted)" }}>Unlimited analyses, priority processing, and all premium features — $5/month.</p>
                   </div>
-                  <a href="mailto:support@craftfolio.co?subject=Pro Upgrade"
+                  <button
+                    onClick={() => setTab("profile")}
                     className="text-sm font-bold px-5 py-2.5 rounded-xl text-white whitespace-nowrap"
                     style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)" }}>
-                    Contact Us
-                  </a>
+                    Upgrade — $5/mo
+                  </button>
                 </div>
               </div>
             )}
