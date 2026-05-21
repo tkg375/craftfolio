@@ -20,8 +20,8 @@ export default async function HomePage() {
 
       {/* Nav */}
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-4" style={{ background: "rgba(8,8,15,0.80)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)" }}>
-        <div className="flex items-center">
-          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "var(--text-primary)", lineHeight: 1 }}>Craftfolio</span>
+        <div className="flex items-center" style={{ overflow: "visible" }}>
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "var(--text-primary)", lineHeight: 1.4, display: "block" }}>Craftfolio</span>
         </div>
         <div className="flex items-center gap-3">
           {session ? (
@@ -49,11 +49,6 @@ export default async function HomePage() {
         <div className="absolute top-40 right-1/4 w-64 h-64 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(124,58,237,0.10)" }} />
 
         <div className="relative max-w-4xl mx-auto">
-          {/* Logo */}
-          <div className="flex justify-center mb-6">
-            <span style={{ fontFamily: "AmbarPearl", fontSize: "5rem", color: "var(--text-primary)", lineHeight: 1, filter: "drop-shadow(0 8px 32px rgba(124,58,237,0.45))" }}>Craftfolio</span>
-          </div>
-
           <h1 className="text-6xl sm:text-7xl font-black leading-[1.02] tracking-tight mb-6" style={{ color: "var(--text-primary)" }}>
             Resumes that get{" "}
             <span style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", backgroundImage: "linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #c4b5fd 100%)" }}>

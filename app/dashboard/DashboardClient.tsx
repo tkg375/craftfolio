@@ -29,8 +29,8 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
       {/* Nav */}
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-4"
         style={{ background: "rgba(8,8,15,0.90)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)" }}>
-        <Link href="/" className="flex items-center">
-          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "var(--text-primary)", lineHeight: 1 }}>Craftfolio</span>
+        <Link href="/" className="flex items-center" style={{ overflow: "visible" }}>
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "var(--text-primary)", lineHeight: 1.4, display: "block" }}>Craftfolio</span>
         </Link>
         <div className="flex items-center gap-3">
           <Link href="/resume-help"
