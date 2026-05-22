@@ -35,7 +35,7 @@ export default async function HomePage() {
 
         {/* Logo */}
         <Link href="/" style={{ overflow: "visible", flexShrink: 0 }}>
-          <span style={{ fontFamily: "AmbarPearl", fontSize: "clamp(1.5rem, 5vw, 2rem)", color: "#a78bfa", lineHeight: 1.4, display: "block" }}>Craftfolio</span>
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "clamp(1.5rem, 5vw, 2rem)", color: "#a78bfa", lineHeight: 1.4, display: "block", paddingTop: "4px" }}>Craftfolio</span>
         </Link>
 
         {/* Centered nav links */}
