@@ -815,6 +815,14 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                 </button>
                 <button
                   onClick={() => exportResumePdf(pivotResume, selectedTemplate)}
+                  className="flex items-center gap-1.5 text-sm font-medium text-slate-400 px-3 py-1.5 rounded-lg transition-colors"
+                  style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}
+                >
+                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-2 0H8v4h8v-4z"/></svg>
+                  Print
+                </button>
+                <button
+                  onClick={() => exportResumePdf(pivotResume, selectedTemplate)}
                   className="flex items-center gap-1.5 text-sm font-medium text-white px-3 py-1.5 rounded-lg hover:opacity-90 transition-colors"
                   style={{ background: selectedTemplate.accentHex }}
                 >
@@ -968,6 +976,11 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                               {copied ? <><svg width="14" height="14" fill="none" viewBox="0 0 24 24" className="text-green-500"><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>Copied!</> : <><svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Copy</>}
                             </button>
                             <button onClick={() => exportResumePdf(improvedResume!, selectedTemplate)}
+                              className="flex items-center gap-1.5 text-sm font-medium text-slate-400 px-3 py-1.5 rounded-lg transition-colors" style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}>
+                              <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-2 0H8v4h8v-4z"/></svg>
+                              Print
+                            </button>
+                            <button onClick={() => exportResumePdf(improvedResume!, selectedTemplate)}
                               className="flex items-center gap-1.5 text-sm font-medium text-white px-3 py-1.5 rounded-lg hover:opacity-90 transition-colors" style={{ background: selectedTemplate.accentHex }}>
                               <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
                               Download PDF
@@ -1036,6 +1049,11 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                             <button onClick={() => { navigator.clipboard.writeText(coverLetter); setCoverCopied(true); setTimeout(() => setCoverCopied(false), 2000); }}
                               className="flex items-center gap-1.5 text-sm font-medium text-slate-400 px-3 py-1.5 rounded-lg transition-colors" style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}>
                               {coverCopied ? <><svg width="14" height="14" fill="none" viewBox="0 0 24 24" className="text-green-500"><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>Copied!</> : <><svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Copy</>}
+                            </button>
+                            <button onClick={() => exportCoverLetterPdf(coverLetter!)}
+                              className="flex items-center gap-1.5 text-sm font-medium text-slate-400 px-3 py-1.5 rounded-lg transition-colors" style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}>
+                              <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-2 0H8v4h8v-4z"/></svg>
+                              Print
                             </button>
                             <button onClick={() => exportCoverLetterPdf(coverLetter!)}
                               className="flex items-center gap-1.5 text-sm font-medium text-white px-3 py-1.5 rounded-lg hover:opacity-90 transition-colors" style={{ background: "#7c3aed" }}>
