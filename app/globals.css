@@ -31,10 +31,10 @@ html { scroll-behavior: smooth; }
   --bg-secondary: #0d0d1a;
   --bg-footer: #08080f;
 
-  --text-primary: #f1f5f9;
-  --text-muted: #94a3b8;
-  --text-dim: #475569;
-  --text-nav: #cbd5e1;
+  --text-primary: #ffffff;
+  --text-muted: #ffffff;
+  --text-dim: #ffffff;
+  --text-nav: #ffffff;
 
   --border: rgba(255,255,255,0.08);
   --border-subtle: rgba(255,255,255,0.07);
