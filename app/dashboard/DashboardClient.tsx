@@ -101,7 +101,13 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
             )}
 
             <div>
-              <h2 className="font-bold mb-4" style={{ color: "var(--text-primary)" }}>Recent Activity</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-bold" style={{ color: "var(--text-primary)" }}>Recent Activity</h2>
+                <Link href="/dashboard/history" className="flex items-center gap-1 text-xs font-semibold transition-all hover:opacity-70" style={{ color: "var(--accent-light)" }}>
+                  View all
+                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6"/></svg>
+                </Link>
+              </div>
               {analyses.length === 0 ? (
                 <EmptyState />
               ) : (
