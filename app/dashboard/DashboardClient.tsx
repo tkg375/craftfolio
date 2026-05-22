@@ -152,6 +152,24 @@ function AnalysisRow({ analysis }: { analysis: Analysis }) {
 function ProfileTab({ user, isPro, onLogout }: { user: User; isPro: boolean; onLogout: () => void }) {
   const [billingLoading, setBillingLoading] = useState(false);
   const [payModal, setPayModal] = useState<"credit" | "pro" | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const router = useRouter();
+
+  async function handleDeleteAccount() {
+    setDeleteLoading(true);
+    setDeleteError(null);
+    const res = await fetch("/api/auth/account", { method: "DELETE" });
+    if (res.ok) {
+      router.push("/");
+      router.refresh();
+    } else {
+      const data = await res.json() as { error?: string };
+      setDeleteError(data.error ?? "Something went wrong. Please try again.");
+      setDeleteLoading(false);
+    }
+  }
 
   async function openPortal() {
     setBillingLoading(true);
@@ -243,6 +261,40 @@ function ProfileTab({ user, isPro, onLogout }: { user: User; isPro: boolean; onL
         style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
         Sign Out
       </button>
+
+      {/* Danger zone */}
+      <div className="rounded-2xl p-6 space-y-3" style={{ background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.18)" }}>
+        <h2 className="font-bold text-sm" style={{ color: "#f87171" }}>Danger Zone</h2>
+        <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+          Permanently delete your account and all associated data. This cannot be undone.
+        </p>
+        {deleteError && (
+          <p className="text-xs font-semibold" style={{ color: "#f87171" }}>{deleteError}</p>
+        )}
+        {!deleteConfirm ? (
+          <button onClick={() => setDeleteConfirm(true)}
+            className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80"
+            style={{ background: "rgba(239,68,68,0.10)", border: "1px solid rgba(239,68,68,0.30)", color: "#f87171" }}>
+            Delete Account
+          </button>
+        ) : (
+          <div className="space-y-2">
+            <p className="text-xs font-semibold" style={{ color: "#fca5a5" }}>Are you sure? All your analyses and data will be wiped permanently.</p>
+            <div className="flex gap-2">
+              <button onClick={() => { setDeleteConfirm(false); setDeleteError(null); }}
+                className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80"
+                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
+                Cancel
+              </button>
+              <button onClick={handleDeleteAccount} disabled={deleteLoading}
+                className="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all hover:opacity-80 disabled:opacity-50"
+                style={{ background: "rgba(239,68,68,0.80)", color: "#fff" }}>
+                {deleteLoading ? "Deleting..." : "Yes, delete everything"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
