@@ -1,7 +1,4 @@
 import Link from "next/link";
-import { getSession } from "@/lib/auth";
-
-export const dynamic = "force-dynamic";
 
 const features = [
   { icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z", title: "ATS Score", desc: "See exactly how your resume ranks before a human ever reads it." },
@@ -23,8 +20,7 @@ const faqs = [
   { q: "What is Career Pivot?", a: "Career Pivot takes your existing resume and rewrites it to target a completely different industry or role — repositioning your experience so it resonates with hiring managers in the new field." },
 ];
 
-export default async function HomePage() {
-  const session = await getSession();
+export default function HomePage() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-page)" }}>
@@ -48,20 +44,13 @@ export default async function HomePage() {
 
         {/* Auth buttons */}
         <div className="flex items-center gap-3 flex-shrink-0">
-          {session ? (
-            <Link href="/dashboard" className="text-sm font-bold px-4 py-2 rounded-full text-white"
+          <>
+            <Link href="/login" className="text-sm font-medium transition hidden sm:block" style={{ color: "var(--text-muted)" }}>Sign In</Link>
+            <Link href="/register" className="text-sm font-bold px-4 py-2 rounded-full text-white"
               style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 14px rgba(124,58,237,0.35)" }}>
-              Dashboard
+              Get Started
             </Link>
-          ) : (
-            <>
-              <Link href="/login" className="text-sm font-medium transition hidden sm:block" style={{ color: "var(--text-muted)" }}>Sign In</Link>
-              <Link href="/register" className="text-sm font-bold px-4 py-2 rounded-full text-white"
-                style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 14px rgba(124,58,237,0.35)" }}>
-                Get Started
-              </Link>
-            </>
-          )}
+          </>
         </div>
       </nav>
 
