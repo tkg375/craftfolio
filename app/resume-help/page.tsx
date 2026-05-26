@@ -7,8 +7,14 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Resume Help — Craftfolio",
-  description: "Score, rewrite, and tailor your resume with AI.",
+  title: "AI Resume Analyzer — ATS Score, Keyword Gap & Full Rewrite",
+  description: "Upload your resume to get an ATS score, keyword gap analysis, impact score, tailored cover letter, and a fully rewritten resume optimized for any job.",
+  alternates: { canonical: "https://www.craftfolio.co/resume-help" },
+  openGraph: {
+    title: "AI Resume Analyzer — ATS Score, Keyword Gap & Full Rewrite",
+    description: "Upload your resume and get an ATS score, keyword gap, cover letter, and a full rewrite in seconds.",
+    url: "https://www.craftfolio.co/resume-help",
+  },
 };
 
 export default async function ResumeHelpPage() {

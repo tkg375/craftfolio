@@ -1,4 +1,59 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Craftfolio — AI Resume Builder & ATS Score Checker",
+  description: "Upload your resume and get an ATS score, keyword gap report, impact score, tailored cover letter, and a fully rewritten resume — in seconds. Free to start, no credit card required.",
+  alternates: { canonical: "https://www.craftfolio.co" },
+  openGraph: {
+    title: "Craftfolio — AI Resume Builder & ATS Score Checker",
+    description: "Upload your resume and get an ATS score, keyword gap report, tailored cover letter, and a fully rewritten resume in seconds.",
+    url: "https://www.craftfolio.co",
+    type: "website",
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://www.craftfolio.co/#website",
+      url: "https://www.craftfolio.co",
+      name: "Craftfolio",
+      description: "AI-powered resume builder, ATS optimizer, and career tools.",
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.craftfolio.co/#organization",
+      name: "Craftfolio",
+      url: "https://www.craftfolio.co",
+    },
+    {
+      "@type": "SoftwareApplication",
+      name: "Craftfolio",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "3 free credits at signup" },
+      featureList: [
+        "ATS Resume Score",
+        "Keyword Gap Analysis",
+        "Impact Score",
+        "AI Cover Letter Generator",
+        "Full Resume Rewrite",
+        "Career Pivot Tool",
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: [
+        { "@type": "Question", name: "What is an ATS score?", acceptedAnswer: { "@type": "Answer", text: "ATS stands for Applicant Tracking System — software that employers use to filter resumes before a human reads them. Your ATS score reflects how well your resume is structured and keyword-matched for automated screening." } },
+        { "@type": "Question", name: "How many free credits do I get?", acceptedAnswer: { "@type": "Answer", text: "You get 3 free credits when you sign up — no credit card required. Each credit covers one full AI analysis." } },
+        { "@type": "Question", name: "Can the AI rewrite my resume?", acceptedAnswer: { "@type": "Answer", text: "Yes. The Full Rewrite feature produces a completely new, ATS-optimized resume formatted in your choice of templates and downloadable as a PDF." } },
+      ],
+    },
+  ],
+};
 
 const features = [
   { icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z", title: "ATS Score", desc: "See exactly how your resume ranks before a human ever reads it." },
@@ -24,6 +79,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-page)" }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* Nav */}
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-5"
