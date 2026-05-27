@@ -924,6 +924,32 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
               </div>
             </div>
 
+            {/* Job Title Recommendations */}
+            {analysis.jobTitleRecommendations && analysis.jobTitleRecommendations.length > 0 && (
+              <div className="rounded-xl p-6" style={{ background: "var(--bg-alt)", border: "1px solid var(--border-subtle)" }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" className="text-violet-400 flex-shrink-0"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                  <h2 className="font-bold text-slate-100 text-lg">Job Title Recommendations</h2>
+                </div>
+                <p className="text-xs text-slate-400 mb-5">Alternative wordings for your current titles that get more recruiter searches and ATS matches.</p>
+                <div className="space-y-4">
+                  {analysis.jobTitleRecommendations.map((rec, i) => (
+                    <div key={i} className="rounded-lg p-4" style={{ background: "rgba(0,0,0,0.18)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <p className="text-xs font-semibold text-slate-500 mb-1.5">Current title</p>
+                      <p className="text-sm font-bold text-slate-200 mb-3">{rec.current}</p>
+                      <p className="text-xs font-semibold text-slate-500 mb-2">Consider instead</p>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {rec.recommended.map((alt, j) => (
+                          <span key={j} className="text-xs font-semibold px-3 py-1 rounded-full" style={{ background: "rgba(124,58,237,0.18)", color: "#c4b5fd", border: "1px solid rgba(124,58,237,0.30)" }}>{alt}</span>
+                        ))}
+                      </div>
+                      <p className="text-xs text-slate-400 leading-relaxed">{rec.reason}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
                 {/* ── Expandable action panels ── */}
             <div className="space-y-3 pt-2">
 

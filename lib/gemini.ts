@@ -64,8 +64,17 @@ export async function scoreResume(
       "why": "1-2 sentences: which specific skills/experience from this resume make them a fit for this role",
       "keywordsToAdd": ["keyword1", "keyword2", "keyword3"]
     }
+  ],
+  "jobTitleRecommendations": [
+    {
+      "current": "Exact job title as it appears on the resume",
+      "recommended": ["Alternative title 1", "Alternative title 2", "Alternative title 3"],
+      "reason": "1-2 sentences: why the alternative titles get more recruiter searches and ATS hits"
+    }
   ]
 }
+
+jobTitleRecommendations: For EVERY job title that appears on this resume, suggest 2-4 alternative wordings that are more searchable, more ATS-friendly, and better reflect modern industry terminology. Focus on titles that will appear more often in recruiter searches and job postings. The "current" field must match the exact title from the resume. Do NOT suggest titles that change the candidate's seniority level or imply experience they don't have — reword, don't upgrade. Examples: "Office Manager" → ["Operations Manager", "Administrative Manager", "Business Operations Manager"]; "Social Media Coordinator" → ["Social Media Manager", "Digital Marketing Coordinator", "Content Marketing Specialist"].
 
 careerOptions: Based STRICTLY on the actual industries, job titles, skills, and experience listed in this resume, suggest 6-8 realistic career paths. ONLY suggest roles that are directly related to what this person has actually done — do NOT suggest industries, fields, or roles that have no connection to their background. Every suggestion must trace back to something explicitly on the resume. Return them SORTED in this exact order: all "strong" fit roles first, then all "good" fit roles, then all "stretch" roles last. For each:
 - "fit": "strong" = they're already doing this or close to it, "good" = natural next step with minor gaps, "stretch" = ambitious but rooted in their actual background
@@ -697,6 +706,11 @@ export interface ResumeAnalysis {
     fit: "strong" | "good" | "stretch";
     why: string;
     keywordsToAdd: string[];
+  }[];
+  jobTitleRecommendations?: {
+    current: string;
+    recommended: string[];
+    reason: string;
   }[];
 }
 
