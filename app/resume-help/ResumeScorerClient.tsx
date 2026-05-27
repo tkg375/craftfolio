@@ -200,7 +200,6 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
 
   // Job title substitutions: Map<currentTitle, selectedAlternative>
   const [selectedTitles, setSelectedTitles] = useState<Map<string, string>>(new Map());
-  const [titlesGenerating, setTitlesGenerating] = useState(false);
 
   // Analysis
   const [loading, setLoading] = useState(false);
@@ -338,38 +337,6 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
     }
   }
 
-  async function handleTitleRewrite() {
-    if (!analysis || !hasResume || selectedTitles.size === 0) return;
-    if (!isLoggedIn) { openModal("register", pathname); return; }
-    setTitlesGenerating(true);
-    setPivotError(null);
-    setPivotResume(null);
-    setPivotingCareerTitle(null);
-    const subs = Array.from(selectedTitles.entries()).map(([from, to]) => ({ from, to }));
-    try {
-      const res = await fetch("/api/analyze/resume-rewrite", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          originalResume: resumeText || undefined,
-          resumePdfBase64: resumePdfBase64 || undefined,
-          analysis,
-          titleSubstitutions: subs,
-          templateId: selectedTemplate.id,
-        }),
-      });
-      const data = await res.json() as { error?: string; rewritten?: string };
-      if (!res.ok) { setPivotError(data.error || "Something went wrong."); return; }
-      setPivotResume(data.rewritten ?? null);
-      setStep(3);
-      setTimeout(() => pivotResultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
-    } catch {
-      setPivotError("Something went wrong. Please try again.");
-    } finally {
-      setTitlesGenerating(false);
-    }
-  }
-
   async function handleRewrite(template: ResumeTemplate) {
     if (!analysis) return;
     setShowTemplatePicker(false);
@@ -386,6 +353,9 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
           analysis,
           jobDescription: jobDescription || undefined,
           templateId: template.id,
+          titleSubstitutions: selectedTitles.size > 0
+            ? Array.from(selectedTitles.entries()).map(([from, to]) => ({ from, to }))
+            : undefined,
         }),
       });
       const data = await res.json() as { error?: string; rewritten?: string };
@@ -987,7 +957,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                             <button
                               key={j}
                               type="button"
-                              disabled={titlesGenerating}
+                              disabled={rewriting}
                               onClick={() => {
                                 setSelectedTitles(prev => {
                                   const next = new Map(prev);
@@ -1019,19 +989,10 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                 </div>
 
                 {selectedTitles.size > 0 && (
-                  <button
-                    type="button"
-                    disabled={titlesGenerating}
-                    onClick={() => { void handleTitleRewrite(); }}
-                    className="w-full font-semibold px-6 py-3 rounded-xl text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm flex items-center justify-center gap-2"
-                    style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}
-                  >
-                    {titlesGenerating ? (
-                      <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Generating...</>
-                    ) : (
-                      <>Generate Resume with {selectedTitles.size} Title{selectedTitles.size > 1 ? " Updates" : " Update"} <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">1 credit</span></>
-                    )}
-                  </button>
+                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg" style={{ background: "rgba(124,58,237,0.10)", border: "1px solid rgba(124,58,237,0.25)" }}>
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" className="text-violet-400 flex-shrink-0"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    <p className="text-xs text-violet-300 font-medium">{selectedTitles.size} title update{selectedTitles.size > 1 ? "s" : ""} selected — will be applied when you generate your resume below.</p>
+                  </div>
                 )}
               </div>
             )}
