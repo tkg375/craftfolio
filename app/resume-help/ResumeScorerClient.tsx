@@ -931,7 +931,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                   <svg width="18" height="18" fill="none" viewBox="0 0 24 24" className="text-violet-400 flex-shrink-0"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                   <h2 className="font-bold text-slate-100 text-lg">Job Title Recommendations</h2>
                 </div>
-                <p className="text-xs text-slate-400 mb-5">Alternative wordings for your current titles that get more recruiter searches and ATS matches.</p>
+                <p className="text-xs text-slate-400 mb-5">Click any alternative title to generate a new resume with that title applied throughout.</p>
                 <div className="space-y-4">
                   {analysis.jobTitleRecommendations.map((rec, i) => (
                     <div key={i} className="rounded-lg p-4" style={{ background: "rgba(0,0,0,0.18)", border: "1px solid rgba(255,255,255,0.06)" }}>
@@ -940,7 +940,20 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                       <p className="text-xs font-semibold text-slate-500 mb-2">Consider instead</p>
                       <div className="flex flex-wrap gap-2 mb-3">
                         {rec.recommended.map((alt, j) => (
-                          <span key={j} className="text-xs font-semibold px-3 py-1 rounded-full" style={{ background: "rgba(124,58,237,0.18)", color: "#c4b5fd", border: "1px solid rgba(124,58,237,0.30)" }}>{alt}</span>
+                          <button
+                            key={j}
+                            type="button"
+                            disabled={pivoting}
+                            onClick={() => { void handleCareerPivot(alt); }}
+                            className="text-xs font-semibold px-3 py-1.5 rounded-full transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+                            style={{ background: "rgba(124,58,237,0.18)", color: "#c4b5fd", border: "1px solid rgba(124,58,237,0.30)" }}
+                          >
+                            {pivoting && pivotingCareerTitle === alt ? (
+                              <><svg className="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Generating...</>
+                            ) : (
+                              <>{alt} <span className="opacity-50">↗</span></>
+                            )}
+                          </button>
                         ))}
                       </div>
                       <p className="text-xs text-slate-400 leading-relaxed">{rec.reason}</p>
