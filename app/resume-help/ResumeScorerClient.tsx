@@ -198,6 +198,10 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
   const [pivotingCareerTitle, setPivotingCareerTitle] = useState<string | null>(null);
   const pivotResultRef = useRef<HTMLDivElement>(null);
 
+  // Job title substitutions: Map<currentTitle, selectedAlternative>
+  const [selectedTitles, setSelectedTitles] = useState<Map<string, string>>(new Map());
+  const [titlesGenerating, setTitlesGenerating] = useState(false);
+
   // Analysis
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<ResumeAnalysis | null>(null);
@@ -331,6 +335,38 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
       setPivotError("Something went wrong. Please try again.");
     } finally {
       setPivoting(false);
+    }
+  }
+
+  async function handleTitleRewrite() {
+    if (!analysis || !hasResume || selectedTitles.size === 0) return;
+    if (!isLoggedIn) { openModal("register", pathname); return; }
+    setTitlesGenerating(true);
+    setPivotError(null);
+    setPivotResume(null);
+    setPivotingCareerTitle(null);
+    const subs = Array.from(selectedTitles.entries()).map(([from, to]) => ({ from, to }));
+    try {
+      const res = await fetch("/api/analyze/resume-rewrite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          originalResume: resumeText || undefined,
+          resumePdfBase64: resumePdfBase64 || undefined,
+          analysis,
+          titleSubstitutions: subs,
+          templateId: selectedTemplate.id,
+        }),
+      });
+      const data = await res.json() as { error?: string; rewritten?: string };
+      if (!res.ok) { setPivotError(data.error || "Something went wrong."); return; }
+      setPivotResume(data.rewritten ?? null);
+      setStep(3);
+      setTimeout(() => pivotResultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+    } catch {
+      setPivotError("Something went wrong. Please try again.");
+    } finally {
+      setTitlesGenerating(false);
     }
   }
 
@@ -931,35 +967,72 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                   <svg width="18" height="18" fill="none" viewBox="0 0 24 24" className="text-violet-400 flex-shrink-0"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                   <h2 className="font-bold text-slate-100 text-lg">Job Title Recommendations</h2>
                 </div>
-                <p className="text-xs text-slate-400 mb-5">Click any alternative title to generate a new resume with that title applied throughout.</p>
-                <div className="space-y-4">
+                <p className="text-xs text-slate-400 mb-5">Select your preferred alternative for each role, then generate a new resume with all changes applied at once.</p>
+                <div className="space-y-4 mb-5">
                   {analysis.jobTitleRecommendations.map((rec, i) => (
                     <div key={i} className="rounded-lg p-4" style={{ background: "rgba(0,0,0,0.18)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                      <p className="text-xs font-semibold text-slate-500 mb-1.5">Current title</p>
-                      <p className="text-sm font-bold text-slate-200 mb-3">{rec.current}</p>
-                      <p className="text-xs font-semibold text-slate-500 mb-2">Consider instead</p>
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {rec.recommended.map((alt, j) => (
-                          <button
-                            key={j}
-                            type="button"
-                            disabled={pivoting}
-                            onClick={() => { void handleCareerPivot(alt); }}
-                            className="text-xs font-semibold px-3 py-1.5 rounded-full transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
-                            style={{ background: "rgba(124,58,237,0.18)", color: "#c4b5fd", border: "1px solid rgba(124,58,237,0.30)" }}
-                          >
-                            {pivoting && pivotingCareerTitle === alt ? (
-                              <><svg className="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Generating...</>
-                            ) : (
-                              <>{alt} <span className="opacity-50">↗</span></>
-                            )}
-                          </button>
-                        ))}
+                      <div className="flex items-center gap-2 mb-3">
+                        <p className="text-sm font-bold text-slate-400 line-through opacity-60">{rec.current}</p>
+                        {selectedTitles.has(rec.current) && (
+                          <>
+                            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" className="text-violet-400 flex-shrink-0"><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            <p className="text-sm font-bold text-violet-300">{selectedTitles.get(rec.current)}</p>
+                          </>
+                        )}
                       </div>
-                      <p className="text-xs text-slate-400 leading-relaxed">{rec.reason}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {rec.recommended.map((alt, j) => {
+                          const isSelected = selectedTitles.get(rec.current) === alt;
+                          return (
+                            <button
+                              key={j}
+                              type="button"
+                              disabled={titlesGenerating}
+                              onClick={() => {
+                                setSelectedTitles(prev => {
+                                  const next = new Map(prev);
+                                  if (isSelected) next.delete(rec.current);
+                                  else next.set(rec.current, alt);
+                                  return next;
+                                });
+                              }}
+                              className="text-xs font-semibold px-3 py-1.5 rounded-full transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                              style={isSelected ? {
+                                background: "rgba(124,58,237,0.40)",
+                                color: "#ede9fe",
+                                border: "1px solid rgba(124,58,237,0.70)",
+                                boxShadow: "0 0 0 1px rgba(124,58,237,0.50)",
+                              } : {
+                                background: "rgba(124,58,237,0.10)",
+                                color: "#a78bfa",
+                                border: "1px solid rgba(124,58,237,0.25)",
+                              }}
+                            >
+                              {isSelected && <span className="mr-1">✓</span>}{alt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <p className="text-xs text-slate-500 leading-relaxed mt-3">{rec.reason}</p>
                     </div>
                   ))}
                 </div>
+
+                {selectedTitles.size > 0 && (
+                  <button
+                    type="button"
+                    disabled={titlesGenerating}
+                    onClick={() => { void handleTitleRewrite(); }}
+                    className="w-full font-semibold px-6 py-3 rounded-xl text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm flex items-center justify-center gap-2"
+                    style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}
+                  >
+                    {titlesGenerating ? (
+                      <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Generating...</>
+                    ) : (
+                      <>Generate Resume with {selectedTitles.size} Title{selectedTitles.size > 1 ? " Updates" : " Update"} <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">1 credit</span></>
+                    )}
+                  </button>
+                )}
               </div>
             )}
 

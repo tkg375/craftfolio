@@ -154,9 +154,13 @@ export async function rewriteResume(
   originalResume?: string,
   resumePdfBase64?: string,
   templateAddendum?: string,
-  targetProfession?: string
+  targetProfession?: string,
+  titleSubstitutions?: { from: string; to: string }[]
 ): Promise<string> {
   const jobContext = jobDescription ? `\n\nTARGET JOB DESCRIPTION:\n${jobDescription}` : "";
+  const titleSubstitutionsContext = titleSubstitutions && titleSubstitutions.length > 0
+    ? `\n\nJOB TITLE UPDATES: Replace the following job titles throughout the resume (in the EXPERIENCE section headers and anywhere else they appear). Use the exact replacement title given — do NOT alter seniority or add extra words:\n${titleSubstitutions.map(s => `• "${s.from}" → "${s.to}"`).join("\n")}`
+    : "";
   const professionContext = targetProfession
     ? `\n\nCAREER PIVOT TARGET: "${targetProfession}"\nThe candidate is transitioning into this field. You must:\n- Reframe ALL existing experience through the lens of "${targetProfession}" — use vocabulary, keywords, and role language that a hiring manager in that field would expect to see\n- Surface every transferable skill and reframe it as directly applicable to "${targetProfession}"\n- Inject high-frequency ATS keywords specific to "${targetProfession}" naturally throughout SUMMARY, CORE COMPETENCIES, and EXPERIENCE\n- Rewrite the SUMMARY to position them as a career-changer with directly relevant strengths for "${targetProfession}"\n- Do NOT fabricate experience, dates, companies, or credentials — reframe only what exists`
     : "";
@@ -284,7 +288,7 @@ CRITICAL OUTPUT RULES
 - NO XML, HTML, or angle-bracket tags of any kind
 - NO commentary, preamble, explanation, or notes
 - NO markdown fences
-- First character of your response MUST be the candidate's name${jobContext}${originalResume ? `\n\nORIGINAL RESUME:\n${originalResume}` : ""}`;
+- First character of your response MUST be the candidate's name${titleSubstitutionsContext}${jobContext}${originalResume ? `\n\nORIGINAL RESUME:\n${originalResume}` : ""}`;
 
   const parts: unknown[] = [];
   if (resumePdfBase64) {

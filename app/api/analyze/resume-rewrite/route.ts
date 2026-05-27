@@ -21,11 +21,11 @@ export async function POST(req: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return NextResponse.json({ error: "API key not configured" }, { status: 500 });
 
-  let body: { originalResume?: string; resumePdfBase64?: string; analysis?: ResumeAnalysis; jobDescription?: string; templateId?: string; targetProfession?: string };
+  let body: { originalResume?: string; resumePdfBase64?: string; analysis?: ResumeAnalysis; jobDescription?: string; templateId?: string; targetProfession?: string; titleSubstitutions?: { from: string; to: string }[] };
   try { body = await req.json() as typeof body; }
   catch { return NextResponse.json({ error: "Invalid request body" }, { status: 400 }); }
 
-  const { originalResume, resumePdfBase64, analysis, jobDescription, templateId, targetProfession } = body;
+  const { originalResume, resumePdfBase64, analysis, jobDescription, templateId, targetProfession, titleSubstitutions } = body;
 
   if (targetProfession && targetProfession.length > 200)
     return NextResponse.json({ error: "Target profession too long." }, { status: 400 });
@@ -56,7 +56,11 @@ export async function POST(req: NextRequest) {
 
   let rewritten: string;
   try {
-    const raw = await rewriteResume(apiKey, sanitizedAnalysis, jobDescription, originalResume, resumePdfBase64, templateAddendum, targetProfession);
+    const sanitizedSubs = (titleSubstitutions ?? [])
+      .filter(s => typeof s?.from === "string" && typeof s?.to === "string")
+      .map(s => ({ from: String(s.from).slice(0, 200), to: String(s.to).slice(0, 200) }))
+      .slice(0, 20);
+    const raw = await rewriteResume(apiKey, sanitizedAnalysis, jobDescription, originalResume, resumePdfBase64, templateAddendum, targetProfession, sanitizedSubs.length ? sanitizedSubs : undefined);
     rewritten = raw.replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim();
   } catch (err) {
     await db.user.update({ where: { id: session.id }, data: { credits: { increment: 1 } } });
