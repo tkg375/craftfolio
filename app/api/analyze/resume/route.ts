@@ -39,8 +39,9 @@ export async function POST(req: NextRequest) {
     analysis = await scoreResume(apiKey, resumeText, jobDescription, resumePdfBase64);
   } catch (err) {
     await db.user.update({ where: { id: session.id }, data: { credits: { increment: 1 } } });
-    console.error("Gemini error:", err);
-    return NextResponse.json({ error: "Analysis failed. Please try again." }, { status: 500 });
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("Gemini error:", msg);
+    return NextResponse.json({ error: `Analysis failed: ${msg}` }, { status: 500 });
   }
 
   await db.analysis.create({
