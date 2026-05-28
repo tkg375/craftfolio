@@ -1073,7 +1073,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
               </button>
             </div>
-            <div className="p-5 grid sm:grid-cols-2 gap-3">
+            <div className="p-5 grid grid-cols-2 gap-3">
               {RESUME_TEMPLATES.map(t => (
                 <button key={t.id} onClick={() => setSelectedTemplate(t)}
                   className="w-full text-left rounded-xl border-2 overflow-hidden transition-all hover:shadow-lg"
@@ -1082,7 +1082,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                   {/* ── Template thumbnail ── */}
                   <div className="relative h-36 overflow-hidden bg-white">
 
-                    {/* Classic */}
+                    {/* Classic ATS — single col, centered name, serif */}
                     {t.id === "classic" && (
                       <div className="p-3" style={{ fontFamily: "Georgia, serif" }}>
                         <div className="text-center mb-1">
@@ -1090,58 +1090,40 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                           <div className="h-1 w-14 bg-slate-300 rounded mx-auto" />
                         </div>
                         <div className="border-t border-slate-800 my-1.5" />
-                        {[["w-10", "w-full", "w-5/6"], ["w-8", "w-full", "w-4/5"]].map((widths, gi) => (
+                        {[0, 1].map(gi => (
                           <div key={gi} className="mb-2">
                             <div className="flex items-center gap-1 mb-1">
                               <div className="h-1 rounded" style={{ width: "2.5rem", background: "#1e293b" }} />
                               <div className="flex-1 h-px bg-slate-200" />
                             </div>
-                            {widths.slice(1).map((w, i) => <div key={i} className={`h-1 ${w} rounded bg-slate-100 mb-0.5`} />)}
+                            <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
+                            <div className="h-1 w-5/6 rounded bg-slate-100" />
                           </div>
                         ))}
                       </div>
                     )}
 
-                    {/* Modern */}
-                    {t.id === "modern" && (
-                      <div>
-                        <div className="px-3 py-2.5" style={{ background: "#DC2626" }}>
-                          <div className="h-2.5 w-20 bg-white/90 rounded mb-1" />
-                          <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.5)" }} />
+                    {/* Classic Two-Column — serif header + sidebar */}
+                    {t.id === "classic-2col" && (
+                      <div style={{ fontFamily: "Georgia, serif" }}>
+                        <div className="text-center px-3 pt-2.5 pb-1.5">
+                          <div className="h-2 w-16 bg-slate-800 rounded mx-auto mb-1" />
+                          <div className="h-1 w-12 bg-slate-300 rounded mx-auto" />
+                          <div className="border-t border-slate-700 mt-1.5" />
                         </div>
-                        <div className="p-3 space-y-2">
-                          {[["w-10", "w-full", "w-5/6"], ["w-8", "w-full", "w-4/5"]].map((widths, gi) => (
-                            <div key={gi}>
-                              <div className="flex items-center gap-1 mb-1">
-                                <div className="h-1 rounded" style={{ width: "2rem", background: "#DC2626" }} />
-                                <div className="flex-1 h-px" style={{ background: "#DC262633" }} />
-                              </div>
-                              {widths.slice(1).map((w, i) => <div key={i} className={`h-1 ${w} rounded bg-slate-100 mb-0.5`} />)}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Executive */}
-                    {t.id === "executive" && (
-                      <div>
-                        <div className="px-3 py-2.5" style={{ background: "#1D4ED8" }}>
-                          <div className="h-2.5 w-20 bg-white/90 rounded mb-1" />
-                          <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.45)" }} />
-                        </div>
-                        <div className="flex flex-1">
-                          <div className="w-[28%] p-2 space-y-1.5" style={{ background: "#1e3a8a" }}>
-                            {[16, 20, 14, 18].map((w, i) => <div key={i} className="h-1 rounded" style={{ width: `${w * 4}%`, background: i % 2 === 0 ? "#93c5fd" : "rgba(255,255,255,0.3)" }} />)}
+                        <div className="flex">
+                          <div className="w-[30%] p-2" style={{ background: "#f8fafc", borderRight: "1px solid #e2e8f0" }}>
+                            {[60, 80, 50, 70, 55].map((w, i) => <div key={i} className="h-1 rounded mb-1" style={{ width: `${w}%`, background: i % 3 === 0 ? "#1e293b" : "#cbd5e1" }} />)}
                           </div>
                           <div className="flex-1 p-2 space-y-1.5">
-                            {[["w-8", "w-full", "w-5/6"], ["w-7", "w-full"]].map((widths, gi) => (
+                            {[0, 1].map(gi => (
                               <div key={gi}>
                                 <div className="flex items-center gap-1 mb-0.5">
-                                  <div className="h-1 rounded" style={{ width: "1.5rem", background: "#1D4ED8" }} />
-                                  <div className="flex-1 h-px" style={{ background: "#1D4ED833" }} />
+                                  <div className="h-1 rounded" style={{ width: "1.5rem", background: "#1e293b" }} />
+                                  <div className="flex-1 h-px bg-slate-200" />
                                 </div>
-                                {widths.slice(1).map((w, i) => <div key={i} className={`h-1 ${w} rounded bg-slate-100 mb-0.5`} />)}
+                                <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
+                                <div className="h-1 w-4/5 rounded bg-slate-100" />
                               </div>
                             ))}
                           </div>
@@ -1149,31 +1131,151 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                       </div>
                     )}
 
-                    {/* Technical */}
-                    {t.id === "technical" && (
-                      <div className="flex h-full">
-                        <div className="w-[30%] p-2" style={{ background: "#064e3b" }}>
-                          <div className="h-2 w-full rounded mb-0.5" style={{ background: "rgba(255,255,255,0.85)" }} />
-                          <div className="h-1 w-4/5 rounded mb-2" style={{ background: "rgba(255,255,255,0.4)" }} />
-                          {[70, 90, 55, 80, 65].map((w, i) => (
-                            <div key={i} className="h-1 rounded mb-1" style={{ width: `${w}%`, background: i % 3 === 0 ? "#6ee7b7" : "rgba(255,255,255,0.35)" }} />
-                          ))}
+                    {/* Modern ATS — red header, single col */}
+                    {t.id === "modern" && (
+                      <div>
+                        <div className="px-3 py-2.5" style={{ background: "#DC2626" }}>
+                          <div className="h-2.5 w-20 bg-white/90 rounded mb-1" />
+                          <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.5)" }} />
                         </div>
-                        <div className="flex-1 p-2 space-y-1.5">
-                          {[["w-8", "w-full", "w-5/6"], ["w-7", "w-4/5", "w-full"]].map((widths, gi) => (
+                        <div className="p-3 space-y-2">
+                          {[0, 1].map(gi => (
                             <div key={gi}>
-                              <div className="flex items-center gap-1 mb-0.5">
-                                <div className="h-1 rounded" style={{ width: "1.5rem", background: "#059669" }} />
-                                <div className="flex-1 h-px" style={{ background: "#05996933" }} />
+                              <div className="flex items-center gap-1 mb-1">
+                                <div className="h-1 rounded" style={{ width: "2rem", background: "#DC2626" }} />
+                                <div className="flex-1 h-px" style={{ background: "#DC262633" }} />
                               </div>
-                              {widths.slice(1).map((w, i) => <div key={i} className={`h-1 ${w} rounded bg-slate-100 mb-0.5`} />)}
+                              <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
+                              <div className="h-1 w-5/6 rounded bg-slate-100" />
                             </div>
                           ))}
                         </div>
                       </div>
                     )}
 
-                    {/* Entry Level */}
+                    {/* Modern Two-Column — red header + dark sidebar */}
+                    {t.id === "modern-2col" && (
+                      <div>
+                        <div className="px-3 py-2.5" style={{ background: "#DC2626" }}>
+                          <div className="h-2.5 w-20 bg-white/90 rounded mb-1" />
+                          <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.5)" }} />
+                        </div>
+                        <div className="flex">
+                          <div className="w-[30%] p-2" style={{ background: "#1f2937" }}>
+                            {[70, 85, 55, 75, 60].map((w, i) => <div key={i} className="h-1 rounded mb-1" style={{ width: `${w}%`, background: i % 3 === 0 ? "#f87171" : "rgba(255,255,255,0.3)" }} />)}
+                          </div>
+                          <div className="flex-1 p-2 space-y-1.5">
+                            {[0, 1].map(gi => (
+                              <div key={gi}>
+                                <div className="flex items-center gap-1 mb-0.5">
+                                  <div className="h-1 rounded" style={{ width: "1.5rem", background: "#DC2626" }} />
+                                  <div className="flex-1 h-px" style={{ background: "#DC262622" }} />
+                                </div>
+                                <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
+                                <div className="h-1 w-4/5 rounded bg-slate-100" />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Executive ATS — navy header, single col */}
+                    {t.id === "executive-ats" && (
+                      <div>
+                        <div className="px-3 py-2.5" style={{ background: "#1D4ED8" }}>
+                          <div className="h-2.5 w-20 bg-white/90 rounded mb-1" />
+                          <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.45)" }} />
+                        </div>
+                        <div className="p-3 space-y-2">
+                          {[0, 1].map(gi => (
+                            <div key={gi}>
+                              <div className="flex items-center gap-1 mb-1">
+                                <div className="h-1 rounded" style={{ width: "2rem", background: "#1D4ED8" }} />
+                                <div className="flex-1 h-px" style={{ background: "#1D4ED833" }} />
+                              </div>
+                              <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
+                              <div className="h-1 w-5/6 rounded bg-slate-100" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Executive Two-Column — navy header + navy sidebar */}
+                    {t.id === "executive" && (
+                      <div>
+                        <div className="px-3 py-2.5" style={{ background: "#1D4ED8" }}>
+                          <div className="h-2.5 w-20 bg-white/90 rounded mb-1" />
+                          <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.45)" }} />
+                        </div>
+                        <div className="flex">
+                          <div className="w-[28%] p-2 space-y-1.5" style={{ background: "#1e3a8a" }}>
+                            {[16, 20, 14, 18].map((w, i) => <div key={i} className="h-1 rounded" style={{ width: `${w * 4}%`, background: i % 2 === 0 ? "#93c5fd" : "rgba(255,255,255,0.3)" }} />)}
+                          </div>
+                          <div className="flex-1 p-2 space-y-1.5">
+                            {[0, 1].map(gi => (
+                              <div key={gi}>
+                                <div className="flex items-center gap-1 mb-0.5">
+                                  <div className="h-1 rounded" style={{ width: "1.5rem", background: "#1D4ED8" }} />
+                                  <div className="flex-1 h-px" style={{ background: "#1D4ED833" }} />
+                                </div>
+                                <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
+                                <div className="h-1 w-4/5 rounded bg-slate-100" />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Technical ATS — green bar, single col, name left */}
+                    {t.id === "technical-ats" && (
+                      <div>
+                        <div className="h-1.5 w-full" style={{ background: "#059669" }} />
+                        <div className="px-3 pt-2 pb-1">
+                          <div className="h-2 w-20 bg-slate-800 rounded mb-0.5" />
+                          <div className="h-1 w-24 bg-slate-300 rounded" />
+                        </div>
+                        <div className="px-3 space-y-1.5">
+                          {[0, 1].map(gi => (
+                            <div key={gi}>
+                              <div className="flex items-center gap-1 mb-0.5">
+                                <div className="h-1 rounded" style={{ width: "2rem", background: "#059669" }} />
+                                <div className="flex-1 h-px" style={{ background: "#05996933" }} />
+                              </div>
+                              <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
+                              <div className="h-1 w-5/6 rounded bg-slate-100" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Technical Two-Column — dark green sidebar */}
+                    {t.id === "technical" && (
+                      <div className="flex h-full">
+                        <div className="w-[30%] p-2" style={{ background: "#064e3b" }}>
+                          <div className="h-2 w-full rounded mb-0.5" style={{ background: "rgba(255,255,255,0.85)" }} />
+                          <div className="h-1 w-4/5 rounded mb-2" style={{ background: "rgba(255,255,255,0.4)" }} />
+                          {[70, 90, 55, 80, 65].map((w, i) => <div key={i} className="h-1 rounded mb-1" style={{ width: `${w}%`, background: i % 3 === 0 ? "#6ee7b7" : "rgba(255,255,255,0.35)" }} />)}
+                        </div>
+                        <div className="flex-1 p-2 space-y-1.5">
+                          {[0, 1].map(gi => (
+                            <div key={gi}>
+                              <div className="flex items-center gap-1 mb-0.5">
+                                <div className="h-1 rounded" style={{ width: "1.5rem", background: "#059669" }} />
+                                <div className="flex-1 h-px" style={{ background: "#05996933" }} />
+                              </div>
+                              <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
+                              <div className="h-1 w-4/5 rounded bg-slate-100" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Entry Level ATS — purple header, single col */}
                     {t.id === "entry" && (
                       <div>
                         <div className="px-3 py-2.5" style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}>
@@ -1181,15 +1283,43 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                           <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.5)" }} />
                         </div>
                         <div className="p-3 space-y-2">
-                          {[["w-10", "w-full", "w-5/6"], ["w-8", "w-full", "w-4/5"]].map((widths, gi) => (
+                          {[0, 1].map(gi => (
                             <div key={gi}>
                               <div className="flex items-center gap-1 mb-1">
                                 <div className="h-1 rounded" style={{ width: "2rem", background: "#7c3aed" }} />
                                 <div className="flex-1 h-px" style={{ background: "#7c3aed33" }} />
                               </div>
-                              {widths.slice(1).map((w, i) => <div key={i} className={`h-1 ${w} rounded bg-slate-100 mb-0.5`} />)}
+                              <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
+                              <div className="h-1 w-5/6 rounded bg-slate-100" />
                             </div>
                           ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Entry Two-Column — purple header + light purple sidebar */}
+                    {t.id === "entry-2col" && (
+                      <div>
+                        <div className="px-3 py-2.5" style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}>
+                          <div className="h-2.5 w-20 bg-white/90 rounded mb-1" />
+                          <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.5)" }} />
+                        </div>
+                        <div className="flex">
+                          <div className="w-[30%] p-2" style={{ background: "#faf5ff", borderRight: "1px solid #e9d5ff" }}>
+                            {[65, 80, 50, 70, 55].map((w, i) => <div key={i} className="h-1 rounded mb-1" style={{ width: `${w}%`, background: i % 3 === 0 ? "#7c3aed" : "#c4b5fd" }} />)}
+                          </div>
+                          <div className="flex-1 p-2 space-y-1.5">
+                            {[0, 1].map(gi => (
+                              <div key={gi}>
+                                <div className="flex items-center gap-1 mb-0.5">
+                                  <div className="h-1 rounded" style={{ width: "1.5rem", background: "#7c3aed" }} />
+                                  <div className="flex-1 h-px" style={{ background: "#7c3aed22" }} />
+                                </div>
+                                <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
+                                <div className="h-1 w-4/5 rounded bg-slate-100" />
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     )}
