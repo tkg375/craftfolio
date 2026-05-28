@@ -46,11 +46,12 @@ function Lines({ lines, titleColor, textColor, bulletColor, fontSize = 10 }: {
       {lines.map((line, i) => {
         const isBullet = line.startsWith("•");
         const nextIsBullet = lines[i + 1]?.startsWith("•") ?? false;
+        const prevIsMetaLine = (lines[i - 1] ?? "").includes(" | ");
         if (isBullet) {
           lastWasBullet = true; firstLine = false;
           return <p key={i} style={{ margin: "2px 0 2px 14px", fontSize, color: bulletColor ?? textColor, lineHeight: 1.45 }}>{line}</p>;
         }
-        const isTitle = firstLine || lastWasBullet || nextIsBullet;
+        const isTitle = firstLine || lastWasBullet || nextIsBullet || prevIsMetaLine;
         firstLine = false; lastWasBullet = false;
         return <p key={i} style={{ fontWeight: isTitle ? 700 : 400, fontSize: isTitle ? fontSize + 0.5 : fontSize, color: isTitle ? titleColor : textColor, margin: isTitle ? "8px 0 1px" : "2px 0", lineHeight: 1.4 }}>{line}</p>;
       })}
@@ -340,11 +341,12 @@ function buildLineHtml(lines: string[]): string {
     const line = lines[i];
     const isBullet = line.startsWith("•");
     const nextIsBullet = lines[i + 1]?.startsWith("•") ?? false;
+    const prevIsMetaLine = (lines[i - 1] ?? "").includes(" | ");
     if (isBullet) {
       html += `<p class="bullet">${esc(line)}</p>`;
       lastWasBullet = true; firstLine = false;
     } else {
-      const isTitle = firstLine || lastWasBullet || nextIsBullet;
+      const isTitle = firstLine || lastWasBullet || nextIsBullet || prevIsMetaLine;
       firstLine = false; lastWasBullet = false;
       html += `<p class="${isTitle ? "title" : "text"}">${esc(line)}</p>`;
     }
