@@ -1,4 +1,4 @@
-const GEMINI_MODEL = "gemini-2.5-flash-preview-05-20";
+const GEMINI_MODEL = "gemini-3.5-flash";
 
 function parseJson<T>(raw: string): T {
   try {
