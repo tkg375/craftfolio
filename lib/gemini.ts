@@ -1,4 +1,4 @@
-const GEMINI_MODEL = "gemini-3.1-flash-lite";
+const GEMINI_MODEL = "gemini-3.5-flash";
 
 function parseJson<T>(raw: string): T {
   try {
@@ -8,7 +8,7 @@ function parseJson<T>(raw: string): T {
     throw new Error("Invalid response from AI. Please try again.");
   }
 }
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1/models/${GEMINI_MODEL}:generateContent`;
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 async function callGemini(apiKey: string, parts: unknown[]): Promise<string> {
   const res = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
