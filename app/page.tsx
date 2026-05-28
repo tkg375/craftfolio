@@ -337,6 +337,17 @@ export default function HomePage() {
             </div>
           </div>
           <p className="text-center text-xs mt-6" style={{ color: "var(--text-dim)" }}>© {new Date().getFullYear()} Craftfolio. All rights reserved.</p>
+          <div className="flex justify-center mt-3">
+            <a href="https://theweekendweb.com" target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs transition-opacity opacity-50 hover:opacity-100"
+              style={{ color: "var(--text-dim)", textDecoration: "none" }}>
+              <span>Built by</span>
+              <span className="font-mono font-semibold" style={{ color: "var(--accent-light)" }}>
+                <span style={{ color: "var(--text-dim)" }}>&lt;</span>tww<span style={{ color: "var(--text-dim)" }}>/&gt;</span>
+              </span>
+              <span>The Weekend Web</span>
+            </a>
+          </div>
         </div>
       </footer>
     </div>
