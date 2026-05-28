@@ -156,13 +156,13 @@ export default function AnalysisViewer({
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="font-bold text-slate-100 text-lg">Scores</h2>
                   <button onClick={() => printAnalysisAsPdf(a)}
-                    className="text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                    className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
                     style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
                     <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-2 0H8v4h8v-4z"/></svg>
                     Print
                   </button>
                   <button onClick={() => downloadAnalysisAsPdf(a)}
-                    className="text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                    className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
                     style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.30)", color: "#a78bfa" }}>
                     <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
                     Download PDF
@@ -258,21 +258,21 @@ export default function AnalysisViewer({
           const r = result as { rewritten: string };
           return (
             <div className="rounded-xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-              <div className="flex justify-end gap-2 mb-4">
+              <div className="grid grid-cols-3 sm:flex sm:justify-end gap-2 mb-4">
                 <button onClick={() => navigator.clipboard.writeText(r.rewritten)}
-                  className="text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                  className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
                   style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
                   <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                   Copy
                 </button>
                 <button onClick={() => printTextAsPdf(r.rewritten)}
-                  className="text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                  className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
                   style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
                   <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-2 0H8v4h8v-4z"/></svg>
                   Print
                 </button>
                 <button onClick={() => downloadTextAsPdf(r.rewritten, "resume-rewrite.pdf")}
-                  className="text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                  className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
                   style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.30)", color: "#a78bfa" }}>
                   <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
                   Download PDF
@@ -291,21 +291,21 @@ export default function AnalysisViewer({
           const r = result as { coverLetter: string };
           return (
             <div className="rounded-xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-              <div className="flex justify-end gap-2 mb-4">
+              <div className="grid grid-cols-3 sm:flex sm:justify-end gap-2 mb-4">
                 <button onClick={() => navigator.clipboard.writeText(r.coverLetter)}
-                  className="text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                  className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
                   style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
                   <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                   Copy
                 </button>
                 <button onClick={() => printTextAsPdf(r.coverLetter, true)}
-                  className="text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                  className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
                   style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
                   <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-2 0H8v4h8v-4z"/></svg>
                   Print
                 </button>
                 <button onClick={() => downloadTextAsPdf(r.coverLetter, "cover-letter.pdf", true)}
-                  className="text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                  className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
                   style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.30)", color: "#a78bfa" }}>
                   <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
                   Download PDF
