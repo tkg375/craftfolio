@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <div className="w-full px-4 py-2.5 text-center text-sm font-medium text-white" style={{ background: "linear-gradient(90deg, #b45309, #d97706)" }}>
+        <div className="fixed top-0 inset-x-0 z-[60] w-full px-4 py-2.5 text-center text-sm font-medium text-white" style={{ background: "linear-gradient(90deg, #b45309, #d97706)" }}>
           We&apos;re experiencing issues with our AI tools and are working to get them fixed. Thank you for your patience.
         </div>
         <AuthModalProvider>
