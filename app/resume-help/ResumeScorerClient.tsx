@@ -8,135 +8,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthModal } from "@/components/AuthModal";
 import BuyAnalysisButton from "@/components/BuyAnalysisButton";
+import { ResumeTemplateRenderer, printResume } from "@/components/ResumeTemplates";
 
 type Mode = "score" | "job" | "pivot" | "careers";
-
-function exportResumePdf(resumeText: string, template: ResumeTemplate) {
-  import("jspdf").then(({ jsPDF }) => {
-    const doc = new jsPDF({ unit: "pt", format: "letter" });
-    const marginX = template.id === "executive" ? 54 : 50;
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const maxWidth = pageWidth - marginX * 2;
-    const pageHeight = doc.internal.pageSize.getHeight();
-    let y = 0;
-
-    if (template.id === "modern") {
-      doc.setFillColor(220, 38, 38);
-      doc.rect(0, 0, pageWidth, 8, "F");
-      y = 28;
-    } else if (template.id === "executive") {
-      doc.setFillColor(29, 78, 216);
-      doc.rect(0, 0, pageWidth, 6, "F");
-      y = 26;
-    } else {
-      y = 50;
-    }
-
-    const accentRgb: Record<string, [number, number, number]> = {
-      classic:   [30, 41, 59],
-      modern:    [220, 38, 38],
-      executive: [29, 78, 216],
-      technical: [5, 150, 105],
-      entry:     [124, 58, 237],
-    };
-    const [ar, ag, ab] = accentRgb[template.id] ?? [30, 41, 59];
-
-    const lines = resumeText.split("\n");
-    lines.forEach((rawLine, idx) => {
-      const line = rawLine.trim();
-      if (y > pageHeight - 50) { doc.addPage(); y = 50; }
-      if (!line) { y += 6; return; }
-
-      const isSectionHeader = /^[A-Z][A-Z\s&\/\-]{2,}$/.test(line);
-      const isBullet = line.startsWith("•");
-
-      if (idx === 0) {
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(template.id === "executive" ? 20 : 18);
-        doc.setTextColor(15, 23, 42);
-        doc.text(line, pageWidth / 2, y, { align: "center" });
-        y += template.id === "executive" ? 26 : 22;
-      } else if (isSectionHeader) {
-        y += 8;
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(9);
-        doc.setTextColor(ar, ag, ab);
-        doc.text(line, marginX, y);
-        y += 3;
-        doc.setDrawColor(ar, ag, ab);
-        doc.setLineWidth(template.id === "executive" ? 1.5 : 0.75);
-        doc.line(marginX, y, pageWidth - marginX, y);
-        y += 11;
-        doc.setTextColor(15, 23, 42);
-        doc.setLineWidth(0.5);
-      } else if (isBullet) {
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(71, 85, 105);
-        const wrapped = doc.splitTextToSize(line, maxWidth - 10);
-        wrapped.forEach((wl: string, wi: number) => {
-          if (y > pageHeight - 50) { doc.addPage(); y = 50; }
-          doc.text(wl, marginX + (wi === 0 ? 0 : 10), y);
-          y += 14;
-        });
-      } else {
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(30, 41, 59);
-        const wrapped = doc.splitTextToSize(line, maxWidth);
-        wrapped.forEach((wl: string) => {
-          if (y > pageHeight - 50) { doc.addPage(); y = 50; }
-          doc.text(wl, marginX, y);
-          y += 14;
-        });
-      }
-    });
-
-    const url = doc.output("bloburl");
-    window.open(url as unknown as string, "_blank");
-  });
-}
-
-function ResumePreview({ text, template }: { text: string; template: ResumeTemplate }) {
-  const lines = text.split("\n");
-  let currentSection = "";
-  const hex = template.accentHex.replace("#", "");
-  const [pr, pg, pb] = [0, 2, 4].map(o => parseInt(hex.slice(o, o + 2), 16));
-  const luminance = 0.299 * pr + 0.587 * pg + 0.114 * pb;
-  const accentColor = luminance > 180 ? "#1e293b" : template.accentHex;
-
-  return (
-    <div className="rounded-xl p-6 overflow-auto max-h-[600px] text-sm leading-relaxed space-y-1" style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.10)", color: "#1e293b" }}>
-      {lines.map((line, i) => {
-        const trimmed = line.trim();
-        if (!trimmed) return <div key={i} className="h-2" />;
-        const isSectionHeader = /^[A-Z][A-Z\s&\/\-]{2,}$/.test(trimmed);
-        if (isSectionHeader) {
-          currentSection = trimmed;
-          return (
-            <p key={i} className="font-bold text-xs tracking-widest uppercase mt-4 mb-1 pb-1"
-              style={{ color: accentColor, borderBottom: `1px solid ${accentColor}22` }}>
-              {trimmed}
-            </p>
-          );
-        }
-        if (trimmed.startsWith("•")) return <p key={i} className="pl-4" style={{ color: "#334155" }}>{trimmed}</p>;
-        if (i === 0) return <p key={i} className="text-lg font-bold text-center" style={{ color: "#0f172a" }}>{trimmed}</p>;
-        if (i === 1) return <p key={i} className="text-xs text-center mb-1" style={{ color: "#475569" }}>{trimmed}</p>;
-        const prevTrimmed = lines.slice(0, i).reverse().find(l => l.trim())?.trim() ?? "";
-        const prevIsBullet = prevTrimmed.startsWith("•");
-        const prevIsHeader = /^[A-Z][A-Z\s&\/\-]{2,}$/.test(prevTrimmed);
-        if (currentSection === "PROJECTS" || currentSection === "CERTIFICATIONS") {
-          return <p key={i} className={`font-semibold ${prevIsHeader ? "" : "mt-3"}`} style={{ color: "#0f172a" }}>{trimmed}</p>;
-        }
-        if (currentSection === "EXPERIENCE" && !prevIsHeader && !prevIsBullet) {
-          return <p key={i} className="font-semibold mt-3" style={{ color: "#0f172a" }}>{trimmed}</p>;
-        }
-        return <p key={i} style={{ color: "#334155" }}>{trimmed}</p>;
-      })}
-    </div>
-  );
-}
 
 function StepIndicator({ step }: { step: number }) {
   const steps = ["Upload Resume", "Choose Goal", "Results"];
@@ -820,15 +694,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                   {pivotCopied ? <><svg width="14" height="14" fill="none" viewBox="0 0 24 24" className="text-green-500"><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>Copied!</> : <><svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Copy</>}
                 </button>
                 <button
-                  onClick={() => exportResumePdf(pivotResume, selectedTemplate)}
-                  className="flex items-center justify-center gap-1.5 text-sm font-medium text-slate-400 px-3 py-2 rounded-lg transition-colors"
-                  style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}
-                >
-                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-2 0H8v4h8v-4z"/></svg>
-                  Print
-                </button>
-                <button
-                  onClick={() => exportResumePdf(pivotResume, selectedTemplate)}
+                  onClick={() => printResume(pivotResume, selectedTemplate.id)}
                   className="flex items-center justify-center gap-1.5 text-sm font-medium text-white px-3 py-2 rounded-lg hover:opacity-90 transition-colors"
                   style={{ background: selectedTemplate.accentHex }}
                 >
@@ -837,7 +703,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                 </button>
               </div>
             </div>
-            <ResumePreview text={pivotResume} template={selectedTemplate} />
+            <ResumeTemplateRenderer text={pivotResume} templateId={selectedTemplate.id} />
             {pivotError && <p className="text-violet-400 text-sm mt-3">{pivotError}</p>}
           </div>
         )}
@@ -1050,12 +916,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                               className="flex items-center justify-center gap-1.5 text-sm font-medium text-slate-400 px-3 py-2 rounded-lg transition-colors" style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}>
                               {copied ? <><svg width="14" height="14" fill="none" viewBox="0 0 24 24" className="text-green-500"><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>Copied!</> : <><svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Copy</>}
                             </button>
-                            <button onClick={() => exportResumePdf(improvedResume!, selectedTemplate)}
-                              className="flex items-center justify-center gap-1.5 text-sm font-medium text-slate-400 px-3 py-2 rounded-lg transition-colors" style={{ background: "var(--border-subtle)", border: "1px solid rgba(0,0,0,0.08)" }}>
-                              <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-2 0H8v4h8v-4z"/></svg>
-                              Print
-                            </button>
-                            <button onClick={() => exportResumePdf(improvedResume!, selectedTemplate)}
+                            <button onClick={() => printResume(improvedResume!, selectedTemplate.id)}
                               className="flex items-center justify-center gap-1.5 text-sm font-medium text-white px-3 py-2 rounded-lg hover:opacity-90 transition-colors" style={{ background: selectedTemplate.accentHex }}>
                               <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
                               Download PDF
@@ -1066,7 +927,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                             </button>
                           </div>
                         </div>
-                        <ResumePreview text={improvedResume} template={selectedTemplate} />
+                        <ResumeTemplateRenderer text={improvedResume} templateId={selectedTemplate.id} />
                       </div>
                     )}
                     {rewriteError && <p className="text-violet-400 text-sm mt-3">{rewriteError}</p>}
@@ -1215,39 +1076,139 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
             <div className="p-5 grid sm:grid-cols-2 gap-3">
               {RESUME_TEMPLATES.map(t => (
                 <button key={t.id} onClick={() => setSelectedTemplate(t)}
-                  className="w-full text-left rounded-xl border-2 overflow-hidden transition-all hover:shadow-md"
-                  style={{ borderColor: selectedTemplate.id === t.id ? t.accentHex : "rgba(0,0,0,0.08)", boxShadow: selectedTemplate.id === t.id ? `0 0 0 3px ${t.accentHex}22` : undefined }}>
-                  <div className="relative h-28 overflow-hidden bg-white" style={{ fontFamily: "serif" }}>
-                    {(t.id === "modern" || t.id === "executive") && <div className="absolute top-0 left-0 right-0 h-2" style={{ background: t.accentHex }} />}
-                    {t.id === "classic" && <div className="absolute top-0 left-0 right-0 h-0.5 bg-slate-800" />}
-                    {t.id === "technical" && <div className="absolute top-0 left-0 w-1 bottom-0" style={{ background: t.accentHex }} />}
-                    {t.id === "entry" && <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t" style={{ background: `linear-gradient(90deg, ${t.accentHex}, ${t.accentHex}88)` }} />}
-                    <div className={`px-4 ${(t.id === "modern" || t.id === "executive") ? "pt-3.5" : t.id === "technical" ? "pl-5 pt-3" : "pt-3"}`}>
-                      <div className="text-center mb-1">
-                        <div className="h-2 w-24 rounded mx-auto mb-0.5" style={{ background: t.id === "executive" ? "#1e293b" : "#334155" }} />
-                        <div className="h-1 w-16 rounded mx-auto bg-slate-200" />
+                  className="w-full text-left rounded-xl border-2 overflow-hidden transition-all hover:shadow-lg"
+                  style={{ borderColor: selectedTemplate.id === t.id ? t.accentHex : "rgba(255,255,255,0.08)", boxShadow: selectedTemplate.id === t.id ? `0 0 0 3px ${t.accentHex}33` : undefined }}>
+
+                  {/* ── Template thumbnail ── */}
+                  <div className="relative h-36 overflow-hidden bg-white">
+
+                    {/* Classic */}
+                    {t.id === "classic" && (
+                      <div className="p-3" style={{ fontFamily: "Georgia, serif" }}>
+                        <div className="text-center mb-1">
+                          <div className="h-2 w-20 bg-slate-800 rounded mx-auto mb-1" />
+                          <div className="h-1 w-14 bg-slate-300 rounded mx-auto" />
+                        </div>
+                        <div className="border-t border-slate-800 my-1.5" />
+                        {[["w-10", "w-full", "w-5/6"], ["w-8", "w-full", "w-4/5"]].map((widths, gi) => (
+                          <div key={gi} className="mb-2">
+                            <div className="flex items-center gap-1 mb-1">
+                              <div className="h-1 rounded" style={{ width: "2.5rem", background: "#1e293b" }} />
+                              <div className="flex-1 h-px bg-slate-200" />
+                            </div>
+                            {widths.slice(1).map((w, i) => <div key={i} className={`h-1 ${w} rounded bg-slate-100 mb-0.5`} />)}
+                          </div>
+                        ))}
                       </div>
-                      <div className="mt-2 mb-1 flex items-center gap-1">
-                        <div className="h-1 w-12 rounded" style={{ background: t.accentHex }} />
-                        <div className="flex-1 h-px" style={{ background: `${t.accentHex}44` }} />
+                    )}
+
+                    {/* Modern */}
+                    {t.id === "modern" && (
+                      <div>
+                        <div className="px-3 py-2.5" style={{ background: "#DC2626" }}>
+                          <div className="h-2.5 w-20 bg-white/90 rounded mb-1" />
+                          <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.5)" }} />
+                        </div>
+                        <div className="p-3 space-y-2">
+                          {[["w-10", "w-full", "w-5/6"], ["w-8", "w-full", "w-4/5"]].map((widths, gi) => (
+                            <div key={gi}>
+                              <div className="flex items-center gap-1 mb-1">
+                                <div className="h-1 rounded" style={{ width: "2rem", background: "#DC2626" }} />
+                                <div className="flex-1 h-px" style={{ background: "#DC262633" }} />
+                              </div>
+                              {widths.slice(1).map((w, i) => <div key={i} className={`h-1 ${w} rounded bg-slate-100 mb-0.5`} />)}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <div className="space-y-1">
-                        <div className="h-1 w-full rounded bg-slate-100" />
-                        <div className="h-1 w-5/6 rounded bg-slate-100" />
+                    )}
+
+                    {/* Executive */}
+                    {t.id === "executive" && (
+                      <div>
+                        <div className="px-3 py-2.5" style={{ background: "#1D4ED8" }}>
+                          <div className="h-2.5 w-20 bg-white/90 rounded mb-1" />
+                          <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.45)" }} />
+                        </div>
+                        <div className="flex flex-1">
+                          <div className="w-[28%] p-2 space-y-1.5" style={{ background: "#1e3a8a" }}>
+                            {[16, 20, 14, 18].map((w, i) => <div key={i} className="h-1 rounded" style={{ width: `${w * 4}%`, background: i % 2 === 0 ? "#93c5fd" : "rgba(255,255,255,0.3)" }} />)}
+                          </div>
+                          <div className="flex-1 p-2 space-y-1.5">
+                            {[["w-8", "w-full", "w-5/6"], ["w-7", "w-full"]].map((widths, gi) => (
+                              <div key={gi}>
+                                <div className="flex items-center gap-1 mb-0.5">
+                                  <div className="h-1 rounded" style={{ width: "1.5rem", background: "#1D4ED8" }} />
+                                  <div className="flex-1 h-px" style={{ background: "#1D4ED833" }} />
+                                </div>
+                                {widths.slice(1).map((w, i) => <div key={i} className={`h-1 ${w} rounded bg-slate-100 mb-0.5`} />)}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    )}
+
+                    {/* Technical */}
+                    {t.id === "technical" && (
+                      <div className="flex h-full">
+                        <div className="w-[30%] p-2" style={{ background: "#064e3b" }}>
+                          <div className="h-2 w-full rounded mb-0.5" style={{ background: "rgba(255,255,255,0.85)" }} />
+                          <div className="h-1 w-4/5 rounded mb-2" style={{ background: "rgba(255,255,255,0.4)" }} />
+                          {[70, 90, 55, 80, 65].map((w, i) => (
+                            <div key={i} className="h-1 rounded mb-1" style={{ width: `${w}%`, background: i % 3 === 0 ? "#6ee7b7" : "rgba(255,255,255,0.35)" }} />
+                          ))}
+                        </div>
+                        <div className="flex-1 p-2 space-y-1.5">
+                          {[["w-8", "w-full", "w-5/6"], ["w-7", "w-4/5", "w-full"]].map((widths, gi) => (
+                            <div key={gi}>
+                              <div className="flex items-center gap-1 mb-0.5">
+                                <div className="h-1 rounded" style={{ width: "1.5rem", background: "#059669" }} />
+                                <div className="flex-1 h-px" style={{ background: "#05996933" }} />
+                              </div>
+                              {widths.slice(1).map((w, i) => <div key={i} className={`h-1 ${w} rounded bg-slate-100 mb-0.5`} />)}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Entry Level */}
+                    {t.id === "entry" && (
+                      <div>
+                        <div className="px-3 py-2.5" style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}>
+                          <div className="h-2.5 w-20 bg-white/90 rounded mb-1" />
+                          <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.5)" }} />
+                        </div>
+                        <div className="p-3 space-y-2">
+                          {[["w-10", "w-full", "w-5/6"], ["w-8", "w-full", "w-4/5"]].map((widths, gi) => (
+                            <div key={gi}>
+                              <div className="flex items-center gap-1 mb-1">
+                                <div className="h-1 rounded" style={{ width: "2rem", background: "#7c3aed" }} />
+                                <div className="flex-1 h-px" style={{ background: "#7c3aed33" }} />
+                              </div>
+                              {widths.slice(1).map((w, i) => <div key={i} className={`h-1 ${w} rounded bg-slate-100 mb-0.5`} />)}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Selected overlay */}
                     {selectedTemplate.id === t.id && (
-                      <div className="absolute inset-0 flex items-center justify-center" style={{ background: `${t.accentHex}18` }}>
-                        <div className="w-7 h-7 rounded-full flex items-center justify-center shadow-lg" style={{ background: t.accentHex }}>
-                          <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+                      <div className="absolute inset-0 flex items-center justify-center" style={{ background: `${t.accentHex}20` }}>
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center shadow-lg" style={{ background: t.accentHex }}>
+                          <svg width="15" height="15" fill="none" viewBox="0 0 24 24"><path stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
                         </div>
                       </div>
                     )}
                   </div>
-                  <div className="px-4 py-3 border-t" style={{ borderColor: "rgba(0,0,0,0.06)", background: selectedTemplate.id === t.id ? `${t.accentHex}18` : "rgba(0,0,0,0.04)" }}>
+
+                  {/* Label row */}
+                  <div className="px-4 py-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)", background: selectedTemplate.id === t.id ? `${t.accentHex}18` : "rgba(0,0,0,0.18)" }}>
                     <div className="flex items-center justify-between mb-0.5">
                       <span className="font-bold text-sm text-slate-100">{t.name}</span>
-                      {selectedTemplate.id === t.id && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-slate-100" style={{ background: t.accentHex }}>✓ Selected</span>}
+                      {selectedTemplate.id === t.id && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white" style={{ background: t.accentHex }}>✓ Selected</span>}
                     </div>
                     <p className="text-[11px] text-slate-400 leading-snug">{t.tagline}</p>
                     <p className="text-[10px] font-semibold mt-1" style={{ color: t.accentHex }}>{t.bestFor}</p>
