@@ -122,7 +122,7 @@ export default function AnalysisViewer({
       {/* Nav */}
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-5"
         style={{ background: "rgba(8,8,15,0.90)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)", overflow: "visible" }}>
-        <Link href="/" style={{ overflow: "visible" }}>
+        <Link href="/dashboard" style={{ overflow: "visible" }}>
           <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "#a78bfa", lineHeight: 1.4, display: "block", paddingTop: "4px" }}>Craftfolio</span>
         </Link>
         <Link href="/dashboard" className="text-sm font-medium px-4 py-2 rounded-xl transition-all"
@@ -155,18 +155,20 @@ export default function AnalysisViewer({
               <div className="rounded-xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="font-bold text-slate-100 text-lg">Scores</h2>
-                  <button onClick={() => printAnalysisAsPdf(a)}
-                    className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
-                    style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
-                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-2 0H8v4h8v-4z"/></svg>
-                    Print
-                  </button>
-                  <button onClick={() => downloadAnalysisAsPdf(a)}
-                    className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
-                    style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.30)", color: "#a78bfa" }}>
-                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
-                    Download PDF
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => printAnalysisAsPdf(a)}
+                      className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
+                      style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
+                      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-2 0H8v4h8v-4z"/></svg>
+                      Print
+                    </button>
+                    <button onClick={() => downloadAnalysisAsPdf(a)}
+                      className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
+                      style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.30)", color: "#a78bfa" }}>
+                      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
+                      Download PDF
+                    </button>
+                  </div>
                 </div>
                 <div className="flex justify-around flex-wrap gap-6">
                   <ScoreCircle score={a.overallScore} label="Overall" color="#7C3AED" />
