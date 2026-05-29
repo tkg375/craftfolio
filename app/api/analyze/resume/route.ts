@@ -13,7 +13,12 @@ export async function POST(req: NextRequest) {
 
   const limitResult = await checkAndDecrementCredits(session.id, db);
   if (!limitResult.allowed) {
-    return NextResponse.json({ error: limitResult.reason ?? "Limit reached" }, { status: 402 });
+  
+  // Delete analyses older than 24 hours for this user
+  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  await db.analysis.deleteMany({ where: { userId: session.id, createdAt: { lt: cutoff } } });
+
+  return NextResponse.json({ error: limitResult.reason ?? "Limit reached" }, { status: 402 });
   }
 
   let body: { resumeText?: string; jobDescription?: string; resumePdfBase64?: string; mode?: string };
