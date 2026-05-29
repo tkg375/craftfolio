@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
+import { verifyPassword } from "@/lib/password";
 import { getDb } from "@/lib/db";
 import { createSessionToken, setSessionCookie } from "@/lib/auth";
 
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
   const user = await db.user.findUnique({ where: { email: email.toLowerCase() } });
   if (!user) return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
 
-  const valid = await bcrypt.compare(password, user.passwordHash);
+  const valid = await verifyPassword(password, user.passwordHash);
   if (!valid) return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
 
   const token = createSessionToken(user.id);

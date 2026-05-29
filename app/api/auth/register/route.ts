@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
+import { hashPassword } from "@/lib/password";
 import { getDb } from "@/lib/db";
 import { createSessionToken, setSessionCookie } from "@/lib/auth";
 
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     const existing = await db.user.findUnique({ where: { email: email.toLowerCase() } });
     if (existing) return NextResponse.json({ error: "An account with this email already exists" }, { status: 409 });
 
-    const passwordHash = await bcrypt.hash(password, 12);
+    const passwordHash = await hashPassword(password);
     const user = await db.user.create({
       data: { email: email.toLowerCase(), passwordHash },
     });
