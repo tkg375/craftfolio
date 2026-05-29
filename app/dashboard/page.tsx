@@ -14,7 +14,6 @@ export default async function DashboardPage() {
   const analyses = await db.analysis.findMany({
     where: { userId: session.id },
     orderBy: { createdAt: "desc" },
-    take: 20,
     select: { id: true, type: true, title: true, createdAt: true },
   });
 
