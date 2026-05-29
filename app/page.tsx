@@ -130,7 +130,7 @@ export default function HomePage() {
               style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 8px 32px rgba(124,58,237,0.45)" }}>
               Start for free →
             </Link>
-            <Link href="/login" className="font-semibold px-8 py-4 rounded-2xl text-base transition-all"
+            <Link href="/login" className="font-semibold px-8 py-4 rounded-2xl text-base transition-all hover:scale-105"
               style={{ background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
               Sign in
             </Link>
