@@ -20,6 +20,7 @@ model User {
   createdAt            DateTime   @default(now())
   updatedAt            DateTime   @updatedAt
   analyses             Analysis[]
+  passwordResets       PasswordReset[]
 }
 
 model Analysis {
@@ -45,6 +46,15 @@ model RateLimit {
 model WebhookEvent {
   stripeEventId String   @id
   processedAt   DateTime @default(now())
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model SupportMessage {

@@ -46,7 +46,12 @@ export default function LoginPage() {
               <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--text-muted)" }}>Password</label>
               <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••" />
             </div>
-            {error && <p className="text-sm text-red-400">{error}</p>}
+            {error && (
+              <div>
+                <p className="text-sm text-red-400">{error}</p>
+                <Link href="/forgot-password" className="text-xs text-violet-400 hover:text-violet-300 mt-1 inline-block">Forgot your password?</Link>
+              </div>
+            )}
             <button type="submit" disabled={loading}
               className="w-full font-bold py-3 rounded-xl text-white disabled:opacity-50 transition-all hover:opacity-90"
               style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 16px rgba(124,58,237,0.35)" }}>
@@ -58,6 +63,9 @@ export default function LoginPage() {
         <p className="text-center text-sm mt-4" style={{ color: "var(--text-dim)" }}>
           Don&apos;t have an account?{" "}
           <Link href="/register" className="font-semibold" style={{ color: "var(--accent-light)" }}>Create one</Link>
+        </p>
+        <p className="text-center text-sm mt-2" style={{ color: "var(--text-dim)" }}>
+          <Link href="/forgot-password" className="font-semibold" style={{ color: "var(--accent-light)" }}>Forgot your password?</Link>
         </p>
       </div>
     </div>
