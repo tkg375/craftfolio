@@ -34,7 +34,6 @@ export default function HistoryClient({ analyses }: { analyses: Analysis[] }) {
         const label = TYPE_LABELS[a.type] ?? a.type;
         const date = new Date(a.createdAt).toLocaleDateString("en-US", {
           month: "short", day: "numeric", year: "numeric",
-          hour: "numeric", minute: "2-digit",
         });
         return (
           <Link key={a.id} href={`/analyses/${a.id}`}
