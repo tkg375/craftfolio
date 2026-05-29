@@ -36,6 +36,11 @@ export default function LoginPage() {
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>Sign in to your account</p>
         </div>
 
+        <div className="rounded-xl px-4 py-3 mb-4 text-sm" style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.35)" }}>
+          <p className="text-violet-300 font-semibold mb-0.5">Important notice</p>
+          <p className="text-slate-300 text-xs leading-relaxed">We upgraded our database on 05/28/2026. If you had an existing account, please <Link href="/forgot-password" className="underline text-violet-300 font-semibold">reset your password</Link> to regain access.</p>
+        </div>
+
         <div className="rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
