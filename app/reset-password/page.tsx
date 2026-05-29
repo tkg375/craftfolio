@@ -105,10 +105,10 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "var(--bg-page)" }}>
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex justify-center">
+          <Link href="/" className="inline-flex justify-center mb-6">
             <span style={{ fontFamily: "AmbarPearl", fontSize: "2.5rem", color: "#a78bfa", lineHeight: 1 }}>Craftfolio</span>
           </Link>
-          <h1 className="text-xl font-bold text-slate-100 mt-4">Set a new password</h1>
+          <h1 className="text-2xl font-black mb-1" style={{ color: "var(--text-primary)" }}>Set a new password</h1>
         </div>
         <Suspense fallback={null}>
           <ResetPasswordForm />
