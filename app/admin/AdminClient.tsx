@@ -123,9 +123,9 @@ export default function AdminClient() {
             <h1 className="text-3xl font-black mb-1" style={{ color: "var(--text-primary)" }}>Admin</h1>
             <p style={{ color: "var(--text-muted)" }}>{users.length} users total</p>
           </div>
-          <Link href="/" className="text-sm font-medium px-4 py-2 rounded-xl transition-all"
+          <Link href="/dashboard" className="text-sm font-medium px-4 py-2 rounded-xl transition-all"
             style={{ color: "var(--text-muted)", background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-            ← Home
+            ← Dashboard
           </Link>
         </div>
 
