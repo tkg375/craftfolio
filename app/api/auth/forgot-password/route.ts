@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     data: { userId: user.id, token, expiresAt },
   });
 
-  const baseUrl = process.env.NEXT_PUBLIC_URL ?? "https://www.craftfolio.co";
+  const baseUrl = "https://www.craftfolio.co";
   const resetUrl = `${baseUrl}/reset-password?token=${token}`;
 
   await sendEmail({

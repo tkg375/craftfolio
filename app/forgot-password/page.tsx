@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "var(--bg-primary)" }}>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "var(--bg-page)" }}>
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex justify-center">
