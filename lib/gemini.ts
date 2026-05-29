@@ -15,7 +15,7 @@ async function callGemini(apiKey: string, parts: unknown[]): Promise<string> {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ contents: [{ parts }] }),
-    signal: AbortSignal.timeout(25000),
+    signal: AbortSignal.timeout(120000),
   });
 
   if (!res.ok) {
