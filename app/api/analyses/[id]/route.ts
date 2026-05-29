@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const db = await getDb();
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -14,5 +15,5 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  return NextResponse.json({ analysis });
+  return NextResponse.json({ analysis: { ...analysis, result: JSON.parse(analysis.result) } });
 }

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import Link from "next/link";
 import DashboardClient from "./DashboardClient";
 
@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const session = await getSession();
+  const db = await getDb();
   if (!session) redirect("/login");
 
   const analyses = await db.analysis.findMany({

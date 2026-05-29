@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { db } from "./db";
+import { getDb } from "./db";
 import crypto from "crypto";
 
 const SESSION_SECRET = process.env.SESSION_SECRET!;
@@ -57,6 +57,7 @@ export async function getSession() {
   if (!token) return null;
   const userId = verifySessionToken(token);
   if (!userId) return null;
+  const db = await getDb();
   const user = await db.user.findUnique({ where: { id: userId } });
   return user ?? null;
 }

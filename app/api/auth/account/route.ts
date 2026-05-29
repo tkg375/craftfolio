@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { getSession, clearSessionCookie } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { getStripe } from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
 
 export async function DELETE() {
+  const db = await getDb();
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

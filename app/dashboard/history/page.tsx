@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +17,7 @@ const TYPE_LABELS: Record<string, string> = {
 
 export default async function HistoryPage() {
   const session = await getSession();
+  const db = await getDb();
   if (!session) redirect("/login");
 
   const analyses = await db.analysis.findMany({

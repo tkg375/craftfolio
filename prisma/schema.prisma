@@ -1,9 +1,10 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 model User {
@@ -27,7 +28,7 @@ model Analysis {
   type         String
   title        String?
   inputSummary String?
-  result       Json
+  result       String
   shareToken   String?  @unique
   createdAt    DateTime @default(now())
 

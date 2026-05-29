@@ -4,16 +4,16 @@ import { rewriteResume } from "@/lib/gemini";
 import type { ResumeAnalysis } from "@/lib/gemini";
 import { checkAndDecrementCredits } from "@/lib/checkLimit";
 import { getTemplatePromptAddendum } from "@/lib/resume-templates";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
+  const db = await getDb();
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const limitResult = await checkAndDecrementCredits(session.id);
+  const limitResult = await checkAndDecrementCredits(session.id, db);
   if (!limitResult.allowed) {
     return NextResponse.json({ error: limitResult.reason ?? "Limit reached" }, { status: 402 });
   }
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
     data: {
       userId: session.id,
       type: targetProfession ? "career_pivot" : "resume_rewrite",
-      result: { rewritten: rewritten.slice(0, 50_000) },
+      result: JSON.stringify({ rewritten: rewritten.slice(0, 50_000) }),
     },
   });
 

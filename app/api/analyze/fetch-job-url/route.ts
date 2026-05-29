@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -209,6 +209,7 @@ async function fetchWithLambda(url: string): Promise<string | null> {
 // ── Route handler ──────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  const db = await getDb();
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

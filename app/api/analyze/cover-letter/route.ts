@@ -2,16 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { generateCoverLetter } from "@/lib/gemini";
 import { checkAndDecrementCredits } from "@/lib/checkLimit";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
+  const db = await getDb();
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const limitResult = await checkAndDecrementCredits(session.id);
+  const limitResult = await checkAndDecrementCredits(session.id, db);
   if (!limitResult.allowed) {
     return NextResponse.json({ error: limitResult.reason ?? "Limit reached" }, { status: 402 });
   }
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     data: {
       userId: session.id,
       type: "cover_letter",
-      result: { coverLetter },
+      result: JSON.stringify({ coverLetter }),
     },
   });
 

@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const db = await getDb();
       const session = await getSession();
   if (!session || session.email !== 'tgordon1@icloud.com') {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

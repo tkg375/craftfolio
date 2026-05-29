@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  const db = await getDb();
   let body: { name?: string; email?: string; message?: string };
   try { body = await req.json() as typeof body; }
   catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }

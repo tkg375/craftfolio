@@ -1,0 +1,13 @@
+name = "craftfolio"
+main = ".open-next/worker.js"
+compatibility_date = "2024-12-18"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "craftfolio-db"
+database_id = "63944b4b-13b2-48e1-a366-ba4d8216ce77"
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"

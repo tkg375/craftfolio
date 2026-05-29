@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { createSessionToken, setSessionCookie } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  const db = await getDb();
   let body: { email?: string; password?: string };
   try { body = await req.json() as { email?: string; password?: string }; }
   catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
