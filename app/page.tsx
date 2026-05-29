@@ -324,7 +324,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="py-10 px-6" style={{ borderTop: "1px solid var(--border)" }}>
         <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col items-center gap-6">
             <span style={{ fontFamily: "AmbarPearl", fontSize: "1.5rem", color: "var(--text-dim)", lineHeight: 1 }}>Craftfolio</span>
             <div className="flex flex-wrap items-center justify-center gap-6 text-sm" style={{ color: "var(--text-dim)" }}>
               <a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a>

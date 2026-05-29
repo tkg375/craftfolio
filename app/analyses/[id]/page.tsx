@@ -14,10 +14,13 @@ export default async function AnalysisPage({ params }: { params: Promise<{ id: s
   const analysis = await db.analysis.findUnique({ where: { id } });
   if (!analysis || analysis.userId !== session.id) redirect("/dashboard");
 
+  let parsedResult: unknown = null;
+  try { parsedResult = JSON.parse(analysis.result as string); } catch { parsedResult = null; }
+
   return (
     <AnalysisViewer
       type={analysis.type}
-      result={analysis.result}
+      result={parsedResult}
       createdAt={analysis.createdAt.toISOString()}
     />
   );

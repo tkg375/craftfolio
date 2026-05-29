@@ -1,30 +1,45 @@
 import { cookies } from "next/headers";
 import { getDb } from "./db";
-import crypto from "crypto";
 
-const SESSION_SECRET = process.env.SESSION_SECRET!;
 const COOKIE_NAME = "craftfolio_session";
 const MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
-function sign(payload: string): string {
-  const hmac = crypto.createHmac("sha256", SESSION_SECRET);
-  hmac.update(payload);
-  return hmac.digest("hex");
+function getSecret(): Uint8Array {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) throw new Error("SESSION_SECRET is not set");
+  return new TextEncoder().encode(secret);
 }
 
-export function createSessionToken(userId: string): string {
+async function sign(payload: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    "raw", getSecret() as BufferSource, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payload));
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function toBase64Url(str: string): string {
+  return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+}
+
+function fromBase64Url(str: string): string {
+  return atob(str.replace(/-/g, "+").replace(/_/g, "/"));
+}
+
+export async function createSessionToken(userId: string): Promise<string> {
   const payload = `${userId}:${Date.now()}`;
-  const sig = sign(payload);
-  return Buffer.from(`${payload}.${sig}`).toString("base64url");
+  const sig = await sign(payload);
+  return toBase64Url(`${payload}.${sig}`);
 }
 
-export function verifySessionToken(token: string): string | null {
+export async function verifySessionToken(token: string): Promise<string | null> {
   try {
-    const decoded = Buffer.from(token, "base64url").toString("utf8");
+    const decoded = fromBase64Url(token);
     const lastDot = decoded.lastIndexOf(".");
     const payload = decoded.slice(0, lastDot);
     const sig = decoded.slice(lastDot + 1);
-    if (sign(payload) !== sig) return null;
+    const expected = await sign(payload);
+    if (expected !== sig) return null;
     const [userId, tsStr] = payload.split(":");
     if (!userId || !tsStr) return null;
     const issuedAt = parseInt(tsStr, 10);
@@ -55,7 +70,7 @@ export async function getSession() {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
-  const userId = verifySessionToken(token);
+  const userId = await verifySessionToken(token);
   if (!userId) return null;
   const db = await getDb();
   const user = await db.user.findUnique({ where: { id: userId } });

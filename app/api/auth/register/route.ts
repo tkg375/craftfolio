@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       data: { email: email.toLowerCase(), passwordHash },
     });
 
-    const token = createSessionToken(user.id);
+    const token = await createSessionToken(user.id);
     await setSessionCookie(token);
 
     return NextResponse.json({ success: true, user: { id: user.id, email: user.email, plan: user.plan, credits: user.credits } });
