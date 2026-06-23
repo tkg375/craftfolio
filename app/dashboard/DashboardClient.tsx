@@ -39,12 +39,6 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
           <span style={{ fontFamily: "AmbarPearl", fontSize: "clamp(1.4rem, 5vw, 2rem)", color: "#fde047", lineHeight: 1.4, display: "block", paddingTop: "4px" }}>Craftfolio</span>
         </Link>
         <div className="flex items-center gap-2">
-          <Link href="/resume-help"
-            className="font-bold px-3 sm:px-4 py-2 rounded-full text-white text-xs sm:text-sm whitespace-nowrap"
-            style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 4px 14px rgba(202,138,4,0.35)" }}>
-            <span className="hidden sm:inline">Analyze Resume</span>
-            <span className="sm:hidden">Analyze</span>
-          </Link>
           <button onClick={handleLogout}
             className="text-xs sm:text-sm font-medium px-3 sm:px-4 py-2 rounded-xl transition-all whitespace-nowrap"
             style={{ color: "var(--text-muted)", background: "var(--bg-card)", border: "1px solid var(--border)" }}>
@@ -61,17 +55,24 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>{user.email}</p>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-1 mb-8 p-1 rounded-xl w-fit" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-          {(["overview", "profile"] as const).map(t => (
-            <button key={t} onClick={() => setTab(t)}
-              className="px-5 py-2 rounded-lg text-sm font-semibold capitalize transition-all"
-              style={tab === t
-                ? { background: "linear-gradient(135deg, #ca8a04, #fde047)", color: "#fff" }
-                : { color: "var(--text-muted)" }}>
-              {t}
-            </button>
-          ))}
+        {/* Tabs + Analyze button */}
+        <div className="flex items-center justify-between gap-4 mb-8">
+          <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+            {(["overview", "profile"] as const).map(t => (
+              <button key={t} onClick={() => setTab(t)}
+                className="px-5 py-2 rounded-lg text-sm font-semibold capitalize transition-all"
+                style={tab === t
+                  ? { background: "linear-gradient(135deg, #ca8a04, #fde047)", color: "#fff" }
+                  : { color: "var(--text-muted)" }}>
+                {t}
+              </button>
+            ))}
+          </div>
+          <Link href="/resume-help"
+            className="font-bold px-4 py-2 rounded-full text-white text-sm whitespace-nowrap"
+            style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 4px 14px rgba(202,138,4,0.35)" }}>
+            Analyze Resume
+          </Link>
         </div>
 
         {/* Overview */}
