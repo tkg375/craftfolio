@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import TiltCard from "@/components/TiltCard";
+import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
   title: "Craftfolio — AI Resume Builder & ATS Score Checker",
@@ -112,14 +114,15 @@ export default function HomePage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative flex flex-col items-center justify-center text-center px-4 pt-32 sm:pt-40 pb-20 sm:pb-28 overflow-hidden">
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(202,138,4,0.15) 0%, transparent 70%)" }} />
-        <div className="absolute top-40 left-1/4 w-64 h-64 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(167,139,250,0.08)" }} />
-        <div className="absolute top-40 right-1/4 w-64 h-64 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(202,138,4,0.10)" }} />
-        <div className="relative max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.02] tracking-tight mb-6" style={{ color: "var(--text-primary)" }}>
+      <section className="relative flex flex-col items-center justify-center text-center px-4 pt-32 sm:pt-40 pb-24 sm:pb-32 overflow-hidden min-h-[90vh]">
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(202,138,4,0.18) 0%, transparent 65%)" }} />
+        <div className="absolute top-40 left-1/4 w-80 h-80 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(167,139,250,0.10)" }} />
+        <div className="absolute top-40 right-1/4 w-80 h-80 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(202,138,4,0.12)" }} />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-32 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--bg-page))" }} />
+        <div className="relative max-w-4xl mx-auto" style={{ perspective: "1200px" }}>
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.02] tracking-tight mb-6" style={{ color: "var(--text-primary)", textShadow: "0 4px 40px rgba(202,138,4,0.25)" }}>
             Resumes that get{" "}
-            <span style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", backgroundImage: "linear-gradient(135deg, #fde047 0%, #ca8a04 50%, #fef08a 100%)" }}>
+            <span style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", backgroundImage: "linear-gradient(135deg, #fde047 0%, #ca8a04 50%, #fef08a 100%)", filter: "drop-shadow(0 0 30px rgba(202,138,4,0.5))" }}>
               interviews
             </span>
           </h1>
@@ -127,12 +130,12 @@ export default function HomePage() {
             ATS scoring, keyword gap analysis, AI-powered rewrites, and tailored cover letters — all from one upload.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/register" className="font-bold px-8 py-4 rounded-2xl text-white text-base transition-all hover:scale-105"
-              style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 8px 32px rgba(202,138,4,0.45)" }}>
+            <Link href="/register" className="font-bold px-8 py-4 rounded-2xl text-white text-base transition-all hover:scale-105 hover:-translate-y-1"
+              style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 8px 32px rgba(202,138,4,0.5), 0 0 0 1px rgba(202,138,4,0.3)" }}>
               Start for free →
             </Link>
-            <Link href="/login" className="font-semibold px-8 py-4 rounded-2xl text-base transition-all hover:scale-105"
-              style={{ background: "#ffffff", color: "#111827" }}>
+            <Link href="/login" className="font-semibold px-8 py-4 rounded-2xl text-base transition-all hover:scale-105 hover:-translate-y-1"
+              style={{ background: "#ffffff", color: "#111827", boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }}>
               Sign in
             </Link>
           </div>
@@ -142,13 +145,14 @@ export default function HomePage() {
       {/* Features */}
       <section className="py-16 sm:py-24 px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
+          <ScrollReveal className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>Everything in one place</h2>
             <p className="text-lg" style={{ color: "var(--text-muted)" }}>Six tools. One upload. Zero guessing.</p>
-          </div>
+          </ScrollReveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {features.map(({ icon, title, desc }) => (
-              <div key={title} className="card-hover rounded-2xl p-6">
+            {features.map(({ icon, title, desc }, i) => (
+              <ScrollReveal key={title} delay={i * 80}>
+              <TiltCard className="rounded-2xl p-6 h-full" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)" }}>
                 <div className="w-10 h-10 rounded-xl mb-4 flex items-center justify-center" style={{ background: "rgba(202,138,4,0.15)", border: "1px solid rgba(202,138,4,0.20)" }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ color: "var(--accent-light)" }}>
                     <path d={icon} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -156,7 +160,8 @@ export default function HomePage() {
                 </div>
                 <h3 className="font-bold mb-1.5" style={{ color: "var(--text-primary)" }}>{title}</h3>
                 <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>{desc}</p>
-              </div>
+              </TiltCard>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -165,10 +170,10 @@ export default function HomePage() {
       {/* How it Works */}
       <section id="how-it-works" className="py-16 sm:py-24 px-4" style={{ background: "rgba(255,255,255,0.015)" }}>
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
+          <ScrollReveal className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>How it works</h2>
             <p className="text-lg" style={{ color: "var(--text-muted)" }}>Three steps. Under a minute. Results that actually help.</p>
-          </div>
+          </ScrollReveal>
           <div className="grid sm:grid-cols-3 gap-8">
             {[
               {
@@ -189,8 +194,9 @@ export default function HomePage() {
                 desc: "Receive a full report with plain-English explanations, a rewritten resume, a tailored cover letter, and career recommendations — all ready to use.",
                 icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
               },
-            ].map(({ step, title, desc, icon }) => (
-              <div key={step} className="step-hover relative text-center">
+            ].map(({ step, title, desc, icon }, i) => (
+              <ScrollReveal key={step} delay={i * 100}>
+              <TiltCard className="relative text-center rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.03)" }} intensity={8}>
                 <div className="step-icon w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center relative"
                   style={{ background: "rgba(202,138,4,0.12)", border: "1px solid rgba(202,138,4,0.25)" }}>
                   <svg width="28" height="28" fill="none" viewBox="0 0 24 24" style={{ color: "#fde047" }}>
@@ -201,7 +207,8 @@ export default function HomePage() {
                 </div>
                 <h3 className="text-lg font-black mb-2" style={{ color: "var(--text-primary)" }}>{title}</h3>
                 <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>{desc}</p>
-              </div>
+              </TiltCard>
+              </ScrollReveal>
             ))}
           </div>
           <div className="text-center mt-14">
@@ -264,7 +271,7 @@ export default function HomePage() {
                 craftfolio: "Repositions your entire experience for a new role or industry — not just advice, a fully rewritten resume",
               },
             ].map(({ icon, label, chatgpt, craftfolio }) => (
-              <div key={label} className="card-hover rounded-2xl overflow-hidden">
+              <TiltCard key={label} className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.09)" }} intensity={8}>
                 <div className="px-5 py-4 flex items-center gap-3" style={{ background: "var(--bg-card)" }}>
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(202,138,4,0.15)" }}>
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" style={{ color: "#fde047" }}>
@@ -273,7 +280,7 @@ export default function HomePage() {
                   </div>
                   <span className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>{label}</span>
                 </div>
-                <div className="px-5 py-4 flex flex-col gap-3" style={{ background: "rgba(0,0,0,0.2)" }}>
+                <div className="px-5 py-4 flex flex-col gap-3" style={{ background: "rgba(0,0,0,0.25)" }}>
                   <div className="flex gap-2.5">
                     <span className="text-xs font-bold flex-shrink-0 mt-0.5" style={{ color: "#64748b" }}>ChatGPT</span>
                     <p className="text-xs leading-relaxed" style={{ color: "#64748b" }}>{chatgpt}</p>
@@ -283,7 +290,7 @@ export default function HomePage() {
                     <p className="text-xs leading-relaxed" style={{ color: "var(--text-muted)" }}>{craftfolio}</p>
                   </div>
                 </div>
-              </div>
+              </TiltCard>
             ))}
           </div>
           <div className="text-center mt-12">
@@ -303,7 +310,7 @@ export default function HomePage() {
             <p className="text-lg" style={{ color: "var(--text-muted)" }}>Pay as you go, or go unlimited.</p>
           </div>
           <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-            <div className="card-hover rounded-2xl p-8 flex flex-col">
+            <TiltCard className="rounded-2xl p-8 flex flex-col" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)" }}>
               <p className="text-sm font-bold mb-2" style={{ color: "var(--text-muted)" }}>PAY AS YOU GO</p>
               <div className="flex items-end gap-1 mb-1">
                 <span className="text-5xl font-black" style={{ color: "var(--text-primary)" }}>$1</span>
@@ -322,9 +329,9 @@ export default function HomePage() {
                 style={{ background: "rgba(202,138,4,0.25)", border: "1px solid rgba(202,138,4,0.4)", color: "#fde047" }}>
                 Get started free
               </Link>
-            </div>
-            <div className="card-hover rounded-2xl p-8 flex flex-col relative overflow-hidden"
-              style={{ background: "linear-gradient(135deg, rgba(202,138,4,0.15), rgba(167,139,250,0.08))", borderColor: "rgba(202,138,4,0.35)" }}>
+            </TiltCard>
+            <TiltCard className="rounded-2xl p-8 flex flex-col relative overflow-hidden"
+              style={{ background: "linear-gradient(135deg, rgba(202,138,4,0.15), rgba(167,139,250,0.08))", border: "1px solid rgba(202,138,4,0.35)" }}>
               <div className="absolute top-4 right-4 text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: "rgba(202,138,4,0.30)", color: "#fef08a" }}>BEST VALUE</div>
               <p className="text-sm font-bold mb-2" style={{ color: "#fde047" }}>PRO</p>
               <div className="flex items-end gap-1 mb-1">
@@ -344,7 +351,7 @@ export default function HomePage() {
                 style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 8px 24px rgba(202,138,4,0.40)" }}>
                 Start Pro — $5/mo
               </Link>
-            </div>
+            </TiltCard>
           </div>
         </div>
       </section>
