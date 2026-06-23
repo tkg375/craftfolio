@@ -148,8 +148,7 @@ export default function HomePage() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {features.map(({ icon, title, desc }) => (
-              <div key={title} className="card-hover rounded-2xl p-6"
-                style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+              <div key={title} className="card-hover rounded-2xl p-6">
                 <div className="w-10 h-10 rounded-xl mb-4 flex items-center justify-center" style={{ background: "rgba(202,138,4,0.15)", border: "1px solid rgba(202,138,4,0.20)" }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ color: "var(--accent-light)" }}>
                     <path d={icon} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -265,7 +264,7 @@ export default function HomePage() {
                 craftfolio: "Repositions your entire experience for a new role or industry — not just advice, a fully rewritten resume",
               },
             ].map(({ icon, label, chatgpt, craftfolio }) => (
-              <div key={label} className="card-hover rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
+              <div key={label} className="card-hover rounded-2xl overflow-hidden">
                 <div className="px-5 py-4 flex items-center gap-3" style={{ background: "var(--bg-card)" }}>
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(202,138,4,0.15)" }}>
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" style={{ color: "#fde047" }}>
@@ -304,7 +303,7 @@ export default function HomePage() {
             <p className="text-lg" style={{ color: "var(--text-muted)" }}>Pay as you go, or go unlimited.</p>
           </div>
           <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-            <div className="card-hover rounded-2xl p-8 flex flex-col" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+            <div className="card-hover rounded-2xl p-8 flex flex-col">
               <p className="text-sm font-bold mb-2" style={{ color: "var(--text-muted)" }}>PAY AS YOU GO</p>
               <div className="flex items-end gap-1 mb-1">
                 <span className="text-5xl font-black" style={{ color: "var(--text-primary)" }}>$1</span>
@@ -325,7 +324,7 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="card-hover rounded-2xl p-8 flex flex-col relative overflow-hidden"
-              style={{ background: "linear-gradient(135deg, rgba(202,138,4,0.15), rgba(167,139,250,0.08))", border: "1px solid rgba(202,138,4,0.35)" }}>
+              style={{ background: "linear-gradient(135deg, rgba(202,138,4,0.15), rgba(167,139,250,0.08))", borderColor: "rgba(202,138,4,0.35)" }}>
               <div className="absolute top-4 right-4 text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: "rgba(202,138,4,0.30)", color: "#fef08a" }}>BEST VALUE</div>
               <p className="text-sm font-bold mb-2" style={{ color: "#fde047" }}>PRO</p>
               <div className="flex items-end gap-1 mb-1">
@@ -359,7 +358,7 @@ export default function HomePage() {
           </div>
           <div className="space-y-3">
             {faqs.map(({ q, a }) => (
-              <details key={q} className="faq-hover group rounded-2xl overflow-hidden" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+              <details key={q} className="faq-hover group rounded-2xl overflow-hidden">
                 <summary className="flex items-center justify-between px-6 py-4 cursor-pointer list-none font-semibold text-sm"
                   style={{ color: "var(--text-primary)" }}>
                   {q}
