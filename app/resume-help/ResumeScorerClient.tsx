@@ -1324,7 +1324,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                       {selectedTemplate.id === t.id && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white" style={{ background: t.accentHex }}>✓ Selected</span>}
                     </div>
                     <p className="text-[11px] text-slate-400 leading-snug">{t.tagline}</p>
-                    <p className="text-[10px] font-semibold mt-1" style={{ color: t.accentHex }}>{t.bestFor}</p>
+                    <p className="text-[10px] font-semibold mt-1" style={{ color: "rgba(255,255,255,0.45)" }}>{t.bestFor}</p>
                   </div>
                 </button>
               ))}
