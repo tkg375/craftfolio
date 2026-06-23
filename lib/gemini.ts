@@ -96,15 +96,24 @@ careerOptions: Based STRICTLY on the actual industries, job titles, skills, and 
 
 SCORING DIMENSIONS:
 
-atsScore (ATS Compliance) — penalize for:
-- Tables, columns, text boxes, multi-column layouts (ATS parsers fail on these)
-- Non-standard section headers (e.g. "My Story" instead of EXPERIENCE)
-- Missing or non-standard date formats
-- Contact info in headers/footers (ATS often strips these)
-- Images, logos, or graphics
-- Decorative fonts or special characters in headers
-- Bullet characters other than • or standard dashes
-- Skills formatted as visual bars or grids instead of plain text
+atsScore (ATS Compliance) — CRITICAL RULE: You are analyzing EXTRACTED PLAIN TEXT from a PDF. You cannot see fonts, graphics, colors, columns, or visual layout from plain text alone. ONLY penalize for issues you can directly observe in the text itself. Never flag "potential" or "possible" formatting issues — only flag what you can definitively see.
+
+Penalize ONLY for things observable in plain text:
+- Non-standard section headers that you can read in the text (e.g. "My Story" instead of "EXPERIENCE")
+- Missing or inconsistent date formats visible in the text
+- Bullet characters other than • or standard dashes that appear in the text
+- Contact info that appears buried mid-document instead of at the top
+- Vague or absent section organization readable in the extracted text
+- Special characters (©, ™, decorative symbols) visible in the text
+
+DO NOT flag these unless you can see direct text evidence:
+- Graphics, images, or logos (you cannot see these in plain text)
+- Font choices or decorative fonts (invisible in plain text)
+- Column layouts or text boxes (indistinguishable from single-column in extracted text)
+- Visual skill bars or grids (only flag if the text shows rating systems like "Excel ████")
+- Headers/footers (cannot be determined from extracted text)
+
+If the resume text reads as clean, well-structured plain text with standard section headers and dates, give it a high atsScore (85+). Do not invent formatting concerns.
 
 keywordMatch — if job description provided: % of critical job keywords and exact phrases found in resume. If no job description: evaluate against industry-standard keywords for the apparent role.
 
