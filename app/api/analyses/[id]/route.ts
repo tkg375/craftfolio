@@ -15,5 +15,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  return NextResponse.json({ analysis: { ...analysis, result: JSON.parse(analysis.result) } });
+  let parsed: unknown;
+  try { parsed = JSON.parse(analysis.result); }
+  catch { return NextResponse.json({ error: "Analysis data is corrupted" }, { status: 500 }); }
+
+  return NextResponse.json({ analysis: { ...analysis, result: parsed } });
 }

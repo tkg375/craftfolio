@@ -123,7 +123,7 @@ export default function AnalysisViewer({
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-5"
         style={{ background: "rgba(8,8,15,0.90)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)", overflow: "visible" }}>
         <Link href="/dashboard" style={{ overflow: "visible" }}>
-          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "#a78bfa", lineHeight: 1.4, display: "block", paddingTop: "4px" }}>Craftfolio</span>
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "#fde047", lineHeight: 1.4, display: "block", paddingTop: "4px" }}>Craftfolio</span>
         </Link>
         <Link href="/dashboard" className="text-sm font-medium px-4 py-2 rounded-xl transition-all"
           style={{ color: "var(--text-muted)", background: "var(--bg-card)", border: "1px solid var(--border)" }}>
@@ -164,7 +164,7 @@ export default function AnalysisViewer({
                     </button>
                     <button onClick={() => downloadAnalysisAsPdf(a)}
                       className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
-                      style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.30)", color: "#a78bfa" }}>
+                      style={{ background: "rgba(202,138,4,0.15)", border: "1px solid rgba(202,138,4,0.30)", color: "#fde047" }}>
                       <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
                       Download PDF
                     </button>
@@ -174,7 +174,7 @@ export default function AnalysisViewer({
                   <ScoreCircle score={a.overallScore} label="Overall" color="#7C3AED" />
                   <ScoreCircle score={a.atsScore} label="ATS Score" color="#4F46E5" />
                   <ScoreCircle score={a.keywordMatch} label="Keyword Match" color="#059669" />
-                  <ScoreCircle score={a.impactScore} label="Impact Score" color="#7c3aed" />
+                  <ScoreCircle score={a.impactScore} label="Impact Score" color="#ca8a04" />
                 </div>
                 <p className="text-slate-400 text-sm mt-6 text-center leading-relaxed">{a.summary}</p>
               </div>
@@ -193,7 +193,7 @@ export default function AnalysisViewer({
                   <h2 className="font-bold text-slate-100 mb-3">Missing Keywords</h2>
                   <div className="flex flex-wrap gap-2">
                     {a.missingKeywords.filter(k => k.length <= 60).map((kw, i) => (
-                      <span key={i} className="text-xs bg-violet-500/20 text-violet-300 px-2 py-1 rounded-full font-semibold">{kw}</span>
+                      <span key={i} className="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full font-semibold">{kw}</span>
                     ))}
                     {a.missingKeywords.length === 0 && <p className="text-sm text-slate-400">None missing</p>}
                   </div>
@@ -220,7 +220,7 @@ export default function AnalysisViewer({
                   <div className="space-y-3">
                     {a.weaknesses.map((w, i) => (
                       <div key={i} className="flex gap-2 items-start">
-                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="text-violet-400 mt-0.5 flex-shrink-0"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="text-yellow-400 mt-0.5 flex-shrink-0"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
                         <div>
                           <p className="text-sm font-semibold text-slate-200">{w.point}</p>
                           <p className="text-xs text-slate-400 mt-0.5">{w.explanation}</p>
@@ -275,7 +275,7 @@ export default function AnalysisViewer({
                 </button>
                 <button onClick={() => downloadTextAsPdf(r.rewritten, "resume-rewrite.pdf")}
                   className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
-                  style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.30)", color: "#a78bfa" }}>
+                  style={{ background: "rgba(202,138,4,0.15)", border: "1px solid rgba(202,138,4,0.30)", color: "#fde047" }}>
                   <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
                   Download PDF
                 </button>
@@ -308,7 +308,7 @@ export default function AnalysisViewer({
                 </button>
                 <button onClick={() => downloadTextAsPdf(r.coverLetter, "cover-letter.pdf", true)}
                   className="text-sm font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
-                  style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.30)", color: "#a78bfa" }}>
+                  style={{ background: "rgba(202,138,4,0.15)", border: "1px solid rgba(202,138,4,0.30)", color: "#fde047" }}>
                   <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
                   Download PDF
                 </button>

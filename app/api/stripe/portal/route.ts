@@ -12,10 +12,14 @@ export async function POST() {
   if (!session.stripeCustomerId) return NextResponse.json({ error: "No billing account found" }, { status: 400 });
 
   const stripe = getStripe();
-  const portal = await stripe.billingPortal.sessions.create({
-    customer: session.stripeCustomerId,
-    return_url: `${BASE_URL}/dashboard`,
-  });
-
-  return NextResponse.json({ url: portal.url });
+  try {
+    const portal = await stripe.billingPortal.sessions.create({
+      customer: session.stripeCustomerId,
+      return_url: `${BASE_URL}/dashboard`,
+    });
+    return NextResponse.json({ url: portal.url });
+  } catch (err) {
+    console.error("Stripe portal error:", err);
+    return NextResponse.json({ error: "Could not open billing portal" }, { status: 500 });
+  }
 }

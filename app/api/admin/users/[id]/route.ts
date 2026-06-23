@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const db = await getDb();
   const session = await getSession();
-  if (!session || session.email !== 'tgordon1@icloud.com') {
+  if (!session || session.email !== 'tgordon1@me.com') {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

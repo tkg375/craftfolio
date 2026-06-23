@@ -65,6 +65,7 @@ const features = [
 ];
 
 const faqs = [
+  { q: "Why use Craftfolio instead of ChatGPT?", a: "ChatGPT is a great general-purpose tool, but it doesn't know how ATS systems actually score resumes, what keywords a specific job posting requires, or how to produce ATS-safe formatting. Craftfolio is purpose-built for resumes — it scores against real ATS rules, compares your resume to actual job postings, saves your history, and generates ATS-safe rewrites and cover letters in one click. No prompting required." },
   { q: "What is an ATS score?", a: "ATS stands for Applicant Tracking System — software that employers use to filter resumes before a human ever reads them. Your ATS score reflects how well your resume is structured and keyword-matched for automated screening." },
   { q: "How many credits do I get for free?", a: "You get 3 free credits when you sign up — no credit card required. Each credit covers one AI analysis. Additional credits are $1 each, or upgrade to Pro for unlimited analyses at $5/month." },
   { q: "What file formats are supported?", a: "We accept PDF uploads up to 10MB. You can also paste your resume as plain text if you prefer." },
@@ -87,7 +88,7 @@ export default function HomePage() {
 
         {/* Logo */}
         <Link href="/" style={{ overflow: "visible", flexShrink: 0 }}>
-          <span style={{ fontFamily: "AmbarPearl", fontSize: "clamp(1.5rem, 5vw, 2rem)", color: "#a78bfa", lineHeight: 1.4, display: "block", paddingTop: "4px" }}>Craftfolio</span>
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "clamp(1.5rem, 5vw, 2rem)", color: "#fde047", lineHeight: 1.4, display: "block", paddingTop: "4px" }}>Craftfolio</span>
         </Link>
 
         {/* Centered nav links */}
@@ -103,7 +104,7 @@ export default function HomePage() {
           <>
             <Link href="/login" className="text-sm font-medium transition hidden sm:block" style={{ color: "var(--text-muted)" }}>Sign In</Link>
             <Link href="/register" className="text-sm font-bold px-4 py-2 rounded-full text-white"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 14px rgba(124,58,237,0.35)" }}>
+              style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 4px 14px rgba(202,138,4,0.35)" }}>
               Get Started
             </Link>
           </>
@@ -112,13 +113,13 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="relative flex flex-col items-center justify-center text-center px-4 pt-32 sm:pt-40 pb-20 sm:pb-28 overflow-hidden">
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%)" }} />
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(202,138,4,0.15) 0%, transparent 70%)" }} />
         <div className="absolute top-40 left-1/4 w-64 h-64 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(167,139,250,0.08)" }} />
-        <div className="absolute top-40 right-1/4 w-64 h-64 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(124,58,237,0.10)" }} />
+        <div className="absolute top-40 right-1/4 w-64 h-64 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(202,138,4,0.10)" }} />
         <div className="relative max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.02] tracking-tight mb-6" style={{ color: "var(--text-primary)" }}>
             Resumes that get{" "}
-            <span style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", backgroundImage: "linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #c4b5fd 100%)" }}>
+            <span style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", backgroundImage: "linear-gradient(135deg, #fde047 0%, #ca8a04 50%, #fef08a 100%)" }}>
               interviews
             </span>
           </h1>
@@ -127,7 +128,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/register" className="font-bold px-8 py-4 rounded-2xl text-white text-base transition-all hover:scale-105"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 8px 32px rgba(124,58,237,0.45)" }}>
+              style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 8px 32px rgba(202,138,4,0.45)" }}>
               Start for free →
             </Link>
             <Link href="/login" className="font-semibold px-8 py-4 rounded-2xl text-base transition-all hover:scale-105"
@@ -149,7 +150,7 @@ export default function HomePage() {
             {features.map(({ icon, title, desc }) => (
               <div key={title} className="rounded-2xl p-6 transition-all hover:scale-[1.02]"
                 style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-                <div className="w-10 h-10 rounded-xl mb-4 flex items-center justify-center" style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.20)" }}>
+                <div className="w-10 h-10 rounded-xl mb-4 flex items-center justify-center" style={{ background: "rgba(202,138,4,0.15)", border: "1px solid rgba(202,138,4,0.20)" }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ color: "var(--accent-light)" }}>
                     <path d={icon} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -192,12 +193,12 @@ export default function HomePage() {
             ].map(({ step, title, desc, icon }) => (
               <div key={step} className="relative text-center">
                 <div className="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center relative"
-                  style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)" }}>
-                  <svg width="28" height="28" fill="none" viewBox="0 0 24 24" style={{ color: "#a78bfa" }}>
+                  style={{ background: "rgba(202,138,4,0.12)", border: "1px solid rgba(202,138,4,0.25)" }}>
+                  <svg width="28" height="28" fill="none" viewBox="0 0 24 24" style={{ color: "#fde047" }}>
                     <path stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" d={icon} />
                   </svg>
                   <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full text-xs font-black flex items-center justify-center"
-                    style={{ background: "#7c3aed", color: "#fff" }}>{step.replace("0","")}</span>
+                    style={{ background: "#ca8a04", color: "#fff" }}>{step.replace("0","")}</span>
                 </div>
                 <h3 className="text-lg font-black mb-2" style={{ color: "var(--text-primary)" }}>{title}</h3>
                 <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>{desc}</p>
@@ -206,8 +207,90 @@ export default function HomePage() {
           </div>
           <div className="text-center mt-14">
             <Link href="/register" className="inline-block font-bold px-8 py-4 rounded-2xl text-white text-base transition-all hover:scale-105"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 8px 32px rgba(124,58,237,0.45)" }}>
+              style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 8px 32px rgba(202,138,4,0.45)" }}>
               Try it free — no card required
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Why not just use ChatGPT */}
+      <section className="py-16 sm:py-24 px-4" style={{ borderTop: "1px solid var(--border)" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14">
+            <p className="text-sm font-bold tracking-widest mb-3" style={{ color: "#ca8a04" }}>THE DIFFERENCE</p>
+            <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>
+              Why not just ask ChatGPT?
+            </h2>
+            <p className="text-lg max-w-2xl mx-auto" style={{ color: "var(--text-muted)" }}>
+              You could — but a general AI chatbot doesn't know what ATS systems actually score, what recruiters skip, or what keywords your specific job posting is looking for. Craftfolio does.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-5">
+            {[
+              {
+                icon: "M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
+                label: "Built for resumes",
+                chatgpt: "Generic output — you have to know the right questions to ask",
+                craftfolio: "Purpose-built ATS scoring, keyword extraction, and impact analysis trained on how hiring actually works",
+              },
+              {
+                icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
+                label: "Job-matched analysis",
+                chatgpt: "No way to compare your resume against a real job posting without a lot of manual prompting",
+                craftfolio: "Paste any job URL and instantly see your keyword gaps, match score, and exactly what to change",
+              },
+              {
+                icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
+                label: "ATS-safe output",
+                chatgpt: "Rewrites can look great but still fail ATS parsers — no way to verify",
+                craftfolio: "Every rewrite is checked against ATS compatibility rules so it actually gets through automated filters",
+              },
+              {
+                icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15",
+                label: "Your history, saved",
+                chatgpt: "Every session starts from scratch — no memory, no tracking improvement over time",
+                craftfolio: "Every analysis is saved to your account so you can compare versions and see your progress",
+              },
+              {
+                icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+                label: "Cover letter in one click",
+                chatgpt: "Requires you to copy-paste your resume, the job post, write a detailed prompt, and then edit the output",
+                craftfolio: "One click generates a tailored cover letter that already knows your resume and the job — ready to send",
+              },
+              {
+                icon: "M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7",
+                label: "Career pivot tool",
+                chatgpt: "Can help brainstorm, but won't rewrite your actual resume for a different industry with the right framing",
+                craftfolio: "Repositions your entire experience for a new role or industry — not just advice, a fully rewritten resume",
+              },
+            ].map(({ icon, label, chatgpt, craftfolio }) => (
+              <div key={label} className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
+                <div className="px-5 py-4 flex items-center gap-3" style={{ background: "var(--bg-card)" }}>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(202,138,4,0.15)" }}>
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" style={{ color: "#fde047" }}>
+                      <path stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" d={icon} />
+                    </svg>
+                  </div>
+                  <span className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>{label}</span>
+                </div>
+                <div className="px-5 py-4 flex flex-col gap-3" style={{ background: "rgba(0,0,0,0.2)" }}>
+                  <div className="flex gap-2.5">
+                    <span className="text-xs font-bold flex-shrink-0 mt-0.5" style={{ color: "#64748b" }}>ChatGPT</span>
+                    <p className="text-xs leading-relaxed" style={{ color: "#64748b" }}>{chatgpt}</p>
+                  </div>
+                  <div className="flex gap-2.5">
+                    <span className="text-xs font-bold flex-shrink-0 mt-0.5" style={{ color: "#fde047" }}>Craftfolio</span>
+                    <p className="text-xs leading-relaxed" style={{ color: "var(--text-muted)" }}>{craftfolio}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <Link href="/register" className="inline-block font-bold px-8 py-4 rounded-2xl text-white text-base transition-all hover:scale-105"
+              style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 8px 32px rgba(202,138,4,0.45)" }}>
+              See the difference for free →
             </Link>
           </div>
         </div>
@@ -231,20 +314,20 @@ export default function HomePage() {
               <ul className="space-y-2 mb-8 flex-1">
                 {["ATS scoring","Keyword gap analysis","Strengths & weaknesses","No subscription required"].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm" style={{ color: "var(--text-muted)" }}>
-                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" style={{ color: "#a78bfa", flexShrink: 0 }}><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" style={{ color: "#fde047", flexShrink: 0 }}><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
                     {f}
                   </li>
                 ))}
               </ul>
               <Link href="/register" className="block text-center font-bold py-3 rounded-xl transition-all hover:opacity-90"
-                style={{ background: "rgba(124,58,237,0.25)", border: "1px solid rgba(124,58,237,0.4)", color: "#a78bfa" }}>
+                style={{ background: "rgba(202,138,4,0.25)", border: "1px solid rgba(202,138,4,0.4)", color: "#fde047" }}>
                 Get started free
               </Link>
             </div>
             <div className="rounded-2xl p-8 flex flex-col relative overflow-hidden"
-              style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.15), rgba(167,139,250,0.08))", border: "1px solid rgba(124,58,237,0.35)" }}>
-              <div className="absolute top-4 right-4 text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: "rgba(124,58,237,0.30)", color: "#c4b5fd" }}>BEST VALUE</div>
-              <p className="text-sm font-bold mb-2" style={{ color: "#a78bfa" }}>PRO</p>
+              style={{ background: "linear-gradient(135deg, rgba(202,138,4,0.15), rgba(167,139,250,0.08))", border: "1px solid rgba(202,138,4,0.35)" }}>
+              <div className="absolute top-4 right-4 text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: "rgba(202,138,4,0.30)", color: "#fef08a" }}>BEST VALUE</div>
+              <p className="text-sm font-bold mb-2" style={{ color: "#fde047" }}>PRO</p>
               <div className="flex items-end gap-1 mb-1">
                 <span className="text-5xl font-black" style={{ color: "var(--text-primary)" }}>$5</span>
                 <span className="text-base mb-2" style={{ color: "var(--text-muted)" }}>/month</span>
@@ -253,13 +336,13 @@ export default function HomePage() {
               <ul className="space-y-2 mb-8 flex-1">
                 {["Unlimited ATS analyses","Full resume rewrites","Tailored cover letters","Career pivot tool","5 professional templates","Cancel anytime"].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm" style={{ color: "var(--text-muted)" }}>
-                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" style={{ color: "#a78bfa", flexShrink: 0 }}><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" style={{ color: "#fde047", flexShrink: 0 }}><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
                     {f}
                   </li>
                 ))}
               </ul>
               <Link href="/register" className="block text-center font-bold py-3 rounded-xl text-white transition-all hover:scale-105"
-                style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 8px 24px rgba(124,58,237,0.40)" }}>
+                style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 8px 24px rgba(202,138,4,0.40)" }}>
                 Start Pro — $5/mo
               </Link>
             </div>
@@ -294,7 +377,7 @@ export default function HomePage() {
       {/* About */}
       <section id="about" className="py-16 sm:py-24 px-4" style={{ borderTop: "1px solid var(--border)" }}>
         <div className="max-w-3xl mx-auto text-center">
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(124,58,237,0.06) 0%, transparent 70%)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(202,138,4,0.06) 0%, transparent 70%)" }} />
           <h2 className="text-3xl sm:text-4xl font-black mb-6" style={{ color: "var(--text-primary)" }}>About Craftfolio</h2>
           <p className="text-lg leading-relaxed mb-6" style={{ color: "var(--text-muted)" }}>
             Craftfolio was built because the job market is broken. Applicant Tracking Systems reject qualified candidates before any human sees their resume — and most people have no idea it's happening.
@@ -311,11 +394,11 @@ export default function HomePage() {
       {/* CTA */}
       <section className="py-16 sm:py-24 px-4 text-center" style={{ borderTop: "1px solid var(--border)" }}>
         <div className="relative max-w-2xl mx-auto">
-          <div className="absolute inset-0 rounded-3xl pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(124,58,237,0.12) 0%, transparent 70%)" }} />
+          <div className="absolute inset-0 rounded-3xl pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(202,138,4,0.12) 0%, transparent 70%)" }} />
           <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: "var(--text-primary)" }}>Ready to get hired?</h2>
           <p className="mb-8" style={{ color: "var(--text-muted)" }}>Create your free account and analyze your first resume in minutes.</p>
           <Link href="/register" className="inline-block font-bold px-10 py-4 rounded-2xl text-white text-base transition-all hover:scale-105"
-            style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 8px 32px rgba(124,58,237,0.45)" }}>
+            style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 8px 32px rgba(202,138,4,0.45)" }}>
             Create free account →
           </Link>
         </div>
@@ -337,17 +420,6 @@ export default function HomePage() {
             </div>
           </div>
           <p className="text-center text-xs mt-6" style={{ color: "var(--text-dim)" }}>© {new Date().getFullYear()} Craftfolio. All rights reserved.</p>
-          <div className="flex justify-center mt-3">
-            <a href="https://theweekendweb.com" target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs transition-opacity opacity-50 hover:opacity-100"
-              style={{ color: "var(--text-dim)", textDecoration: "none" }}>
-              <span>Built by</span>
-              <span className="font-mono font-semibold" style={{ color: "var(--accent-light)" }}>
-                <span style={{ color: "var(--text-dim)" }}>&lt;</span>tww<span style={{ color: "var(--text-dim)" }}>/&gt;</span>
-              </span>
-              <span>The Weekend Web</span>
-            </a>
-          </div>
         </div>
       </footer>
     </div>

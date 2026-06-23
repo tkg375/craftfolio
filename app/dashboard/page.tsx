@@ -11,10 +11,6 @@ export default async function DashboardPage() {
   const db = await getDb();
   if (!session) redirect("/login");
 
-  // Delete analyses older than 24 hours for this user
-  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  await db.analysis.deleteMany({ where: { userId: session.id, createdAt: { lt: cutoff } } });
-
   const analyses = await db.analysis.findMany({
     where: { userId: session.id },
     orderBy: { createdAt: "desc" },

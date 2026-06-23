@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const db = await getDb();
       const session = await getSession();
-  if (!session || session.email !== 'tgordon1@icloud.com') return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!session || session.email !== 'tgordon1@me.com') return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const messages = await db.supportMessage.findMany({
     orderBy: { createdAt: "desc" },
@@ -21,7 +21,7 @@ export async function GET() {
 export async function PATCH(req: NextRequest) {
   const db = await getDb();
   const session = await getSession();
-  if (!session || session.email !== 'tgordon1@icloud.com') return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!session || session.email !== 'tgordon1@me.com') return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   let body: { id?: string; read?: boolean };
   try { body = await req.json() as typeof body; }

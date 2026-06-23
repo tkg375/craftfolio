@@ -20,10 +20,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  // Idempotency check — Stripe retries webhooks on failure; skip already-processed events
+  // Idempotency: create the record first to block concurrent duplicates
   const processed = await db.webhookEvent.findUnique({ where: { stripeEventId: event.id } });
   if (processed) return NextResponse.json({ received: true });
-  await db.webhookEvent.create({ data: { stripeEventId: event.id } });
+  try {
+    await db.webhookEvent.create({ data: { stripeEventId: event.id } });
+  } catch {
+    // Race: another request already created it
+    return NextResponse.json({ received: true });
+  }
 
   switch (event.type) {
     case "payment_intent.succeeded": {

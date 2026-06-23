@@ -12,7 +12,7 @@ export default function BuyAnalysisButton({ hidePrice }: { returnUrl?: string; h
       <button
         onClick={() => setOpen(true)}
         className="w-full font-semibold px-4 py-2.5 rounded-xl transition-opacity hover:opacity-90 text-sm flex items-center justify-center gap-1.5 text-white mt-2"
-        style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 16px rgba(124,58,237,0.35)" }}
+        style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 4px 16px rgba(202,138,4,0.35)" }}
       >
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
           <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/>

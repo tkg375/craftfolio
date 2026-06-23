@@ -112,7 +112,7 @@ export default function AdminClient() {
   return (
     <div className="min-h-screen px-4 sm:px-6 py-10" style={{ background: "var(--bg-page)" }}>
       {toast && (
-        <div className="fixed top-6 right-6 z-50 px-4 py-3 rounded-xl text-sm font-semibold text-white" style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 20px rgba(124,58,237,0.4)" }}>
+        <div className="fixed top-6 right-6 z-50 px-4 py-3 rounded-xl text-sm font-semibold text-white" style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 4px 20px rgba(202,138,4,0.4)" }}>
           {toast}
         </div>
       )}
@@ -133,15 +133,15 @@ export default function AdminClient() {
         <div className="flex gap-1 mb-8 p-1 rounded-xl w-fit" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
           <button onClick={() => setTab("users")}
             className="px-5 py-2 rounded-lg text-sm font-semibold transition-all"
-            style={tab === "users" ? { background: "linear-gradient(135deg, #7c3aed, #a78bfa)", color: "#fff" } : { color: "var(--text-muted)" }}>
+            style={tab === "users" ? { background: "linear-gradient(135deg, #ca8a04, #fde047)", color: "#fff" } : { color: "var(--text-muted)" }}>
             Users
           </button>
           <button onClick={() => setTab("support")}
             className="px-5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2"
-            style={tab === "support" ? { background: "linear-gradient(135deg, #7c3aed, #a78bfa)", color: "#fff" } : { color: "var(--text-muted)" }}>
+            style={tab === "support" ? { background: "linear-gradient(135deg, #ca8a04, #fde047)", color: "#fff" } : { color: "var(--text-muted)" }}>
             Support
             {unreadCount > 0 && (
-              <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{ background: tab === "support" ? "rgba(255,255,255,0.25)" : "#7c3aed", color: "#fff", minWidth: 20, textAlign: "center" }}>
+              <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{ background: tab === "support" ? "rgba(255,255,255,0.25)" : "#ca8a04", color: "#fff", minWidth: 20, textAlign: "center" }}>
                 {unreadCount}
               </span>
             )}
@@ -170,19 +170,19 @@ export default function AdminClient() {
                       </p>
                     </div>
                     <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{
-                      background: user.plan === "pro" ? "rgba(124,58,237,0.20)" : "rgba(255,255,255,0.07)",
+                      background: user.plan === "pro" ? "rgba(202,138,4,0.20)" : "rgba(255,255,255,0.07)",
                       color: user.plan === "pro" ? "var(--accent-light)" : "var(--text-muted)",
-                      border: `1px solid ${user.plan === "pro" ? "rgba(124,58,237,0.35)" : "var(--border)"}`,
+                      border: `1px solid ${user.plan === "pro" ? "rgba(202,138,4,0.35)" : "var(--border)"}`,
                     }}>
                       {user.plan.toUpperCase()}
                     </span>
                   </div>
 
-                  <div className="flex flex-wrap gap-3 mt-4">
+                  <div className="flex flex-wrap items-center gap-2 mt-4">
                     {user.plan === "free" ? (
                       <button onClick={() => setPlan(user.id, "pro")} disabled={saving === user.id}
-                        className="text-sm font-bold px-4 py-2 rounded-xl text-white disabled:opacity-50 transition-all hover:opacity-90"
-                        style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)" }}>
+                        className="text-sm font-bold px-3 py-2 rounded-xl text-white disabled:opacity-50 transition-all hover:opacity-90 whitespace-nowrap"
+                        style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)" }}>
                         Upgrade to Pro
                       </button>
                     ) : (
@@ -193,17 +193,29 @@ export default function AdminClient() {
                       </button>
                     )}
                     <button onClick={() => setCredits(user.id, 0)} disabled={saving === user.id}
-                      className="text-sm font-semibold px-4 py-2 rounded-xl disabled:opacity-50 transition-all"
+                      className="text-sm font-semibold px-3 py-2 rounded-xl disabled:opacity-50 transition-all whitespace-nowrap"
                       style={{ background: "var(--bg-alt)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
                       Reset Credits
                     </button>
-                    <div className="flex items-center gap-2">
-                      <input type="number" min="1" placeholder="# credits"
-                        value={addCreditsMap[user.id] ?? ""}
-                        onChange={e => setAddCreditsMap(m => ({ ...m, [user.id]: e.target.value }))}
-                        className="text-sm" style={{ width: 100, padding: "0.5rem 0.75rem" }} />
+                    <div className="flex items-center gap-2 ml-auto">
+                      <div className="flex items-center rounded-xl overflow-hidden" style={{ border: "1px solid var(--border)", background: "var(--bg-alt)" }}>
+                        <button
+                          onClick={() => setAddCreditsMap(m => ({ ...m, [user.id]: String(Math.max(1, parseInt(m[user.id] || "1") - 1)) }))}
+                          className="px-2 py-2 text-sm font-bold transition-all hover:opacity-70"
+                          style={{ color: "var(--text-muted)" }}>−</button>
+                        <input
+                          type="number" min="1" placeholder="0"
+                          value={addCreditsMap[user.id] ?? ""}
+                          onChange={e => setAddCreditsMap(m => ({ ...m, [user.id]: e.target.value }))}
+                          className="text-sm text-center"
+                          style={{ width: 48, padding: "0.4rem 0", border: "none", background: "transparent", MozAppearance: "textfield" } as React.CSSProperties} />
+                        <button
+                          onClick={() => setAddCreditsMap(m => ({ ...m, [user.id]: String(parseInt(m[user.id] || "0") + 1) }))}
+                          className="px-2 py-2 text-sm font-bold transition-all hover:opacity-70"
+                          style={{ color: "var(--text-muted)" }}>+</button>
+                      </div>
                       <button onClick={() => giveCredits(user.id)} disabled={saving === user.id || !addCreditsMap[user.id]}
-                        className="text-sm font-bold px-4 py-2 rounded-xl text-white disabled:opacity-50 transition-all"
+                        className="text-sm font-bold px-3 py-2 rounded-xl text-white disabled:opacity-50 transition-all whitespace-nowrap"
                         style={{ background: "#16a34a" }}>
                         Add
                       </button>
@@ -218,12 +230,12 @@ export default function AdminClient() {
           <div className="space-y-3">
             {messages.length === 0 && <p style={{ color: "var(--text-muted)" }}>No support messages yet.</p>}
             {messages.map(msg => (
-              <div key={msg.id} className="rounded-2xl overflow-hidden" style={{ background: "var(--bg-card)", border: `1px solid ${msg.read ? "var(--border)" : "rgba(124,58,237,0.4)"}` }}>
+              <div key={msg.id} className="rounded-2xl overflow-hidden" style={{ background: "var(--bg-card)", border: `1px solid ${msg.read ? "var(--border)" : "rgba(202,138,4,0.4)"}` }}>
                 <button className="w-full text-left px-5 py-4 flex items-start gap-3" onClick={() => {
                   setExpanded(expanded === msg.id ? null : msg.id);
                   if (!msg.read) markRead(msg.id);
                 }}>
-                  {!msg.read && <span className="mt-1.5 shrink-0 w-2 h-2 rounded-full" style={{ background: "#a78bfa" }} />}
+                  {!msg.read && <span className="mt-1.5 shrink-0 w-2 h-2 rounded-full" style={{ background: "#fde047" }} />}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>{msg.name}</p>
@@ -245,7 +257,7 @@ export default function AdminClient() {
                     <p className="text-sm whitespace-pre-wrap" style={{ color: "var(--text-primary)" }}>{msg.message}</p>
                     <a href={`mailto:${msg.email}`}
                       className="inline-block mt-4 text-xs font-semibold px-4 py-2 rounded-xl"
-                      style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", color: "#fff" }}>
+                      style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", color: "#fff" }}>
                       Reply to {msg.email}
                     </a>
                   </div>

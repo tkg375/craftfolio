@@ -30,15 +30,10 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex justify-center mb-6">
-            <span style={{ fontFamily: "AmbarPearl", fontSize: "2.5rem", color: "#a78bfa", lineHeight: 1 }}>Craftfolio</span>
+            <span style={{ fontFamily: "AmbarPearl", fontSize: "2.5rem", color: "#fde047", lineHeight: 1 }}>Craftfolio</span>
           </Link>
           <h1 className="text-2xl font-black mb-1" style={{ color: "var(--text-primary)" }}>Welcome back</h1>
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>Sign in to your account</p>
-        </div>
-
-        <div className="rounded-xl px-4 py-3 mb-4 text-sm" style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.35)" }}>
-          <p className="text-violet-300 font-semibold mb-0.5">Important notice</p>
-          <p className="text-slate-300 text-xs leading-relaxed">We upgraded our database on 05/28/2026. If you had an existing account, please <Link href="/forgot-password" className="underline text-violet-300 font-semibold">reset your password</Link> to regain access.</p>
         </div>
 
         <div className="rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
@@ -54,12 +49,12 @@ export default function LoginPage() {
             {error && (
               <div>
                 <p className="text-sm text-red-400">{error}</p>
-                <Link href="/forgot-password" className="text-xs text-violet-400 hover:text-violet-300 mt-1 inline-block">Forgot your password?</Link>
+                <Link href="/forgot-password" className="text-xs text-yellow-400 hover:text-yellow-300 mt-1 inline-block">Forgot your password?</Link>
               </div>
             )}
             <button type="submit" disabled={loading}
               className="w-full font-bold py-3 rounded-xl text-white disabled:opacity-50 transition-all hover:opacity-90"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 16px rgba(124,58,237,0.35)" }}>
+              style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 4px 16px rgba(202,138,4,0.35)" }}>
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>

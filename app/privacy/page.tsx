@@ -8,7 +8,7 @@ export default function PrivacyPage() {
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-5"
         style={{ background: "rgba(8,8,15,0.90)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)", overflow: "visible" }}>
         <Link href="/" style={{ overflow: "visible" }}>
-          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "#a78bfa", lineHeight: 1.4, display: "block", paddingTop: "4px" }}>Craftfolio</span>
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "2rem", color: "#fde047", lineHeight: 1.4, display: "block", paddingTop: "4px" }}>Craftfolio</span>
         </Link>
         <Link href="/" className="text-sm font-medium px-4 py-2 rounded-xl transition-all"
           style={{ color: "var(--text-muted)", background: "var(--bg-card)", border: "1px solid var(--border)" }}>
@@ -39,7 +39,7 @@ export default function PrivacyPage() {
           ))}
           <div>
             <h2 className="font-bold mb-2 text-base" style={{ color: "var(--text-primary)" }}>10. Contact</h2>
-            <p>Questions about your data? <Link href="/support" style={{ color: "#a78bfa" }} className="underline hover:opacity-80">Click here</Link> to contact support.</p>
+            <p>Questions about your data? <Link href="/support" style={{ color: "#fde047" }} className="underline hover:opacity-80">Click here</Link> to contact support.</p>
           </div>
         </div>
       </div>

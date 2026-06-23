@@ -21,7 +21,7 @@ export default function HistoryClient({ analyses }: { analyses: Analysis[] }) {
         <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>Upload your resume to get started.</p>
         <Link href="/resume-help"
           className="inline-block text-sm font-bold px-5 py-2.5 rounded-xl text-white"
-          style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)" }}>
+          style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)" }}>
           Analyze Resume
         </Link>
       </div>

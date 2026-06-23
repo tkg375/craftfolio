@@ -8,7 +8,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 const appearance = {
   theme: "night" as const,
   variables: {
-    colorPrimary: "#7c3aed",
+    colorPrimary: "#ca8a04",
     colorBackground: "#13131f",
     colorText: "#e2e8f0",
     colorDanger: "#f87171",
@@ -70,7 +70,7 @@ function CheckoutForm({
         </button>
         <button type="submit" disabled={!stripe || loading}
           className="flex-1 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-50 transition-all hover:opacity-90"
-          style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)" }}>
+          style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)" }}>
           {loading ? "Processing..." : type === "pro" ? "Subscribe — $5/mo" : "Pay — $1.00"}
         </button>
       </div>
@@ -96,7 +96,7 @@ export default function PaymentModal({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ type }),
     })
-      .then(r => r.json())
+      .then(async r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then((data: { clientSecret?: string; error?: string }) => {
         if (data.clientSecret) setClientSecret(data.clientSecret);
         else setFetchError(data.error ?? "Could not start checkout");
@@ -115,7 +115,7 @@ export default function PaymentModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
       style={{ background: "rgba(0,0,0,0.70)", backdropFilter: "blur(8px)" }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="w-full max-w-md rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto" style={{ background: "#0d0d1a", border: "1px solid rgba(124,58,237,0.30)" }}>
+      <div className="w-full max-w-md rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto" style={{ background: "#0d0d1a", border: "1px solid rgba(202,138,4,0.30)" }}>
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-lg font-black" style={{ color: "#f1f5f9" }}>
@@ -136,7 +136,7 @@ export default function PaymentModal({
 
         {!clientSecret && !fetchError && (
           <div className="flex justify-center py-8">
-            <svg className="animate-spin h-6 w-6" fill="none" viewBox="0 0 24 24" style={{ color: "#7c3aed" }}>
+            <svg className="animate-spin h-6 w-6" fill="none" viewBox="0 0 24 24" style={{ color: "#ca8a04" }}>
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
             </svg>

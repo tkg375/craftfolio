@@ -17,9 +17,9 @@ a, button, [role="button"] { cursor: pointer; }
 html { scroll-behavior: smooth; }
 
 :root {
-  --accent: #7c3aed;
-  --accent-light: #a78bfa;
-  --accent-dark: #5b21b6;
+  --accent: #ca8a04;
+  --accent-light: #fde047;
+  --accent-dark: #854d0e;
   --accent-glow: rgba(124, 58, 237, 0.35);
 
   --bg-page: #08080f;
@@ -38,15 +38,15 @@ html { scroll-behavior: smooth; }
 
   --border: rgba(255,255,255,0.08);
   --border-subtle: rgba(255,255,255,0.07);
-  --border-accent: rgba(124,58,237,0.40);
+  --border-accent: rgba(202,138,4,0.40);
 
-  --shadow-glow: 0 0 40px rgba(124,58,237,0.20);
+  --shadow-glow: 0 0 40px rgba(202,138,4,0.20);
   --shadow-card: 0 4px 24px rgba(0,0,0,0.40);
   --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
   --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
 
-  --scrollbar-thumb: rgba(124,58,237,0.3);
-  --scrollbar-thumb-hover: rgba(124,58,237,0.5);
+  --scrollbar-thumb: rgba(202,138,4,0.3);
+  --scrollbar-thumb-hover: rgba(202,138,4,0.5);
 }
 
 body {
@@ -74,6 +74,8 @@ input, textarea, select {
 }
 input:focus, textarea:focus, select:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+  box-shadow: 0 0 0 3px rgba(202,138,4,0.15);
 }
 input::placeholder, textarea::placeholder { color: var(--text-dim); }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }

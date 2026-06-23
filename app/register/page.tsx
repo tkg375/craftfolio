@@ -30,7 +30,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex justify-center mb-6">
-            <span style={{ fontFamily: "AmbarPearl", fontSize: "2.5rem", color: "#a78bfa", lineHeight: 1 }}>Craftfolio</span>
+            <span style={{ fontFamily: "AmbarPearl", fontSize: "2.5rem", color: "#fde047", lineHeight: 1 }}>Craftfolio</span>
           </Link>
           <h1 className="text-2xl font-black mb-1" style={{ color: "var(--text-primary)" }}>Create your account</h1>
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>Free to start. No credit card required.</p>
@@ -39,7 +39,7 @@ export default function RegisterPage() {
         <div className="rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
           <div className="flex flex-wrap gap-2 mb-5">
             {["3 free analyses", "No card needed"].map(f => (
-              <span key={f} className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(124,58,237,0.15)", color: "var(--accent-light)", border: "1px solid rgba(124,58,237,0.25)" }}>{f}</span>
+              <span key={f} className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(202,138,4,0.15)", color: "var(--accent-light)", border: "1px solid rgba(202,138,4,0.25)" }}>{f}</span>
             ))}
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -54,7 +54,7 @@ export default function RegisterPage() {
             {error && <p className="text-sm text-red-400">{error}</p>}
             <button type="submit" disabled={loading}
               className="w-full font-bold py-3 rounded-xl text-white disabled:opacity-50 transition-all hover:opacity-90"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 16px rgba(124,58,237,0.35)" }}>
+              style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 4px 16px rgba(202,138,4,0.35)" }}>
               {loading ? "Creating account..." : "Create Free Account"}
             </button>
           </form>

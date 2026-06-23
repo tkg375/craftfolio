@@ -3,6 +3,8 @@ import { getSession } from "@/lib/auth";
 import { scoreResume } from "@/lib/gemini";
 import { checkAndDecrementCredits } from "@/lib/checkLimit";
 import { getDb } from "@/lib/db";
+import { extractTextFromPdf } from "@/lib/pdfExtract";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 export const dynamic = "force-dynamic";
 
@@ -13,12 +15,7 @@ export async function POST(req: NextRequest) {
 
   const limitResult = await checkAndDecrementCredits(session.id, db);
   if (!limitResult.allowed) {
-  
-  // Delete analyses older than 24 hours for this user
-  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  await db.analysis.deleteMany({ where: { userId: session.id, createdAt: { lt: cutoff } } });
-
-  return NextResponse.json({ error: limitResult.reason ?? "Limit reached" }, { status: 402 });
+    return NextResponse.json({ error: limitResult.reason ?? "Limit reached" }, { status: 402 });
   }
 
   let body: { resumeText?: string; jobDescription?: string; resumePdfBase64?: string; mode?: string };
@@ -36,26 +33,41 @@ export async function POST(req: NextRequest) {
   if (!resumeText && !resumePdfBase64)
     return NextResponse.json({ error: "No resume content provided" }, { status: 400 });
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const { env } = await getCloudflareContext({ async: true });
+  const apiKey = (env as unknown as Record<string, string>).OPENAI_API_KEY || process.env.OPENAI_API_KEY;
   if (!apiKey) return NextResponse.json({ error: "API key not configured" }, { status: 500 });
+
+  let effectiveText = resumeText;
+  if (!effectiveText && resumePdfBase64) {
+    try {
+      effectiveText = await extractTextFromPdf(resumePdfBase64);
+    } catch {
+      return NextResponse.json({ error: "Could not extract text from PDF. Please paste your resume as text instead." }, { status: 400 });
+    }
+  }
 
   let analysis;
   try {
-    analysis = await scoreResume(apiKey, resumeText, jobDescription, resumePdfBase64);
+    analysis = await scoreResume(apiKey, effectiveText, jobDescription);
   } catch (err) {
-    await db.user.update({ where: { id: session.id }, data: { credits: { increment: 1 } } });
+    try { await db.user.update({ where: { id: session.id }, data: { credits: { increment: 1 } } }); }
+    catch (refundErr) { console.error("Credit refund failed:", refundErr); }
     const msg = err instanceof Error ? err.message : String(err);
     console.error("Gemini error:", msg);
     return NextResponse.json({ error: `Analysis failed: ${msg}` }, { status: 500 });
   }
 
-  await db.analysis.create({
-    data: {
-      userId: session.id,
-      type: mode === "job" ? "resume_job" : "resume",
-      result: JSON.stringify(analysis),
-    },
-  });
+  try {
+    await db.analysis.create({
+      data: {
+        userId: session.id,
+        type: mode === "job" ? "resume_job" : "resume",
+        result: JSON.stringify(analysis),
+      },
+    });
+  } catch (err) {
+    console.error("Failed to save analysis:", err);
+  }
 
   return NextResponse.json({ analysis });
 }

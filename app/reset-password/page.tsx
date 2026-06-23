@@ -18,7 +18,7 @@ function ResetPasswordForm() {
     return (
       <div className="text-center">
         <p className="text-red-400 mb-4">Invalid reset link.</p>
-        <Link href="/forgot-password" className="text-violet-400 hover:text-violet-300 text-sm">Request a new one</Link>
+        <Link href="/forgot-password" className="text-yellow-400 hover:text-yellow-300 text-sm">Request a new one</Link>
       </div>
     );
   }
@@ -69,7 +69,7 @@ function ResetPasswordForm() {
           required
           autoFocus
           placeholder="At least 8 characters"
-          className="w-full rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder-slate-500"
+          className="w-full rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500 placeholder-slate-500"
           style={{ background: "var(--border-subtle)", border: "1px solid rgba(255,255,255,0.08)" }}
         />
       </div>
@@ -81,7 +81,7 @@ function ResetPasswordForm() {
           onChange={e => setConfirm(e.target.value)}
           required
           placeholder="Repeat your password"
-          className="w-full rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder-slate-500"
+          className="w-full rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500 placeholder-slate-500"
           style={{ background: "var(--border-subtle)", border: "1px solid rgba(255,255,255,0.08)" }}
         />
       </div>
@@ -92,7 +92,7 @@ function ResetPasswordForm() {
         type="submit"
         disabled={loading}
         className="w-full font-semibold py-3 rounded-xl text-white hover:opacity-90 disabled:opacity-50 transition-all"
-        style={{ background: "linear-gradient(135deg, #5b21b6, #7c3aed)" }}
+        style={{ background: "linear-gradient(135deg, #854d0e, #ca8a04)" }}
       >
         {loading ? "Updating..." : "Update Password"}
       </button>
@@ -106,7 +106,7 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex justify-center mb-6">
-            <span style={{ fontFamily: "AmbarPearl", fontSize: "2.5rem", color: "#a78bfa", lineHeight: 1 }}>Craftfolio</span>
+            <span style={{ fontFamily: "AmbarPearl", fontSize: "2.5rem", color: "#fde047", lineHeight: 1 }}>Craftfolio</span>
           </Link>
           <h1 className="text-2xl font-black mb-1" style={{ color: "var(--text-primary)" }}>Set a new password</h1>
         </div>

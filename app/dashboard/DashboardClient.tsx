@@ -36,12 +36,12 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5"
         style={{ background: "rgba(8,8,15,0.90)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)", overflow: "visible" }}>
         <Link href="/dashboard" className="flex items-center shrink-0" style={{ overflow: "visible" }}>
-          <span style={{ fontFamily: "AmbarPearl", fontSize: "clamp(1.4rem, 5vw, 2rem)", color: "#a78bfa", lineHeight: 1.4, display: "block", paddingTop: "4px" }}>Craftfolio</span>
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "clamp(1.4rem, 5vw, 2rem)", color: "#fde047", lineHeight: 1.4, display: "block", paddingTop: "4px" }}>Craftfolio</span>
         </Link>
         <div className="flex items-center gap-2">
           <Link href="/resume-help"
             className="font-bold px-3 sm:px-4 py-2 rounded-full text-white text-xs sm:text-sm whitespace-nowrap"
-            style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 14px rgba(124,58,237,0.35)" }}>
+            style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 4px 14px rgba(202,138,4,0.35)" }}>
             <span className="hidden sm:inline">Analyze Resume</span>
             <span className="sm:hidden">Analyze</span>
           </Link>
@@ -67,7 +67,7 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
             <button key={t} onClick={() => setTab(t)}
               className="px-5 py-2 rounded-lg text-sm font-semibold capitalize transition-all"
               style={tab === t
-                ? { background: "linear-gradient(135deg, #7c3aed, #a78bfa)", color: "#fff" }
+                ? { background: "linear-gradient(135deg, #ca8a04, #fde047)", color: "#fff" }
                 : { color: "var(--text-muted)" }}>
               {t}
             </button>
@@ -84,7 +84,7 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
             </div>
 
             {!isPro && (
-              <div className="rounded-2xl p-6" style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.25)" }}>
+              <div className="rounded-2xl p-6" style={{ background: "rgba(202,138,4,0.08)", border: "1px solid rgba(202,138,4,0.25)" }}>
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <div>
                     <p className="font-bold mb-1" style={{ color: "var(--text-primary)" }}>Upgrade to Pro</p>
@@ -93,7 +93,7 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
                   <button
                     onClick={() => setTab("profile")}
                     className="text-sm font-bold px-5 py-2.5 rounded-xl text-white whitespace-nowrap"
-                    style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)" }}>
+                    style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)" }}>
                     Upgrade — $5/mo
                   </button>
                 </div>
@@ -104,7 +104,7 @@ export default function DashboardClient({ user, analyses }: { user: User; analys
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <h2 className="font-bold" style={{ color: "var(--text-primary)" }}>Recent Activity</h2>
-                  <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: "rgba(124,58,237,0.15)", color: "#a78bfa" }}>24h</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: "rgba(202,138,4,0.15)", color: "#fde047" }}>24h</span>
                 </div>
                 <Link href="/dashboard/history" className="flex items-center gap-1 text-xs font-semibold transition-all hover:opacity-70" style={{ color: "var(--accent-light)" }}>
                   View all
@@ -182,10 +182,15 @@ function ProfileTab({ user, isPro, onLogout }: { user: User; isPro: boolean; onL
 
   async function openPortal() {
     setBillingLoading(true);
-    const res = await fetch("/api/stripe/portal", { method: "POST" });
-    const data = await res.json() as { url?: string; error?: string };
-    if (data.url) window.location.href = data.url;
-    else setBillingLoading(false);
+    try {
+      const res = await fetch("/api/stripe/portal", { method: "POST" });
+      const data = await res.json() as { url?: string; error?: string };
+      if (data.url) window.location.href = data.url;
+      else { alert(data.error ?? "Could not open billing portal"); setBillingLoading(false); }
+    } catch {
+      alert("Network error. Please try again.");
+      setBillingLoading(false);
+    }
   }
 
   return (
@@ -210,7 +215,7 @@ function ProfileTab({ user, isPro, onLogout }: { user: User; isPro: boolean; onL
             <p className="text-xs font-semibold mb-1" style={{ color: "var(--text-muted)" }}>Plan</p>
             <span className="text-xs font-bold px-2.5 py-1 rounded-full"
               style={isPro
-                ? { background: "rgba(124,58,237,0.20)", color: "var(--accent-light)", border: "1px solid rgba(124,58,237,0.30)" }
+                ? { background: "rgba(202,138,4,0.20)", color: "var(--accent-light)", border: "1px solid rgba(202,138,4,0.30)" }
                 : { background: "rgba(255,255,255,0.06)", color: "var(--text-muted)", border: "1px solid var(--border)" }}>
               {isPro ? "Pro — Unlimited" : "Free"}
             </span>
@@ -229,8 +234,8 @@ function ProfileTab({ user, isPro, onLogout }: { user: User; isPro: boolean; onL
 
         {isPro ? (
           <>
-            <div className="flex items-center gap-3 p-3 rounded-xl mb-4" style={{ background: "rgba(124,58,237,0.10)", border: "1px solid rgba(124,58,237,0.25)" }}>
-              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" style={{ color: "#a78bfa", flexShrink: 0 }}><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <div className="flex items-center gap-3 p-3 rounded-xl mb-4" style={{ background: "rgba(202,138,4,0.10)", border: "1px solid rgba(202,138,4,0.25)" }}>
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" style={{ color: "#fde047", flexShrink: 0 }}><path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
               <div>
                 <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Pro — $5/month</p>
                 <p className="text-xs" style={{ color: "var(--text-muted)" }}>Unlimited analyses · {user.subscriptionStatus === "active" ? "Active" : user.subscriptionStatus ?? "Active"}</p>
@@ -252,7 +257,7 @@ function ProfileTab({ user, isPro, onLogout }: { user: User; isPro: boolean; onL
             <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>Upgrade to Pro for unlimited analyses at $5/month, or buy individual credits for $1 each.</p>
             <button onClick={() => setPayModal("pro")}
               className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)", boxShadow: "0 4px 16px rgba(124,58,237,0.35)" }}>
+              style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)", boxShadow: "0 4px 16px rgba(202,138,4,0.35)" }}>
               Upgrade to Pro — $5/month
             </button>
             <button onClick={() => setPayModal("credit")}
@@ -315,7 +320,7 @@ function EmptyState() {
       <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>Upload your resume to get started.</p>
       <Link href="/resume-help"
         className="inline-block text-sm font-bold px-5 py-2.5 rounded-xl text-white"
-        style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)" }}>
+        style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)" }}>
         Analyze Resume
       </Link>
     </div>

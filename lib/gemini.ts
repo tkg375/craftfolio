@@ -1,46 +1,59 @@
-const GEMINI_MODEL = "gemini-3.5-flash";
+const OPENAI_MODEL = "gpt-4o";
+const OPENAI_MODEL_REWRITE = "gpt-4o";
+const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
 function parseJson<T>(raw: string): T {
   try {
     return JSON.parse(raw) as T;
   } catch {
-    console.error("Failed to parse Gemini JSON:", raw.slice(0, 500));
+    console.error("Failed to parse OpenAI JSON:", raw.slice(0, 500));
     throw new Error("Invalid response from AI. Please try again.");
   }
 }
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
-async function callGemini(apiKey: string, parts: unknown[]): Promise<string> {
-  const res = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+async function callOpenAI(apiKey: string, prompt: string, jsonMode = true, model = OPENAI_MODEL, maxTokens = 4096): Promise<string> {
+  const body: Record<string, unknown> = {
+    model,
+    messages: [{ role: "user", content: prompt }],
+    max_tokens: maxTokens,
+  };
+  if (jsonMode) {
+    body.response_format = { type: "json_object" };
+  }
+
+  const res = await fetch(OPENAI_API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ contents: [{ parts }] }),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(body),
     signal: AbortSignal.timeout(120000),
   });
 
   if (!res.ok) {
     const err = await res.text();
-    console.error(`Gemini ${res.status}:`, err);
-    throw new Error(`Gemini API error ${res.status}`);
+    console.error(`OpenAI ${res.status}:`, err);
+    throw new Error(`OpenAI API error ${res.status}`);
   }
 
-  const json = await res.json() as { candidates?: { content: { parts: { text?: string }[] } }[] };
-  const parts2 = json.candidates?.[0]?.content?.parts ?? [];
-  const text = parts2.map(p => p.text).filter(Boolean).join("").trim();
+  const json = await res.json() as { choices?: { message: { content: string } }[] };
+  const text = json.choices?.[0]?.message?.content?.trim();
   if (!text) {
-    console.error("Gemini empty response:", JSON.stringify(json));
-    throw new Error("Empty response from Gemini");
+    console.error("OpenAI empty response:", JSON.stringify(json));
+    throw new Error("Empty response from AI");
   }
-  // Strip markdown code fences if present
-  return text.replace(/^```json\s*/i, "").replace(/```\s*$/, "").trim();
+  return text;
 }
 
 export async function scoreResume(
   apiKey: string,
   resumeText?: string,
   jobDescription?: string,
-  resumePdfBase64?: string
+  _resumePdfBase64?: string
 ): Promise<ResumeAnalysis> {
+  if (!resumeText) throw new Error("Resume text is required.");
+
   const jobContext = jobDescription
     ? `\n\nJob Description:\n${jobDescription}`
     : "\n\nNo job description provided — evaluate against general best practices.";
@@ -135,16 +148,47 @@ CRITICAL — evaluate all five of these issue categories:
    - Function-first organization when chronological is expected
    - Skills section with outdated tools/technologies
 
-Flag every section that fails any of these criteria. Be specific — name the section and the exact issue.${jobContext}`;
+Flag every section that fails any of these criteria. Be specific — name the section and the exact issue.${jobContext}
 
-  const parts: unknown[] = [];
-  if (resumePdfBase64) {
-    parts.push({ inlineData: { mimeType: "application/pdf", data: resumePdfBase64 } });
-  }
-  parts.push({ text: resumeText ? `${prompt}\n\nResume:\n${resumeText}` : prompt });
+Resume:
+${resumeText}`;
 
-  const raw = await callGemini(apiKey, parts);
+  const raw = await callOpenAI(apiKey, prompt, true);
   return parseJson<ResumeAnalysis>(raw);
+}
+
+export interface EmploymentEntry {
+  company: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+}
+
+export async function extractEmploymentDates(
+  apiKey: string,
+  resumeText?: string,
+  _resumePdfBase64?: string
+): Promise<EmploymentEntry[]> {
+  if (!resumeText) throw new Error("Resume text is required.");
+
+  const prompt = `Extract all work experience entries from this resume. Respond with ONLY a raw JSON array (no markdown, no code fences) where each item has exactly these fields:
+{"company":"string","title":"string","startDate":"string","endDate":"string"}
+
+Rules:
+- startDate and endDate must use "Month Year" format (e.g. "January 2020") whenever the information is available
+- If only a year is available, use just the year (e.g. "2020")
+- For current/ongoing roles use "Present" as the endDate
+- If a date is completely missing or unreadable, use "Unknown"
+- List entries in reverse chronological order (most recent first)
+- Include every job, internship, or work experience listed
+- Return an empty array [] if no work experience is found
+Return ONLY the JSON array. No explanation.
+
+Resume:
+${resumeText}`;
+
+  const raw = await callOpenAI(apiKey, prompt, true);
+  return parseJson<EmploymentEntry[]>(raw);
 }
 
 export async function rewriteResume(
@@ -152,12 +196,18 @@ export async function rewriteResume(
   analysis: ResumeAnalysis,
   jobDescription?: string,
   originalResume?: string,
-  resumePdfBase64?: string,
+  _resumePdfBase64?: string,
   templateAddendum?: string,
   targetProfession?: string,
-  titleSubstitutions?: { from: string; to: string }[]
+  titleSubstitutions?: { from: string; to: string }[],
+  correctedDates?: EmploymentEntry[]
 ): Promise<string> {
+  if (!originalResume) throw new Error("Original resume text is required.");
+
   const jobContext = jobDescription ? `\n\nTARGET JOB DESCRIPTION:\n${jobDescription}` : "";
+  const correctedDatesContext = correctedDates && correctedDates.length > 0
+    ? `\n\nEMPLOYMENT DATE CORRECTIONS: The user has verified and corrected these employment dates. Use EXACTLY these dates in the resume — do not alter them:\n${correctedDates.map(e => `• ${e.title} at ${e.company}: ${e.startDate} – ${e.endDate}`).join("\n")}`
+    : "";
   const titleSubstitutionsContext = titleSubstitutions && titleSubstitutions.length > 0
     ? `\n\nJOB TITLE UPDATES: Replace the following job titles throughout the resume (in the EXPERIENCE section headers and anywhere else they appear). Use the exact replacement title given — do NOT alter seniority or add extra words:\n${titleSubstitutions.map(s => `• "${s.from}" → "${s.to}"`).join("\n")}`
     : "";
@@ -168,7 +218,15 @@ export async function rewriteResume(
   const weaknesses = analysis.weaknesses.map(w => `- ${w.point}: ${w.explanation}`).join("\n");
   const suggestions = analysis.suggestions.map(s => `- [${s.priority}] ${s.action}: ${s.explanation}`).join("\n");
 
-  const prompt = `You are a Certified Professional Resume Writer (CPRW) with 20+ years placing candidates at Fortune 500 companies. Your resumes pass ATS at 90%+ and get callbacks. You write resumes that read like a real human wrote them — not an AI, not a template. Recruiters notice the difference.${professionContext}
+  const prompt = `You are a Certified Professional Resume Writer (CPRW) with 20+ years placing candidates at Fortune 500 companies. Your resumes consistently pass ATS at 90%+ and generate interview callbacks within 2 weeks. You write resumes that read like a real human wrote them — confident, specific, and impossible to ignore. Recruiters immediately notice the difference between your work and a generic AI output.${professionContext}
+
+═══════════════════════════════════════════
+STEP 0 — PRE-ANALYSIS (do this mentally before writing a single word)
+═══════════════════════════════════════════
+Before writing, identify these from the original resume:
+1. The candidate's TOP 3 most impressive quantified achievements (numbers, %, $, team sizes, revenue). These MUST appear prominently in the SUMMARY and as strong bullets. Do not bury them.
+2. The single biggest gap between this candidate's current presentation and the job posting (if provided). The rewrite must close that gap head-on.
+3. The candidate's genuine differentiator — the one thing about their background that a recruiter would remember after reading 100 resumes. Build the SUMMARY around it.${jobDescription ? `\n4. The EXACT job title and company name from the job description below. Use these in the SUMMARY to show this resume was written for THIS role, not sprayed everywhere.` : ""}
 
 ═══════════════════════════════════════════
 EXACT OUTPUT FORMAT — FOLLOW THIS PRECISELY
@@ -176,18 +234,19 @@ EXACT OUTPUT FORMAT — FOLLOW THIS PRECISELY
 Output the resume using EXACTLY this structure and line ordering. Do not deviate.
 
 Line 1: Candidate full name — ALL CAPS, plain text, nothing else on this line
-Line 2: Phone | Email | City, State | LinkedIn (if available) — use | as separator, plain text
+Line 2: Phone | Email | City, State | LinkedIn (ONLY if LinkedIn URL is explicitly present in the original resume — do NOT invent or add one) — use | as separator, plain text
 Line 3: blank line
 
 SUMMARY
-[2-4 sentence paragraph. No bullets. Write in first-person-implied voice (no "I") — direct, confident, specific. Sound like the candidate wrote this themselves after a lot of thought, not like a template was filled in.
+[3-4 sentences. No bullets. Write in first-person-implied voice (no "I") — direct, confident, specific. Sound like the candidate sat down, thought hard about what makes them valuable, and wrote this themselves. Not a form. Not a template.
 
-Follow the WHO framework for the summary itself:
-- Sentence 1 (WHO): Title + total years + the one thing that makes them distinctively valuable — not a formula, a real differentiator
-- Sentence 2 (HOW): The specific way they create results — methodology, approach, or strength that recruiters don't see every day
-- Sentence 3–4 (OUTCOME): The scope and scale of their impact; close with what they're targeting next if a job description is provided
+SUMMARY FRAMEWORK:
+- Sentence 1: [Title] with [X] years in [specific domain/industry]. Lead with their single most impressive credential or achievement — the thing that earns the right to keep reading. Do NOT open with "Dynamic", "Results-driven", "Seasoned", "Dedicated", "Passionate", "Proven track record", "Highly motivated", or any cliché.
+- Sentence 2: One concrete, specific thing they're genuinely great at — with a real example or number from their background. "Generated $2.4M in new contracts" beats "strong track record of sales success."
+- Sentence 3: How they work / what they bring to a team / the approach that makes them effective. Should feel personal and specific, not generic.
+- Sentence 4 (if job description provided): Explicitly connect to the TARGET ROLE — "Seeking to bring [specific strength] to [company name or role title] to [specific outcome they'll drive]." Make clear this resume was written for THIS job.
 
-Do NOT open with: "Dynamic", "Results-driven", "Seasoned", "Dedicated", "Passionate", "Proven track record", or any variation of those phrases.]
+SUMMARY MUST include at least one real number, %, $, or scale metric from the original resume. If there are none, use scope language (team size, geographic reach, client count). The goal: a recruiter reads sentence 1 and cannot put it down.]
 
 CORE COMPETENCIES
 [Comma-separated keywords on ONE line — 9 to 12 terms. No bullets. No columns. Pick terms that reflect how this person actually works, not just industry buzzwords.]
@@ -273,6 +332,7 @@ HUMAN WRITING PRINCIPLES — READ CAREFULLY
 CONTENT RULES
 ═══════════════════════════════════════════
 - Preserve ALL real experience, dates, companies, and education — never fabricate
+- NEVER invent contact information (phone, email, LinkedIn, website, address) that does not appear in the original resume
 - Weave in missing keywords naturally — they must read as part of the sentence, not bolted on: ${missingKeywords || "none identified"}
 ${weaknesses ? `- Fix these weaknesses:\n${weaknesses}` : ""}
 ${suggestions ? `- Apply these improvements:\n${suggestions}` : ""}
@@ -288,22 +348,21 @@ CRITICAL OUTPUT RULES
 - NO XML, HTML, or angle-bracket tags of any kind
 - NO commentary, preamble, explanation, or notes
 - NO markdown fences
-- First character of your response MUST be the candidate's name${titleSubstitutionsContext}${jobContext}${originalResume ? `\n\nORIGINAL RESUME:\n${originalResume}` : ""}`;
+- First character of your response MUST be the candidate's name${correctedDatesContext}${titleSubstitutionsContext}${jobContext}
 
-  const parts: unknown[] = [];
-  if (resumePdfBase64) {
-    parts.push({ inlineData: { mimeType: "application/pdf", data: resumePdfBase64 } });
-  }
-  parts.push({ text: prompt });
+ORIGINAL RESUME:
+${originalResume}`;
 
-  return callGemini(apiKey, parts);
+  return callOpenAI(apiKey, prompt, false, OPENAI_MODEL_REWRITE, 8192);
 }
 
 export async function analyzeNDA(
   apiKey: string,
   text?: string,
-  pdfBase64?: string
+  _pdfBase64?: string
 ): Promise<ContractAnalysis> {
+  if (!text) throw new Error("Document text is required.");
+
   const prompt = `You are a business attorney specializing in confidentiality and non-disclosure agreements. Analyze this NDA and respond with ONLY a raw JSON object (no markdown, no code fences) with exactly these fields:
 {
   "summary": "2-3 sentence plain English summary (mutual vs one-sided, parties, purpose, duration)",
@@ -318,23 +377,22 @@ export async function analyzeNDA(
 For keyTerms focus on: mutual vs unilateral, duration of confidentiality, definition of confidential information, exclusions from confidentiality, permitted disclosures, return/destruction of materials, governing law, dispute resolution.
 For redFlags look for: overly broad definition of confidential information (covering publicly known info), no expiration date (perpetual NDAs), hidden non-compete or non-solicitation clauses, one-sided terms that only restrict one party, no carve-outs for independently developed info, required disclosure to government/courts without notice, excessive damages clauses, automatic assignment of IP.
 For missingClauses check for: time limit on confidentiality, clear definition of what is confidential, standard exclusions (public domain, independently developed, received from third party), permitted disclosure process, return or destruction of materials clause, mutual obligations if appropriate.
-Be thorough. Flag real risks to the signing party.`;
+Be thorough. Flag real risks to the signing party.
 
-  const parts: unknown[] = [];
-  if (pdfBase64) {
-    parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-  }
-  parts.push({ text: text ? `${prompt}\n\nNDA:\n${text}` : prompt });
+NDA:
+${text}`;
 
-  const raw = await callGemini(apiKey, parts);
+  const raw = await callOpenAI(apiKey, prompt, true);
   return parseJson<ContractAnalysis>(raw);
 }
 
 export async function analyzeEmploymentContract(
   apiKey: string,
   text?: string,
-  pdfBase64?: string
+  _pdfBase64?: string
 ): Promise<ContractAnalysis> {
+  if (!text) throw new Error("Document text is required.");
+
   const prompt = `You are an employment attorney. Analyze this employment contract and respond with ONLY a raw JSON object (no markdown, no code fences) with exactly these fields:
 {
   "summary": "2-3 sentence plain English summary (role, compensation, term, key restrictions)",
@@ -349,23 +407,22 @@ export async function analyzeEmploymentContract(
 For keyTerms focus on: compensation and bonus structure, start date and term, at-will vs fixed term, non-compete scope and duration, non-solicitation clause, IP assignment scope, severance terms, benefits summary, arbitration requirement, governing law.
 For redFlags look for: overbroad non-compete (long duration, wide geography, vague industry restrictions), IP assignment that covers personal-time work unrelated to employer's business, mandatory arbitration waiving class action rights, no severance protection, unilateral modification clauses, clawback provisions, excessive liquidated damages, automatic renewal at lower compensation, probationary period with no protections, non-disparagement that prevents reporting illegal activity.
 For missingClauses check for: clear compensation definition, equity vesting schedule (if applicable), severance terms, defined non-compete geographic and time limits, IP carve-out for personal projects, termination notice requirements, bonus eligibility criteria, reimbursement policy, remote/work-from-home policy.
-Be thorough. Flag real employment risks.`;
+Be thorough. Flag real employment risks.
 
-  const parts: unknown[] = [];
-  if (pdfBase64) {
-    parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-  }
-  parts.push({ text: text ? `${prompt}\n\nEmployment Contract:\n${text}` : prompt });
+Employment Contract:
+${text}`;
 
-  const raw = await callGemini(apiKey, parts);
+  const raw = await callOpenAI(apiKey, prompt, true);
   return parseJson<ContractAnalysis>(raw);
 }
 
 export async function analyzeLease(
   apiKey: string,
   text?: string,
-  pdfBase64?: string
+  _pdfBase64?: string
 ): Promise<ContractAnalysis> {
+  if (!text) throw new Error("Document text is required.");
+
   const prompt = `You are a tenant rights attorney specializing in residential and commercial lease agreements. Analyze this lease and respond with ONLY a raw JSON object (no markdown, no code fences) with exactly these fields:
 {
   "summary": "2-3 sentence plain English summary of the lease (type, parties, term, rent)",
@@ -380,23 +437,22 @@ export async function analyzeLease(
 For keyTerms focus on: monthly rent, security deposit amount, lease term/dates, notice to vacate period, late fees, pet policy, subletting rules, early termination penalty, utilities responsibility, maintenance responsibilities, rent increase terms.
 For redFlags look for: excessive security deposit (over 2 months rent in most states), no habitability guarantee, automatic renewal traps, unreasonable entry rights, one-sided repair responsibility, waived tenant rights, hidden fees, overly broad landlord right to terminate, no grace period for late rent, prohibited subletting without cause.
 For missingClauses check for: move-in inspection clause, security deposit return timeline, repair/maintenance process, notice required for landlord entry, lease renewal terms, early termination process, dispute resolution, what happens if property is sold.
-Be thorough. Flag real tenant risks.`;
+Be thorough. Flag real tenant risks.
 
-  const parts: unknown[] = [];
-  if (pdfBase64) {
-    parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-  }
-  parts.push({ text: text ? `${prompt}\n\nLease Agreement:\n${text}` : prompt });
+Lease Agreement:
+${text}`;
 
-  const raw = await callGemini(apiKey, parts);
+  const raw = await callOpenAI(apiKey, prompt, true);
   return parseJson<ContractAnalysis>(raw);
 }
 
 export async function analyzeCourtDocument(
   apiKey: string,
   text?: string,
-  pdfBase64?: string
+  _pdfBase64?: string
 ): Promise<CourtDocumentAnalysis> {
+  if (!text) throw new Error("Document text is required.");
+
   const prompt = `You are an experienced litigation attorney with deep knowledge of consumer protection law including the FDCPA and FCRA. Analyze this court document and respond with ONLY a raw JSON object (no markdown, no code fences) with exactly these fields:
 {
   "summary": "2-3 sentence plain English summary of what this document is and what it means for the parties",
@@ -442,15 +498,12 @@ For disputeOpportunities:
 - letterType "bureau_dispute": send to credit bureaus to dispute inaccurate reporting under FCRA § 611.
 - letterType "cease_and_desist": when collector should stop all contact.
 - If the document is not debt/credit related (e.g. criminal case, family law, property dispute), set applicable: false and opportunities: [].
-Be thorough. This helps non-lawyers understand serious legal documents.`;
+Be thorough. This helps non-lawyers understand serious legal documents.
 
-  const parts: unknown[] = [];
-  if (pdfBase64) {
-    parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-  }
-  parts.push({ text: text ? `${prompt}\n\nCourt Document:\n${text}` : prompt });
+Court Document:
+${text}`;
 
-  const raw = await callGemini(apiKey, parts);
+  const raw = await callOpenAI(apiKey, prompt, true);
   return parseJson<CourtDocumentAnalysis>(raw);
 }
 
@@ -495,9 +548,11 @@ export interface ContractAnalysis {
 export async function analyzeCollectionLetter(
   apiKey: string,
   text?: string,
-  pdfBase64?: string,
-  imageMimeType?: string
+  _pdfBase64?: string,
+  _imageMimeType?: string
 ): Promise<CollectionLetterAnalysis> {
+  if (!text) throw new Error("Document text is required.");
+
   const prompt = `You are a consumer rights attorney specializing in debt collection law (FDCPA), credit reporting (FCRA), and consumer protection. Analyze this letter received from a debt collector or creditor and respond with ONLY a raw JSON object (no markdown, no code fences) with exactly these fields:
 {
   "creditorName": "string or null — name of the collection agency or original creditor",
@@ -526,15 +581,12 @@ Guidelines:
 - debtValidationWindow: true if the consumer still has 30 days from first contact to request validation (i.e. this appears to be initial communication or recent)
 - statuteOfLimitationsConcern: true if there are signs the debt may be time-barred (old dates, references to very old accounts)
 - riskScore: 0=no real threat, 100=extremely urgent — factor in amount, deadline, and litigation risk
-Be thorough and accurate. Consumer protection law expertise is critical here.`;
+Be thorough and accurate. Consumer protection law expertise is critical here.
 
-  const parts: unknown[] = [];
-  if (pdfBase64) {
-    parts.push({ inlineData: { mimeType: imageMimeType || "application/pdf", data: pdfBase64 } });
-  }
-  parts.push({ text: text ? `${prompt}\n\nLetter:\n${text}` : prompt });
+Letter:
+${text}`;
 
-  const raw = await callGemini(apiKey, parts);
+  const raw = await callOpenAI(apiKey, prompt, true);
   return parseJson<CollectionLetterAnalysis>(raw);
 }
 
@@ -557,106 +609,115 @@ export interface CollectionLetterAnalysis {
   riskScore: number;
 }
 
-export async function analyzeNonCompete(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
+export async function analyzeNonCompete(apiKey: string, text?: string, _pdfBase64?: string): Promise<ContractAnalysis> {
+  if (!text) throw new Error("Document text is required.");
   const prompt = `You are an employment attorney specializing in restrictive covenants. Analyze this non-compete agreement and respond with ONLY a raw JSON object (no markdown, no code fences) in exactly this format:
 {"summary":"2-3 sentences: scope, duration, geography, who it binds","keyTerms":[{"term":"string","value":"string","description":"string"}],"redFlags":[{"issue":"string","severity":"low|medium|high","explanation":"string"}],"missingClauses":[{"clause":"string","importance":"recommended|important|critical","explanation":"string"}],"overallRisk":"low|medium|high","riskScore":0-100,"recommendation":"string"}
 keyTerms: geographic scope, duration, covered activities/industry, consideration offered, carve-outs, governing state law, enforcement remedy (injunction vs damages).
 redFlags: overbroad geography (nationwide with no legitimate business interest), excessive duration (>1-2 years in most states), vague "business activities" definition covering unrelated work, no garden leave payment, non-solicitation of customers you never worked with, attempt to restrict freelance/personal-time work, states with strict non-compete laws (CA, MN, ND, OK — near-unenforceable there).
 missingClauses: specific geographic limits, list of covered competitors, legitimate business interest justification, consideration beyond continued employment, carve-outs for pre-existing clients, severability clause.
-Be thorough — non-competes can devastate careers if signed blindly.`;
-  const parts: unknown[] = [];
-  if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-  parts.push({ text: text ? `${prompt}\n\nNon-Compete Agreement:\n${text}` : prompt });
-  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
+Be thorough — non-competes can devastate careers if signed blindly.
+
+Non-Compete Agreement:
+${text}`;
+  return parseJson<ContractAnalysis>(await callOpenAI(apiKey, prompt, true));
 }
 
-export async function analyzeSeveranceAgreement(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
+export async function analyzeSeveranceAgreement(apiKey: string, text?: string, _pdfBase64?: string): Promise<ContractAnalysis> {
+  if (!text) throw new Error("Document text is required.");
   const prompt = `You are an employment attorney specializing in severance agreements and ADEA/OWBPA compliance. Analyze this severance agreement and respond with ONLY a raw JSON object (no markdown, no code fences) in exactly this format:
 {"summary":"2-3 sentences: severance amount, key releases, time window, notable restrictions","keyTerms":[{"term":"string","value":"string","description":"string"}],"redFlags":[{"issue":"string","severity":"low|medium|high","explanation":"string"}],"missingClauses":[{"clause":"string","importance":"recommended|important|critical","explanation":"string"}],"overallRisk":"low|medium|high","riskScore":0-100,"recommendation":"string"}
 keyTerms: severance amount and payment schedule, COBRA continuation period and cost, equity treatment (vesting acceleration, exercise window), ADEA/OWBPA 21-day review period (45 days if group layoff), 7-day revocation right, claims being released, non-disparagement scope, reference letter commitment, return of property obligations.
 redFlags: waiver of ADEA rights without proper 21/45-day window, waiver of EEOC filing rights (illegal), mutual non-disparagement missing (one-sided), clawback provisions, non-compete or non-solicitation attached with no additional consideration, no COBRA subsidy, release of unknown claims without California-style carve-out, overly broad IP assignment on departure.
 missingClauses: neutral reference letter commitment, ADEA/OWBPA compliant language for workers 40+, COBRA cost information, explicit list of released claims, 7-day revocation window, outplacement services, equity vesting acceleration.
-Highlight the 21-day consideration period prominently if found or missing.`;
-  const parts: unknown[] = [];
-  if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-  parts.push({ text: text ? `${prompt}\n\nSeverance Agreement:\n${text}` : prompt });
-  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
+Highlight the 21-day consideration period prominently if found or missing.
+
+Severance Agreement:
+${text}`;
+  return parseJson<ContractAnalysis>(await callOpenAI(apiKey, prompt, true));
 }
 
-export async function analyzeBusinessPurchaseAgreement(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
+export async function analyzeBusinessPurchaseAgreement(apiKey: string, text?: string, _pdfBase64?: string): Promise<ContractAnalysis> {
+  if (!text) throw new Error("Document text is required.");
   const prompt = `You are a mergers and acquisitions attorney. Analyze this business purchase agreement or letter of intent and respond with ONLY a raw JSON object (no markdown, no code fences) in exactly this format:
 {"summary":"2-3 sentences: deal type, purchase price, structure, key conditions","keyTerms":[{"term":"string","value":"string","description":"string"}],"redFlags":[{"issue":"string","severity":"low|medium|high","explanation":"string"}],"missingClauses":[{"clause":"string","importance":"recommended|important|critical","explanation":"string"}],"overallRisk":"low|medium|high","riskScore":0-100,"recommendation":"string"}
 keyTerms: purchase price and payment structure, earnout terms and milestones, representations and warranties scope, indemnification caps and baskets, closing conditions, working capital adjustment mechanism, seller non-compete post-closing, transition services period, escrow holdback amount and duration.
 redFlags: unlimited indemnification with no cap (expose seller to massive liability), earnout metrics controlled entirely by buyer (sandbagging risk), material adverse change definition too broad, no rep and warranty insurance mentioned for large deals, seller non-compete too long or geographically broad, no working capital peg mechanism, missing MAC carve-outs for industry-wide events, personal guarantees without liability limits.
-missingClauses: indemnification cap (often 10-15% of purchase price), basket/deductible for rep/warranty claims, survival period for representations, working capital target and adjustment process, specific earnout dispute resolution mechanism, IP assignment and registration, employee retention provisions.`;
-  const parts: unknown[] = [];
-  if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-  parts.push({ text: text ? `${prompt}\n\nBusiness Purchase Agreement:\n${text}` : prompt });
-  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
+missingClauses: indemnification cap (often 10-15% of purchase price), basket/deductible for rep/warranty claims, survival period for representations, working capital target and adjustment process, specific earnout dispute resolution mechanism, IP assignment and registration, employee retention provisions.
+
+Business Purchase Agreement:
+${text}`;
+  return parseJson<ContractAnalysis>(await callOpenAI(apiKey, prompt, true));
 }
 
-export async function analyzeHoaDocuments(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
+export async function analyzeHoaDocuments(apiKey: string, text?: string, _pdfBase64?: string): Promise<ContractAnalysis> {
+  if (!text) throw new Error("Document text is required.");
   const prompt = `You are a real estate attorney specializing in community association law (HOAs, condos, co-ops). Analyze this HOA governing document (CC&Rs, bylaws, or rules) and respond with ONLY a raw JSON object (no markdown, no code fences) in exactly this format:
 {"summary":"2-3 sentences: property type, key restrictions, assessment authority, notable rules","keyTerms":[{"term":"string","value":"string","description":"string"}],"redFlags":[{"issue":"string","severity":"low|medium|high","explanation":"string"}],"missingClauses":[{"clause":"string","importance":"recommended|important|critical","explanation":"string"}],"overallRisk":"low|medium|high","riskScore":0-100,"recommendation":"string"}
 keyTerms: monthly/annual assessment amount, special assessment authority (cap and voting threshold), fining authority and process, architectural review requirements, rental restrictions (min rental period, cap on rentals), pet policies, parking rules, reserve fund requirement, board member election process.
 redFlags: board can raise assessments without homeowner vote (unlimited authority), fines with no due process or appeal, restrictions on For Sale signs or political speech (may violate law), prohibition on solar panels or EV chargers (may violate state law), reserve fund below 70% funded (financial health risk), board can amend rules without member vote, overly broad nuisance definitions giving board broad enforcement discretion.
-missingClauses: reserve fund adequacy disclosure, alternative dispute resolution before fines, owner right to inspect financial records, maximum assessment increase per year, clear definition of "common areas" vs owner responsibility, architectural standards in writing.`;
-  const parts: unknown[] = [];
-  if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-  parts.push({ text: text ? `${prompt}\n\nHOA Document:\n${text}` : prompt });
-  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
+missingClauses: reserve fund adequacy disclosure, alternative dispute resolution before fines, owner right to inspect financial records, maximum assessment increase per year, clear definition of "common areas" vs owner responsibility, architectural standards in writing.
+
+HOA Document:
+${text}`;
+  return parseJson<ContractAnalysis>(await callOpenAI(apiKey, prompt, true));
 }
 
-export async function analyzePromissoryNote(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
+export async function analyzePromissoryNote(apiKey: string, text?: string, _pdfBase64?: string): Promise<ContractAnalysis> {
+  if (!text) throw new Error("Document text is required.");
   const prompt = `You are a commercial lending attorney. Analyze this promissory note or loan agreement and respond with ONLY a raw JSON object (no markdown, no code fences) in exactly this format:
 {"summary":"2-3 sentences: loan amount, interest rate, repayment terms, collateral","keyTerms":[{"term":"string","value":"string","description":"string"}],"redFlags":[{"issue":"string","severity":"low|medium|high","explanation":"string"}],"missingClauses":[{"clause":"string","importance":"recommended|important|critical","explanation":"string"}],"overallRisk":"low|medium|high","riskScore":0-100,"recommendation":"string"}
 keyTerms: principal amount, interest rate (fixed vs variable), APR if stated, repayment schedule (amortization), maturity date, prepayment penalty and amount, collateral and security interest, default definition, acceleration clause, personal guarantee requirement, late payment fee.
 redFlags: interest rate above state usury limit, compounding interest not clearly disclosed, acceleration clause with no cure period (immediate full balance due on any default), prepayment penalty that exceeds interest savings, cross-default provisions (default on other loans triggers this one), personal guarantee with unlimited recourse, confession of judgment clause (waives right to defend), auto-renewal at higher rate, balloon payment not clearly disclosed.
-missingClauses: clear APR disclosure, prepayment rights, default cure period and notice requirement, governing law and jurisdiction, loan forgiveness conditions (if applicable), lender's duty to provide payoff statement, right to contest default.`;
-  const parts: unknown[] = [];
-  if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-  parts.push({ text: text ? `${prompt}\n\nPromissory Note / Loan Agreement:\n${text}` : prompt });
-  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
+missingClauses: clear APR disclosure, prepayment rights, default cure period and notice requirement, governing law and jurisdiction, loan forgiveness conditions (if applicable), lender's duty to provide payoff statement, right to contest default.
+
+Promissory Note / Loan Agreement:
+${text}`;
+  return parseJson<ContractAnalysis>(await callOpenAI(apiKey, prompt, true));
 }
 
-export async function analyzePowerOfAttorney(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
+export async function analyzePowerOfAttorney(apiKey: string, text?: string, _pdfBase64?: string): Promise<ContractAnalysis> {
+  if (!text) throw new Error("Document text is required.");
   const prompt = `You are an elder law and estate planning attorney. Analyze this power of attorney document and respond with ONLY a raw JSON object (no markdown, no code fences) in exactly this format:
 {"summary":"2-3 sentences: type of POA, scope of authority, durability, principal and agent","keyTerms":[{"term":"string","value":"string","description":"string"}],"redFlags":[{"issue":"string","severity":"low|medium|high","explanation":"string"}],"missingClauses":[{"clause":"string","importance":"recommended|important|critical","explanation":"string"}],"overallRisk":"low|medium|high","riskScore":0-100,"recommendation":"string"}
 keyTerms: POA type (general, limited, durable, healthcare/medical, springing), principal and agent names, scope of authority granted, effective date and triggering conditions (immediate vs springing), durability (does it survive incapacity), expiration date or conditions, successor agent named, witnessing and notarization requirements.
 redFlags: overly broad "general authority" with no limitations (agent can do anything), no durability clause (POA becomes void when most needed — at incapacity), single agent with no successor named, no accounting requirement for agent, gift-giving powers with no dollar limit (elder financial abuse risk), self-dealing allowed without court approval, no revocation process defined, not properly witnessed/notarized per state law.
 missingClauses: durability clause for financial POAs, successor agent designation, agent compensation terms (paid vs unpaid), accounting and record-keeping requirement, specific prohibited transactions, revocation process, governing state law, healthcare proxy separate from financial POA.
-Note that POA requirements vary significantly by state — flag any missing state-law formalities.`;
-  const parts: unknown[] = [];
-  if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-  parts.push({ text: text ? `${prompt}\n\nPower of Attorney:\n${text}` : prompt });
-  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
+Note that POA requirements vary significantly by state — flag any missing state-law formalities.
+
+Power of Attorney:
+${text}`;
+  return parseJson<ContractAnalysis>(await callOpenAI(apiKey, prompt, true));
 }
 
-export async function analyzeInsurancePolicy(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
+export async function analyzeInsurancePolicy(apiKey: string, text?: string, _pdfBase64?: string): Promise<ContractAnalysis> {
+  if (!text) throw new Error("Document text is required.");
   const prompt = `You are an insurance coverage attorney. Analyze this insurance policy (health, auto, home, life, or other) and respond with ONLY a raw JSON object (no markdown, no code fences) in exactly this format:
 {"summary":"2-3 sentences: policy type, insurer, coverage limits, key exclusions, premium","keyTerms":[{"term":"string","value":"string","description":"string"}],"redFlags":[{"issue":"string","severity":"low|medium|high","explanation":"string"}],"missingClauses":[{"clause":"string","importance":"recommended|important|critical","explanation":"string"}],"overallRisk":"low|medium|high","riskScore":0-100,"recommendation":"string"}
 keyTerms: policy type, coverage limits (per-occurrence and aggregate), deductible amount, premium, policy period, named insured, exclusions list, claims filing deadline, subrogation rights, cancellation terms, coordination of benefits (if health), replacement cost vs actual cash value (if property).
 redFlags: exclusions so broad they swallow most realistic claims, short claims filing window (some policies require notice within days), subrogation waiver absent for business policies, no replacement cost coverage (ACV pays far less for older property), mandatory arbitration for coverage disputes, concurrent causation exclusion, anti-assignment clause preventing you from assigning benefits, pre-existing condition exclusion for health, cancellation for any reason with short notice, no guaranteed renewability.
-missingClauses: replacement cost vs ACV clearly stated, grace period for late premiums, guaranteed renewability or non-cancellation commitment, independent appraisal right for disputed claims, extended reporting period (tail coverage) for claims-made policies, umbrella policy coordination, business interruption coverage details.`;
-  const parts: unknown[] = [];
-  if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-  parts.push({ text: text ? `${prompt}\n\nInsurance Policy:\n${text}` : prompt });
-  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
+missingClauses: replacement cost vs ACV clearly stated, grace period for late premiums, guaranteed renewability or non-cancellation commitment, independent appraisal right for disputed claims, extended reporting period (tail coverage) for claims-made policies, umbrella policy coordination, business interruption coverage details.
+
+Insurance Policy:
+${text}`;
+  return parseJson<ContractAnalysis>(await callOpenAI(apiKey, prompt, true));
 }
 
-export async function analyzeVehiclePurchaseAgreement(apiKey: string, text?: string, pdfBase64?: string): Promise<ContractAnalysis> {
+export async function analyzeVehiclePurchaseAgreement(apiKey: string, text?: string, _pdfBase64?: string): Promise<ContractAnalysis> {
+  if (!text) throw new Error("Document text is required.");
   const prompt = `You are a consumer protection attorney specializing in auto sales. Analyze this vehicle purchase or financing agreement and respond with ONLY a raw JSON object (no markdown, no code fences) in exactly this format:
 {"summary":"2-3 sentences: vehicle, total price, financing terms, key add-ons","keyTerms":[{"term":"string","value":"string","description":"string"}],"redFlags":[{"issue":"string","severity":"low|medium|high","explanation":"string"}],"missingClauses":[{"clause":"string","importance":"recommended|important|critical","explanation":"string"}],"overallRisk":"low|medium|high","riskScore":0-100,"recommendation":"string"}
 keyTerms: vehicle year/make/model/VIN, sale price vs MSRP, trade-in credit, down payment, APR, loan term, monthly payment, total amount financed, total cost of financing, add-ons (GAP insurance, extended warranty, paint protection, tire/wheel), balloon payment if applicable, right to cancel/cooling off period.
 redFlags: spot delivery / yo-yo financing clause (dealer can call back the deal days later at worse terms), payment packing (monthly payment inflated with hidden add-ons), GAP insurance from dealer at 3-5x market price (buy from insurer directly for $200-$300/yr), dealer arbitration clause waiving class action rights, "as-is" sale with no disclosure of known defects, interest rate marked up significantly above buy rate (dealer profit on financing), add-ons added without clear disclosure, odometer mismatch, trade-in value far below market.
-missingClauses: itemized breakdown of all fees, VIN and odometer statement, right to cancel if financing falls through, written warranty terms, condition disclosure for used vehicles, trade-in payoff guarantee.`;
-  const parts: unknown[] = [];
-  if (pdfBase64) parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-  parts.push({ text: text ? `${prompt}\n\nVehicle Purchase Agreement:\n${text}` : prompt });
-  return parseJson<ContractAnalysis>(await callGemini(apiKey, parts));
+missingClauses: itemized breakdown of all fees, VIN and odometer statement, right to cancel if financing falls through, written warranty terms, condition disclosure for used vehicles, trade-in payoff guarantee.
+
+Vehicle Purchase Agreement:
+${text}`;
+  return parseJson<ContractAnalysis>(await callOpenAI(apiKey, prompt, true));
 }
 
-export async function analyzeMedicalBill(apiKey: string, text?: string, pdfBase64?: string, imageMimeType?: string): Promise<MedicalBillAnalysis> {
+export async function analyzeMedicalBill(apiKey: string, text?: string, _pdfBase64?: string, _imageMimeType?: string): Promise<MedicalBillAnalysis> {
+  if (!text) throw new Error("Document text is required.");
   const prompt = `You are a medical billing advocate and patient rights expert. Analyze this medical bill or Explanation of Benefits (EOB) and respond with ONLY a raw JSON object (no markdown, no code fences) in exactly this format:
 {"facilityName":null,"billDate":null,"totalBilled":null,"totalAfterInsurance":null,"patientResponsibility":null,"commonErrors":[{"error":"string","severity":"low|medium|high","explanation":"string","potentialSavings":"string or null"}],"lineItems":[{"code":"string or null","description":"string","amountBilled":null,"flag":"ok|questionable|error|null"}],"patientRights":[{"right":"string","explanation":"string"}],"recommendedActions":[{"action":"string","priority":"HIGH|MEDIUM|LOW","description":"string"}],"summary":"2-3 sentence plain-English summary","overallRisk":"low|medium|high","riskScore":0-100}
 
@@ -670,12 +731,11 @@ commonErrors to check for: duplicate billing (same procedure billed twice), upco
 patientRights: right to itemized bill, right to dispute billing errors, right to apply for financial assistance/charity care, No Surprises Act protections, ERISA appeal rights for employer plans, right to request medical records
 recommendedActions: request itemized bill (always #1 if not already itemized), compare against EOB, call provider billing department with specific dispute, contact insurer to verify payment applied correctly, apply for financial assistance, contact state insurance commissioner if unresolved
 riskScore: 0=clean bill, 100=multiple serious errors or very large balance — weight heavily by dollar amount at stake
-Return only raw JSON.`;
+Return only raw JSON.
 
-  const parts: unknown[] = [];
-  if (pdfBase64) parts.push({ inlineData: { mimeType: imageMimeType || "application/pdf", data: pdfBase64 } });
-  parts.push({ text: text ? `${prompt}\n\nMedical Bill:\n${text}` : prompt });
-  const raw = await callGemini(apiKey, parts);
+Medical Bill:
+${text}`;
+  const raw = await callOpenAI(apiKey, prompt, true);
   return parseJson<MedicalBillAnalysis>(raw);
 }
 
@@ -722,37 +782,71 @@ export async function generateCoverLetter(
   apiKey: string,
   jobDescription: string,
   resumeText?: string,
-  resumePdfBase64?: string
+  _resumePdfBase64?: string
 ): Promise<string> {
-  const prompt = `You are a professional cover letter writer. Write a compelling, tailored cover letter based on the candidate's resume and the target job description.
+  if (!resumeText) throw new Error("Resume text is required.");
 
-COVER LETTER RULES:
-- Address it to "Hiring Manager" (do not invent a name)
-- 3-4 paragraphs, no longer than one page
-- Opening paragraph: hook that immediately connects the candidate's strongest qualification to the role's biggest need — do NOT open with "I am writing to apply for..."
-- Second paragraph: 2-3 specific achievements from the resume that directly map to the job's requirements. Use real numbers and outcomes from the resume.
-- Third paragraph: why THIS company and THIS role specifically — draw from the job description to show genuine interest and role fit
-- Closing paragraph: confident call to action, express enthusiasm for an interview
-- Tone: professional but warm — confident without being arrogant. Sound like a real person, not a template.
-- NO filler phrases: "I am a hard worker", "team player", "passionate about", "I believe I would be a great fit"
-- Sign off with: Sincerely, [Candidate Name]
+  const prompt = `You are a professional cover letter writer who has helped thousands of candidates land interviews at top companies. You write cover letters that feel personal, confident, and impossible to ignore — not templates, not AI fluff.
 
-FORMATTING:
-- Plain text only — no markdown, no bold, no bullets
+═══════════════════════════════════════════
+STEP 0 — PRE-ANALYSIS (do this before writing)
+═══════════════════════════════════════════
+From the job description, identify:
+1. The COMPANY NAME — use it in the letter. Generic "your company" is a red flag.
+2. The ROLE TITLE — use the exact title from the posting.
+3. The TOP 2 REQUIREMENTS the employer cares most about (usually in the first 3 bullets of the job post, or most repeated phrases).
+4. One specific thing about this company or role that would genuinely excite a qualified candidate — a product, market, mission, or challenge mentioned in the posting.
+
+From the resume, identify:
+5. The candidate's SINGLE STRONGEST achievement that maps to requirement #1 above — ideally with a number.
+6. A SECOND achievement that maps to requirement #2 — also specific.
+
+These 2 achievements are the spine of the letter. Everything else supports them.
+
+═══════════════════════════════════════════
+COVER LETTER STRUCTURE
+═══════════════════════════════════════════
+
+PARAGRAPH 1 — THE HOOK (3-4 sentences):
+Do NOT open with "I am writing to apply for..." or any variation.
+Open with the candidate's strongest qualification meeting the role's biggest need — in one punchy sentence. Then add context that earns credibility: years of experience, scale of work, or a relevant credential. Close with a clear statement of what they're bringing to this specific role at this specific company.
+
+BAD: "I am excited to apply for the Marketing Manager position at Acme Corp. I believe my experience makes me a strong fit."
+GOOD: "When [Company] is looking for someone who can take a marketing team from 3 to 30 and double pipeline in under 18 months, that's a challenge I've already solved. Over the past 6 years at [previous company], I led exactly that kind of growth — building the infrastructure, hiring the team, and driving $4.2M in attributed revenue by the time I left."
+
+PARAGRAPH 2 — PROOF (4-5 sentences):
+Two specific, quantified achievements that directly address the top 2 requirements. Tell a micro-story for each:
+- What the situation was
+- What the candidate did specifically
+- What the measurable result was
+Do NOT list bullets. Write this as connected prose. Real numbers required — if the resume has none, use scope language (team size, number of accounts, revenue managed).
+
+PARAGRAPH 3 — WHY THIS COMPANY (3-4 sentences):
+Reference something SPECIFIC from the job description — a product, challenge, mission statement, or growth stage. Show that this isn't a mass-applied letter. Connect that specific thing to something in the candidate's background. One sentence should make it undeniable they've thought about THIS role, not just "any role."
+
+PARAGRAPH 4 — CLOSE (2-3 sentences):
+Confident, not desperate. Express genuine enthusiasm. Request the conversation, not "the opportunity to interview." End on something memorable — a result they'll deliver or a question they're excited to explore with the team.
+
+Sign off with: Sincerely, [Candidate Name from resume]
+
+═══════════════════════════════════════════
+STRICT RULES
+═══════════════════════════════════════════
+- Plain text only — no markdown, no bold, no asterisks, no bullets
 - Full blank line between each paragraph
-- Start directly with the date line using today's date: ${new Date(new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}, then a blank line, then "Hiring Manager" salutation
+- Maximum 400 words in the body (not counting date/salutation/sign-off)
+- Tone: confident, warm, direct. Sound like a high-performer who doesn't need to beg.
+- BANNED phrases: "I am a hard worker", "team player", "passionate about", "I believe I would be a great fit", "I am writing to apply", "I am excited to apply", "I think I would", "Leveraged", "Spearheaded", "Orchestrated", "Synergy", "Results-driven"
+- Start with the date: ${new Date(new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+- Then blank line, then "Dear Hiring Manager,"
 
 Target Job Description:
 ${jobDescription}
 
-Return ONLY the cover letter text. No commentary, no preamble, no explanation.`;
+Candidate Resume:
+${resumeText}
 
-  const parts: unknown[] = [];
-  if (resumePdfBase64) {
-    parts.push({ inlineData: { mimeType: "application/pdf", data: resumePdfBase64 } });
-  }
-  const fullPrompt = resumeText ? `${prompt}\n\nCandidate Resume:\n${resumeText}` : prompt;
-  parts.push({ text: fullPrompt });
+Return ONLY the cover letter text. No commentary, no preamble, no explanation. First character must be the date.`;
 
-  return callGemini(apiKey, parts);
+  return callOpenAI(apiKey, prompt, false, OPENAI_MODEL_REWRITE, 2048);
 }

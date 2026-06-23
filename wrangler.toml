@@ -1,7 +1,18 @@
+account_id = "3869ffbbf462deee55a7a0b1880ffb84"
 name = "craftfolio"
 main = ".open-next/worker.js"
 compatibility_date = "2024-12-18"
 compatibility_flags = ["nodejs_compat"]
+workers_dev = false
+preview_urls = false
+
+[[routes]]
+pattern = "craftfolio.co/*"
+zone_name = "craftfolio.co"
+
+[[routes]]
+pattern = "www.craftfolio.co/*"
+zone_name = "craftfolio.co"
 
 [[d1_databases]]
 binding = "DB"
@@ -11,3 +22,5 @@ database_id = "63944b4b-13b2-48e1-a366-ba4d8216ce77"
 [assets]
 directory = ".open-next/assets"
 binding = "ASSETS"
+
+browser = { binding = "BROWSER" }

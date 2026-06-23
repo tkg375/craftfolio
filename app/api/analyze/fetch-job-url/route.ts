@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getDb } from "@/lib/db";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 export const dynamic = "force-dynamic";
 
@@ -154,13 +155,96 @@ async function fetchAshby(url: string): Promise<string | null> {
   } catch { return null; }
 }
 
-function detectPlatform(url: string): "workday" | "greenhouse" | "lever" | "ashby" | null {
+async function fetchSmartRecruiters(url: string): Promise<string | null> {
+  try {
+    const parsed = new URL(url);
+    // Pattern: smartrecruiters.com/companyname/jobid or careers.company.com with SR embed
+    let company = "", jobId = "";
+    if (parsed.hostname === "jobs.smartrecruiters.com" || parsed.hostname === "www.smartrecruiters.com") {
+      const parts = parsed.pathname.split("/").filter(Boolean);
+      company = parts[0] ?? ""; jobId = parts[1] ?? "";
+    }
+    if (!company || !jobId) return null;
+    const apiRes = await fetch(`https://api.smartrecruiters.com/v1/companies/${company}/postings/${jobId}`, { signal: AbortSignal.timeout(8000) });
+    if (!apiRes.ok) return null;
+    const data = await apiRes.json() as { name?: string; department?: { label?: string }; location?: { city?: string; region?: string }; jobAd?: { sections?: { jobDescription?: { text?: string }; qualifications?: { text?: string }; additionalInformation?: { text?: string } } } };
+    const sections = data.jobAd?.sections;
+    const description = [
+      sections?.jobDescription?.text,
+      sections?.qualifications?.text,
+      sections?.additionalInformation?.text,
+    ].filter(Boolean).map(t => decodeHtmlEntities((t ?? "").replace(/<[^>]*>/g, " ").replace(/\s{2,}/g, " ").trim())).join("\n\n");
+    if (!description) return null;
+    const location = [data.location?.city, data.location?.region].filter(Boolean).join(", ");
+    return `${data.name ?? ""}\n${[data.department?.label, location].filter(Boolean).join(" · ")}\n\n${description}`.slice(0, 8000);
+  } catch { return null; }
+}
+
+async function fetchSaaSHR(url: string): Promise<string | null> {
+  // SaaSHR/iSolved portals are Angular SPAs — try to extract job ID and hit their internal API
+  try {
+    const parsed = new URL(url);
+    if (!parsed.hostname.includes("saashr.com")) return null;
+    // Extract client ID from hostname or path e.g. secure10.saashr.com/ta/6154256.careers
+    const clientMatch = parsed.pathname.match(/\/ta\/(\d+)\.careers/);
+    if (!clientMatch) return null;
+    const clientId = clientMatch[1];
+    // Job detail URLs have the job ID in the hash: #/jobs/detail/JOBID or in query
+    const jobIdHash = parsed.hash.match(/\/jobs\/detail\/([^/?#]+)/)?.[1];
+    const jobIdQuery = parsed.searchParams.get("jobId") ?? parsed.searchParams.get("jid");
+    const jobId = jobIdHash ?? jobIdQuery;
+    if (!jobId) {
+      // No specific job — return null, let ScrapingAnt handle the careers listing page
+      return null;
+    }
+    // Try their internal REST API pattern
+    const apiUrl = `https://${parsed.hostname}/ta/${clientId}.careers/api/json/reply/JobDetails?JobId=${jobId}&lang=en-US`;
+    const apiRes = await fetch(apiUrl, { headers: BROWSER_HEADERS, signal: AbortSignal.timeout(8000) });
+    if (!apiRes.ok) return null;
+    const data = await apiRes.json() as { JobTitle?: string; JobDescription?: string; Requirements?: string; CompanyName?: string };
+    const description = decodeHtmlEntities(((data.JobDescription ?? "") + "\n\n" + (data.Requirements ?? "")).replace(/<[^>]*>/g, " ").replace(/\s{2,}/g, " ").trim());
+    if (!description || description.length < 100) return null;
+    return `${data.JobTitle ?? ""}\n${data.CompanyName ?? ""}\n\n${description}`.slice(0, 8000);
+  } catch { return null; }
+}
+
+async function fetchIcims(url: string): Promise<string | null> {
+  try {
+    const parsed = new URL(url);
+    if (!parsed.hostname.includes("icims.com")) return null;
+    // iCIMS URLs: careers-company.icims.com/jobs/JOBID/job
+    const jobIdMatch = parsed.pathname.match(/\/jobs\/(\d+)/);
+    if (!jobIdMatch) return null;
+    const jobId = jobIdMatch[1];
+    const companySlug = parsed.hostname.split(".")[0]; // careers-company → careers-company
+    const apiRes = await fetch(`https://api.icims.com/customers/${companySlug}/jobs/${jobId}`, {
+      headers: { ...BROWSER_HEADERS, "Accept": "application/json" },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!apiRes.ok) {
+      // Fall back to ld+json from page fetch
+      const pageRes = await fetch(url, { headers: BROWSER_HEADERS, signal: AbortSignal.timeout(10000) });
+      if (!pageRes.ok) return null;
+      const html = await pageRes.text();
+      return extractLdJsonJobPosting(html);
+    }
+    const data = await apiRes.json() as { jobtitle?: string; joblocation?: { formatted?: string }; jobad?: string };
+    const description = decodeHtmlEntities((data.jobad ?? "").replace(/<[^>]*>/g, " ").replace(/\s{2,}/g, " ").trim());
+    if (!description) return null;
+    return `${data.jobtitle ?? ""}\n${data.joblocation?.formatted ?? ""}\n\n${description}`.slice(0, 8000);
+  } catch { return null; }
+}
+
+function detectPlatform(url: string): "workday" | "greenhouse" | "lever" | "ashby" | "smartrecruiters" | "saashr" | "icims" | null {
   try {
     const { hostname } = new URL(url);
     if (hostname.includes("myworkdayjobs.com")) return "workday";
     if (hostname === "boards.greenhouse.io" || hostname.endsWith(".greenhouse.io")) return "greenhouse";
     if (hostname === "jobs.lever.co") return "lever";
     if (hostname === "jobs.ashbyhq.com") return "ashby";
+    if (hostname.includes("smartrecruiters.com")) return "smartrecruiters";
+    if (hostname.includes("saashr.com")) return "saashr";
+    if (hostname.includes("icims.com")) return "icims";
     return null;
   } catch { return null; }
 }
@@ -188,22 +272,31 @@ async function fetchWithScrapingAnt(url: string): Promise<string | null> {
   } catch { return null; }
 }
 
-async function fetchWithLambda(url: string): Promise<string | null> {
-  const lambdaUrl = process.env.BROWSER_LAMBDA_URL;
-  if (!lambdaUrl) return null;
+async function fetchWithCloudfareBrowser(url: string): Promise<string | null> {
   try {
-    const res = await fetch(lambdaUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-api-key": process.env.BROWSER_LAMBDA_API_KEY ?? "" },
-      body: JSON.stringify({ url }),
-      signal: AbortSignal.timeout(30000),
-    });
-    if (!res.ok) return null;
-    const data = await res.json() as { text?: string };
-    const text = data.text ?? null;
-    if (text && text.length > 200_000) return text.slice(0, 8000);
-    return text;
-  } catch { return null; }
+    const { env } = await getCloudflareContext({ async: true });
+    const browser_env = env as unknown as Record<string, unknown>;
+    if (!browser_env.BROWSER) return null;
+
+    const puppeteer = await import("@cloudflare/puppeteer");
+    const browser = await puppeteer.default.launch(browser_env.BROWSER as Parameters<typeof puppeteer.default.launch>[0]);
+    try {
+      const page = await browser.newPage();
+      await page.setUserAgent(BROWSER_HEADERS["User-Agent"]);
+      await page.goto(url, { waitUntil: "networkidle0", timeout: 25000 });
+      const html = await page.content();
+      const ldText = extractLdJsonJobPosting(html);
+      if (ldText) return ldText;
+      const text = await page.evaluate(() => document.body.innerText);
+      if (text && text.length > 200) return text.slice(0, 12000);
+      return null;
+    } finally {
+      await browser.close();
+    }
+  } catch (err) {
+    console.error("Cloudflare browser error:", err);
+    return null;
+  }
 }
 
 // ── Route handler ──────────────────────────────────────────────────────────
@@ -243,7 +336,7 @@ export async function POST(req: NextRequest) {
   // Step 1: platform-specific fast path
   const platform = detectPlatform(url);
   if (platform) {
-    const handlers = { workday: fetchWorkday, greenhouse: fetchGreenhouse, lever: fetchLever, ashby: fetchAshby };
+    const handlers = { workday: fetchWorkday, greenhouse: fetchGreenhouse, lever: fetchLever, ashby: fetchAshby, smartrecruiters: fetchSmartRecruiters, saashr: fetchSaaSHR, icims: fetchIcims };
     const text = await handlers[platform](url);
     if (text && looksLikeJobContent(text)) return NextResponse.json({ text });
   }
@@ -264,8 +357,8 @@ export async function POST(req: NextRequest) {
   const antText = await fetchWithScrapingAnt(url);
   if (antText && looksLikeJobContent(antText)) return NextResponse.json({ text: antText });
 
-  // Step 4: Lambda + Chromium fallback
-  const pageText = await fetchWithLambda(url);
+  // Step 4: Cloudflare Browser Rendering fallback (full JS execution)
+  const pageText = await fetchWithCloudfareBrowser(url);
   if (pageText && looksLikeJobContent(pageText)) return NextResponse.json({ text: pageText });
 
   return NextResponse.json({ error: "This job page couldn't be read automatically. Please paste the job description below.", needsPaste: true }, { status: 422 });

@@ -37,7 +37,7 @@ export default function SupportPage() {
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-5"
         style={{ background: "rgba(8,8,15,0.90)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--border)" }}>
         <Link href="/" className="flex items-center">
-          <span style={{ fontFamily: "AmbarPearl", fontSize: "clamp(1.4rem, 5vw, 2rem)", color: "#a78bfa", lineHeight: 1.4, paddingTop: "4px", display: "block" }}>Craftfolio</span>
+          <span style={{ fontFamily: "AmbarPearl", fontSize: "clamp(1.4rem, 5vw, 2rem)", color: "#fde047", lineHeight: 1.4, paddingTop: "4px", display: "block" }}>Craftfolio</span>
         </Link>
       </nav>
 
@@ -48,10 +48,10 @@ export default function SupportPage() {
         </p>
 
         {status === "success" ? (
-          <div className="rounded-2xl p-8 text-center" style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.25)" }}>
+          <div className="rounded-2xl p-8 text-center" style={{ background: "rgba(202,138,4,0.08)", border: "1px solid rgba(202,138,4,0.25)" }}>
             <p className="text-lg font-bold mb-2" style={{ color: "var(--text-primary)" }}>Message sent!</p>
             <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>We&apos;ll get back to you as soon as possible.</p>
-            <Link href="/" className="text-sm font-semibold" style={{ color: "#a78bfa" }}>← Back to home</Link>
+            <Link href="/" className="text-sm font-semibold" style={{ color: "#fde047" }}>← Back to home</Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -103,7 +103,7 @@ export default function SupportPage() {
               type="submit"
               disabled={status === "loading"}
               className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #a78bfa)" }}>
+              style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)" }}>
               {status === "loading" ? "Sending..." : "Send Message"}
             </button>
           </form>
