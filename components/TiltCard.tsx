@@ -1,5 +1,5 @@
 'use client';
-import { useRef, MouseEvent, CSSProperties, ReactNode } from 'react';
+import { useRef, MouseEvent, CSSProperties, ReactNode, useEffect, useState } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -10,8 +10,14 @@ interface Props {
 
 export default function TiltCard({ children, className = '', style = {}, intensity = 12 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    setIsTouch(window.matchMedia('(hover: none)').matches);
+  }, []);
 
   function onMouseMove(e: MouseEvent<HTMLDivElement>) {
+    if (isTouch) return;
     const el = ref.current;
     if (!el) return;
     const { left, top, width, height } = el.getBoundingClientRect();
@@ -22,9 +28,10 @@ export default function TiltCard({ children, className = '', style = {}, intensi
   }
 
   function onMouseLeave() {
+    if (isTouch) return;
     const el = ref.current;
     if (!el) return;
-    el.style.transform = 'perspective(700px) rotateY(0deg) rotateX(0deg) translateZ(0)';
+    el.style.transform = '';
     el.style.boxShadow = '';
   }
 
@@ -32,7 +39,7 @@ export default function TiltCard({ children, className = '', style = {}, intensi
     <div
       ref={ref}
       className={className}
-      style={{ ...style, transition: 'transform 0.18s ease, box-shadow 0.18s ease', transformStyle: 'preserve-3d', willChange: 'transform' }}
+      style={{ ...style, transition: 'transform 0.18s ease, box-shadow 0.18s ease', willChange: isTouch ? 'auto' : 'transform' }}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
     >

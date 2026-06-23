@@ -116,8 +116,8 @@ export default function HomePage() {
       {/* Hero */}
       <section className="relative flex flex-col items-center justify-center text-center px-4 pt-32 sm:pt-40 pb-24 sm:pb-32 overflow-hidden min-h-[90vh]">
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(202,138,4,0.18) 0%, transparent 65%)" }} />
-        <div className="absolute top-40 left-1/4 w-80 h-80 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(167,139,250,0.10)" }} />
-        <div className="absolute top-40 right-1/4 w-80 h-80 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(202,138,4,0.12)" }} />
+        <div className="absolute top-40 left-1/4 w-40 h-40 sm:w-80 sm:h-80 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(167,139,250,0.10)" }} />
+        <div className="absolute top-40 right-1/4 w-40 h-40 sm:w-80 sm:h-80 rounded-full pointer-events-none blur-3xl" style={{ background: "rgba(202,138,4,0.12)" }} />
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-32 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--bg-page))" }} />
         <div className="relative max-w-4xl mx-auto" style={{ perspective: "1200px" }}>
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.02] tracking-tight mb-6" style={{ color: "var(--text-primary)", textShadow: "0 4px 40px rgba(202,138,4,0.25)" }}>

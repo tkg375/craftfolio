@@ -13,6 +13,14 @@ export default function ScrollReveal({ children, className = '', delay = 0 }: Pr
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    // Respect reduced motion preference
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -23,7 +31,7 @@ export default function ScrollReveal({ children, className = '', delay = 0 }: Pr
           observer.disconnect();
         }
       },
-      { threshold: 0.12 }
+      { threshold: 0.05, rootMargin: '0px 0px -40px 0px' }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -33,7 +41,7 @@ export default function ScrollReveal({ children, className = '', delay = 0 }: Pr
     <div
       ref={ref}
       className={className}
-      style={{ opacity: 0, transform: 'translateY(32px) scale(0.97)', transition: 'opacity 0.6s ease, transform 0.6s ease' }}
+      style={{ opacity: 0, transform: 'translateY(28px) scale(0.98)', transition: 'opacity 0.55s ease, transform 0.55s ease' }}
     >
       {children}
     </div>
