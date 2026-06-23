@@ -61,6 +61,38 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
 
+.card-hover {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.25s ease;
+}
+.card-hover:hover {
+  border-color: rgba(202,138,4,0.45) !important;
+  box-shadow: 0 0 0 1px rgba(202,138,4,0.25), 0 8px 32px rgba(202,138,4,0.15);
+  background: rgba(255,255,255,0.07) !important;
+  transform: translateY(-2px);
+}
+
+.step-hover {
+  transition: transform 0.25s ease;
+}
+.step-hover:hover {
+  transform: translateY(-4px);
+}
+.step-hover:hover .step-icon {
+  box-shadow: 0 0 20px rgba(202,138,4,0.35);
+  border-color: rgba(202,138,4,0.55) !important;
+}
+.step-icon {
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.faq-hover {
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.faq-hover:hover, .faq-hover[open] {
+  border-color: rgba(202,138,4,0.35) !important;
+  background: rgba(255,255,255,0.06) !important;
+}
+
 input, textarea, select {
   background: var(--bg-input);
   border: 1px solid var(--border);
