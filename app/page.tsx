@@ -195,8 +195,8 @@ export default function HomePage() {
                 icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
               },
             ].map(({ step, title, desc, icon }, i) => (
-              <ScrollReveal key={step} delay={i * 100}>
-              <TiltCard className="relative text-center rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.03)" }} intensity={8}>
+              <ScrollReveal key={step} delay={i * 100} className="h-full">
+              <TiltCard className="relative text-center rounded-2xl p-6 h-full" style={{ background: "rgba(255,255,255,0.03)" }} intensity={8}>
                 <div className="step-icon w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center relative"
                   style={{ background: "rgba(202,138,4,0.12)", border: "1px solid rgba(202,138,4,0.25)" }}>
                   <svg width="28" height="28" fill="none" viewBox="0 0 24 24" style={{ color: "#fde047" }}>
