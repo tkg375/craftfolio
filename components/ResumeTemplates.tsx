@@ -48,7 +48,8 @@ function Lines({ lines, titleColor, textColor, bulletColor, fontSize = 10 }: {
           lastWasBullet = true; firstLine = false;
           return <p key={i} style={{ margin: "2px 0 2px 14px", fontSize, color: bulletColor ?? textColor, lineHeight: 1.45 }}>{line}</p>;
         }
-        const isTitle = firstLine || lastWasBullet || nextIsBullet || prevIsMetaLine;
+        const nextIsMetaLine = (lines[i + 1] ?? "").includes(" | ");
+        const isTitle = (firstLine && (nextIsBullet || nextIsMetaLine)) || lastWasBullet || nextIsBullet || prevIsMetaLine;
         firstLine = false; lastWasBullet = false;
         return <p key={i} style={{ fontWeight: isTitle ? 700 : 400, fontSize: isTitle ? fontSize + 0.5 : fontSize, color: isTitle ? titleColor : textColor, margin: isTitle ? "8px 0 1px" : "2px 0", lineHeight: 1.4 }}>{line}</p>;
       })}
@@ -226,7 +227,8 @@ function renderLines(
     const isBullet = line.startsWith("•");
     const nextIsBullet = lines[i + 1]?.startsWith("•") ?? false;
     const prevIsMetaLine = (lines[i - 1] ?? "").includes(" | ");
-    const isTitle = !isBullet && (firstLine || lastWasBullet || nextIsBullet || prevIsMetaLine);
+    const nextIsMetaLine = (lines[i + 1] ?? "").includes(" | ");
+    const isTitle = !isBullet && ((firstLine && (nextIsBullet || nextIsMetaLine)) || lastWasBullet || nextIsBullet || prevIsMetaLine);
 
     if (isBullet) {
       lastWasBullet = true; firstLine = false;
@@ -428,7 +430,8 @@ function buildLineHtml(lines: string[]): string {
       html += `<p class="bullet">${esc(line)}</p>`;
       lastWasBullet = true; firstLine = false;
     } else {
-      const isTitle = firstLine || lastWasBullet || nextIsBullet || prevIsMetaLine;
+      const nextIsMetaLine = (lines[i + 1] ?? "").includes(" | ");
+      const isTitle = (firstLine && (nextIsBullet || nextIsMetaLine)) || lastWasBullet || nextIsBullet || prevIsMetaLine;
       firstLine = false; lastWasBullet = false;
       html += `<p class="${isTitle ? "title" : "text"}">${esc(line)}</p>`;
     }
