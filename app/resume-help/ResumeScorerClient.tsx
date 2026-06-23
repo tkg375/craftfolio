@@ -1217,34 +1217,6 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                       </div>
                     )}
 
-                    {/* Classic Two-Column — serif header + sidebar */}
-                    {t.id === "classic-2col" && (
-                      <div style={{ fontFamily: "Georgia, serif" }}>
-                        <div className="text-center px-3 pt-2.5 pb-1.5">
-                          <div className="h-2 w-16 bg-slate-800 rounded mx-auto mb-1" />
-                          <div className="h-1 w-12 bg-slate-300 rounded mx-auto" />
-                          <div className="border-t border-slate-700 mt-1.5" />
-                        </div>
-                        <div className="flex">
-                          <div className="w-[30%] p-2" style={{ background: "#f8fafc", borderRight: "1px solid #e2e8f0" }}>
-                            {[60, 80, 50, 70, 55].map((w, i) => <div key={i} className="h-1 rounded mb-1" style={{ width: `${w}%`, background: i % 3 === 0 ? "#1e293b" : "#cbd5e1" }} />)}
-                          </div>
-                          <div className="flex-1 p-2 space-y-1.5">
-                            {[0, 1].map(gi => (
-                              <div key={gi}>
-                                <div className="flex items-center gap-1 mb-0.5">
-                                  <div className="h-1 rounded" style={{ width: "1.5rem", background: "#1e293b" }} />
-                                  <div className="flex-1 h-px bg-slate-200" />
-                                </div>
-                                <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
-                                <div className="h-1 w-4/5 rounded bg-slate-100" />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
                     {/* Modern ATS — red header, single col */}
                     {t.id === "modern" && (
                       <div>
@@ -1263,33 +1235,6 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                               <div className="h-1 w-5/6 rounded bg-slate-100" />
                             </div>
                           ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Modern Two-Column — red header + dark sidebar */}
-                    {t.id === "modern-2col" && (
-                      <div>
-                        <div className="px-3 py-2.5" style={{ background: "#DC2626" }}>
-                          <div className="h-2.5 w-20 bg-white/90 rounded mb-1" />
-                          <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.5)" }} />
-                        </div>
-                        <div className="flex">
-                          <div className="w-[30%] p-2" style={{ background: "#1f2937" }}>
-                            {[70, 85, 55, 75, 60].map((w, i) => <div key={i} className="h-1 rounded mb-1" style={{ width: `${w}%`, background: i % 3 === 0 ? "#f87171" : "rgba(255,255,255,0.3)" }} />)}
-                          </div>
-                          <div className="flex-1 p-2 space-y-1.5">
-                            {[0, 1].map(gi => (
-                              <div key={gi}>
-                                <div className="flex items-center gap-1 mb-0.5">
-                                  <div className="h-1 rounded" style={{ width: "1.5rem", background: "#DC2626" }} />
-                                  <div className="flex-1 h-px" style={{ background: "#DC262622" }} />
-                                </div>
-                                <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
-                                <div className="h-1 w-4/5 rounded bg-slate-100" />
-                              </div>
-                            ))}
-                          </div>
                         </div>
                       </div>
                     )}
@@ -1316,33 +1261,6 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                       </div>
                     )}
 
-                    {/* Executive Two-Column — navy header + navy sidebar */}
-                    {t.id === "executive" && (
-                      <div>
-                        <div className="px-3 py-2.5" style={{ background: "#1D4ED8" }}>
-                          <div className="h-2.5 w-20 bg-white/90 rounded mb-1" />
-                          <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.45)" }} />
-                        </div>
-                        <div className="flex">
-                          <div className="w-[28%] p-2 space-y-1.5" style={{ background: "#1e3a8a" }}>
-                            {[16, 20, 14, 18].map((w, i) => <div key={i} className="h-1 rounded" style={{ width: `${w * 4}%`, background: i % 2 === 0 ? "#93c5fd" : "rgba(255,255,255,0.3)" }} />)}
-                          </div>
-                          <div className="flex-1 p-2 space-y-1.5">
-                            {[0, 1].map(gi => (
-                              <div key={gi}>
-                                <div className="flex items-center gap-1 mb-0.5">
-                                  <div className="h-1 rounded" style={{ width: "1.5rem", background: "#1D4ED8" }} />
-                                  <div className="flex-1 h-px" style={{ background: "#1D4ED833" }} />
-                                </div>
-                                <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
-                                <div className="h-1 w-4/5 rounded bg-slate-100" />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
                     {/* Technical ATS — green bar, single col, name left */}
                     {t.id === "technical-ats" && (
                       <div>
@@ -1360,29 +1278,6 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                               </div>
                               <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
                               <div className="h-1 w-5/6 rounded bg-slate-100" />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Technical Two-Column — dark green sidebar */}
-                    {t.id === "technical" && (
-                      <div className="flex h-full">
-                        <div className="w-[30%] p-2" style={{ background: "#064e3b" }}>
-                          <div className="h-2 w-full rounded mb-0.5" style={{ background: "rgba(255,255,255,0.85)" }} />
-                          <div className="h-1 w-4/5 rounded mb-2" style={{ background: "rgba(255,255,255,0.4)" }} />
-                          {[70, 90, 55, 80, 65].map((w, i) => <div key={i} className="h-1 rounded mb-1" style={{ width: `${w}%`, background: i % 3 === 0 ? "#6ee7b7" : "rgba(255,255,255,0.35)" }} />)}
-                        </div>
-                        <div className="flex-1 p-2 space-y-1.5">
-                          {[0, 1].map(gi => (
-                            <div key={gi}>
-                              <div className="flex items-center gap-1 mb-0.5">
-                                <div className="h-1 rounded" style={{ width: "1.5rem", background: "#059669" }} />
-                                <div className="flex-1 h-px" style={{ background: "#05996933" }} />
-                              </div>
-                              <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
-                              <div className="h-1 w-4/5 rounded bg-slate-100" />
                             </div>
                           ))}
                         </div>
@@ -1411,32 +1306,6 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                       </div>
                     )}
 
-                    {/* Entry Two-Column — yellow header + light yellow sidebar */}
-                    {t.id === "entry-2col" && (
-                      <div>
-                        <div className="px-3 py-2.5" style={{ background: "linear-gradient(135deg, #854d0e, #ca8a04)" }}>
-                          <div className="h-2.5 w-20 bg-white/90 rounded mb-1" />
-                          <div className="h-1 w-28 rounded" style={{ background: "rgba(255,255,255,0.5)" }} />
-                        </div>
-                        <div className="flex">
-                          <div className="w-[30%] p-2" style={{ background: "#fefce8", borderRight: "1px solid #fef9c3" }}>
-                            {[65, 80, 50, 70, 55].map((w, i) => <div key={i} className="h-1 rounded mb-1" style={{ width: `${w}%`, background: i % 3 === 0 ? "#ca8a04" : "#fef08a" }} />)}
-                          </div>
-                          <div className="flex-1 p-2 space-y-1.5">
-                            {[0, 1].map(gi => (
-                              <div key={gi}>
-                                <div className="flex items-center gap-1 mb-0.5">
-                                  <div className="h-1 rounded" style={{ width: "1.5rem", background: "#ca8a04" }} />
-                                  <div className="flex-1 h-px" style={{ background: "#ca8a0422" }} />
-                                </div>
-                                <div className="h-1 w-full rounded bg-slate-100 mb-0.5" />
-                                <div className="h-1 w-4/5 rounded bg-slate-100" />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
 
                     {/* Selected overlay */}
                     {selectedTemplate.id === t.id && (
