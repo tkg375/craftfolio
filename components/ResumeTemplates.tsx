@@ -75,7 +75,7 @@ function Section({ header, lines, shStyle, titleColor, textColor, fontSize = 10 
 // ════════════════════════════════════════════════════════════════════
 
 function ClassicTemplate({ r }: { r: ParsedResume }) {
-  const sh: React.CSSProperties = { fontSize: 8.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "2px", color: "#1e293b", borderBottom: "0.75px solid #1e293b", paddingBottom: 2, margin: "16px 0 7px" };
+  const sh: React.CSSProperties = { fontSize: 8.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "2px", color: "#1e293b", borderBottom: "0.75px solid #1e293b", paddingBottom: 5, margin: "16px 0 7px" };
   return (
     <div style={{ fontFamily: "'Georgia', 'Times New Roman', serif", background: "#fff", padding: "36px 52px", color: "#1e293b" }}>
       <div style={{ textAlign: "center", marginBottom: 4 }}>
@@ -89,7 +89,7 @@ function ClassicTemplate({ r }: { r: ParsedResume }) {
 }
 
 function ModernTemplate({ r }: { r: ParsedResume }) {
-  const sh: React.CSSProperties = { fontSize: 8.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "2px", color: "#DC2626", borderBottom: "1px solid #DC2626", paddingBottom: 2, margin: "14px 0 7px" };
+  const sh: React.CSSProperties = { fontSize: 8.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "2px", color: "#DC2626", borderBottom: "1px solid #DC2626", paddingBottom: 5, margin: "14px 0 7px" };
   return (
     <div style={{ fontFamily: "Arial, Helvetica, sans-serif", background: "#fff", color: "#111827" }}>
       <div style={{ background: "#DC2626", padding: "26px 40px 18px" }}>
@@ -104,7 +104,7 @@ function ModernTemplate({ r }: { r: ParsedResume }) {
 }
 
 function ExecutiveAtsTemplate({ r }: { r: ParsedResume }) {
-  const sh: React.CSSProperties = { fontSize: 8.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "2px", color: "#1D4ED8", borderBottom: "1px solid #1D4ED8", paddingBottom: 2, margin: "14px 0 7px" };
+  const sh: React.CSSProperties = { fontSize: 8.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "2px", color: "#1D4ED8", borderBottom: "1px solid #1D4ED8", paddingBottom: 5, margin: "14px 0 7px" };
   return (
     <div style={{ fontFamily: "Arial, Helvetica, sans-serif", background: "#fff", color: "#111827" }}>
       <div style={{ background: "#1D4ED8", padding: "26px 40px 18px" }}>
@@ -119,7 +119,7 @@ function ExecutiveAtsTemplate({ r }: { r: ParsedResume }) {
 }
 
 function TechnicalAtsTemplate({ r }: { r: ParsedResume }) {
-  const sh: React.CSSProperties = { fontSize: 8.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "2px", color: "#059669", borderBottom: "1px solid #059669", paddingBottom: 2, margin: "14px 0 7px" };
+  const sh: React.CSSProperties = { fontSize: 8.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "2px", color: "#059669", borderBottom: "1px solid #059669", paddingBottom: 5, margin: "14px 0 7px" };
   return (
     <div style={{ fontFamily: "Arial, Helvetica, sans-serif", background: "#fff", color: "#111827" }}>
       <div style={{ background: "#059669", height: 6 }} />
@@ -135,7 +135,7 @@ function TechnicalAtsTemplate({ r }: { r: ParsedResume }) {
 }
 
 function EntryTemplate({ r }: { r: ParsedResume }) {
-  const sh: React.CSSProperties = { fontSize: 8.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "2px", color: "#ca8a04", borderBottom: "1px solid #ca8a04", paddingBottom: 2, margin: "14px 0 7px" };
+  const sh: React.CSSProperties = { fontSize: 8.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "2px", color: "#ca8a04", borderBottom: "1px solid #ca8a04", paddingBottom: 5, margin: "14px 0 7px" };
   return (
     <div style={{ fontFamily: "Arial, Helvetica, sans-serif", background: "#fff", color: "#111827" }}>
       <div style={{ background: "linear-gradient(135deg, #854d0e, #ca8a04)", padding: "26px 40px 20px" }}>
