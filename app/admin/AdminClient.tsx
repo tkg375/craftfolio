@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
+import { setPlan, setCredits, addCredits, markMessageRead } from "./actions";
 
 type User = {
   id: string;
@@ -20,90 +21,53 @@ type SupportMessage = {
   createdAt: string;
 };
 
-export default function AdminClient() {
+export default function AdminClient({ users: initialUsers, messages: initialMessages }: { users: User[]; messages: SupportMessage[] }) {
   const [tab, setTab] = useState<"users" | "support">("users");
-  const [users, setUsers] = useState<User[]>([]);
-  const [messages, setMessages] = useState<SupportMessage[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState(initialUsers);
+  const [messages, setMessages] = useState(initialMessages);
   const [search, setSearch] = useState("");
-  const [saving, setSaving] = useState<string | null>(null);
   const [addCreditsMap, setAddCreditsMap] = useState<Record<string, string>>({});
   const [toast, setToast] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
-
-  const loadUsers = useCallback(async () => {
-    const res = await fetch("/api/admin/users");
-    const data = await res.json() as { users?: User[] };
-    setUsers(data.users ?? []);
-  }, []);
-
-  const loadMessages = useCallback(async () => {
-    const res = await fetch("/api/admin/support");
-    const data = await res.json() as { messages?: SupportMessage[] };
-    setMessages(data.messages ?? []);
-  }, []);
-
-  useEffect(() => {
-    Promise.all([loadUsers(), loadMessages()]).then(() => setLoading(false));
-  }, [loadUsers, loadMessages]);
+  const [pending, startTransition] = useTransition();
 
   function showToast(msg: string) {
     setToast(msg);
     setTimeout(() => setToast(null), 3000);
   }
 
-  async function setPlan(id: string, plan: string) {
-    setSaving(id);
-    const res = await fetch(`/api/admin/users/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ plan }),
-    });
-    if (res.ok) {
+  function handleSetPlan(id: string, plan: string) {
+    startTransition(async () => {
+      await setPlan(id, plan);
       setUsers(u => u.map(x => x.id === id ? { ...x, plan } : x));
       showToast(`Plan updated to ${plan}`);
-    }
-    setSaving(null);
+    });
   }
 
-  async function giveCredits(id: string) {
+  function handleSetCredits(id: string, credits: number) {
+    startTransition(async () => {
+      await setCredits(id, credits);
+      setUsers(u => u.map(x => x.id === id ? { ...x, credits } : x));
+      showToast(`Credits set to ${credits}`);
+    });
+  }
+
+  function handleAddCredits(id: string) {
     const n = parseInt(addCreditsMap[id] ?? "0");
     if (!n || isNaN(n)) return;
-    setSaving(id);
-    const res = await fetch(`/api/admin/users/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ addCredits: n }),
-    });
-    if (res.ok) {
+    startTransition(async () => {
+      await addCredits(id, n);
       setUsers(u => u.map(x => x.id === id ? { ...x, credits: x.credits + n } : x));
       setAddCreditsMap(m => ({ ...m, [id]: "" }));
       showToast(`+${n} credits added`);
-    }
-    setSaving(null);
+    });
   }
 
-  async function setCredits(id: string, credits: number) {
-    setSaving(id);
-    const res = await fetch(`/api/admin/users/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ credits }),
+  function handleMarkRead(id: string) {
+    startTransition(async () => {
+      await markMessageRead(id);
+      setMessages(m => m.map(x => x.id === id ? { ...x, read: true } : x));
     });
-    if (res.ok) {
-      setUsers(u => u.map(x => x.id === id ? { ...x, credits } : x));
-      showToast(`Credits set to ${credits}`);
-    }
-    setSaving(null);
-  }
-
-  async function markRead(id: string) {
-    await fetch("/api/admin/support", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, read: true }),
-    });
-    setMessages(m => m.map(x => x.id === id ? { ...x, read: true } : x));
   }
 
   const filtered = users.filter(u => u.email.toLowerCase().includes(search.toLowerCase()));
@@ -129,7 +93,6 @@ export default function AdminClient() {
           </Link>
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-1 mb-8 p-1 rounded-xl w-fit" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
           <button onClick={() => setTab("users")}
             className="px-5 py-2 rounded-lg text-sm font-semibold transition-all"
@@ -148,9 +111,7 @@ export default function AdminClient() {
           </button>
         </div>
 
-        {loading ? (
-          <p style={{ color: "var(--text-muted)" }}>Loading...</p>
-        ) : tab === "users" ? (
+        {tab === "users" ? (
           <>
             <input
               value={search}
@@ -180,19 +141,19 @@ export default function AdminClient() {
 
                   <div className="flex flex-wrap items-center gap-2 mt-4">
                     {user.plan === "free" ? (
-                      <button onClick={() => setPlan(user.id, "pro")} disabled={saving === user.id}
+                      <button onClick={() => handleSetPlan(user.id, "pro")} disabled={pending}
                         className="text-sm font-bold px-3 py-2 rounded-xl text-white disabled:opacity-50 transition-all hover:opacity-90 whitespace-nowrap"
                         style={{ background: "linear-gradient(135deg, #ca8a04, #fde047)" }}>
                         Upgrade to Pro
                       </button>
                     ) : (
-                      <button onClick={() => setPlan(user.id, "free")} disabled={saving === user.id}
+                      <button onClick={() => handleSetPlan(user.id, "free")} disabled={pending}
                         className="text-sm font-semibold px-4 py-2 rounded-xl disabled:opacity-50 transition-all"
                         style={{ background: "var(--bg-alt)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
                         Downgrade to Free
                       </button>
                     )}
-                    <button onClick={() => setCredits(user.id, 0)} disabled={saving === user.id}
+                    <button onClick={() => handleSetCredits(user.id, 0)} disabled={pending}
                       className="text-sm font-semibold px-3 py-2 rounded-xl disabled:opacity-50 transition-all whitespace-nowrap"
                       style={{ background: "var(--bg-alt)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
                       Reset Credits
@@ -214,7 +175,7 @@ export default function AdminClient() {
                           className="px-2 py-2 text-sm font-bold transition-all hover:opacity-70"
                           style={{ color: "var(--text-muted)" }}>+</button>
                       </div>
-                      <button onClick={() => giveCredits(user.id)} disabled={saving === user.id || !addCreditsMap[user.id]}
+                      <button onClick={() => handleAddCredits(user.id)} disabled={pending || !addCreditsMap[user.id]}
                         className="text-sm font-bold px-3 py-2 rounded-xl text-white disabled:opacity-50 transition-all whitespace-nowrap"
                         style={{ background: "#16a34a" }}>
                         Add
@@ -233,7 +194,7 @@ export default function AdminClient() {
               <div key={msg.id} className="rounded-2xl overflow-hidden" style={{ background: "var(--bg-card)", border: `1px solid ${msg.read ? "var(--border)" : "rgba(202,138,4,0.4)"}` }}>
                 <button className="w-full text-left px-5 py-4 flex items-start gap-3" onClick={() => {
                   setExpanded(expanded === msg.id ? null : msg.id);
-                  if (!msg.read) markRead(msg.id);
+                  if (!msg.read) handleMarkRead(msg.id);
                 }}>
                   {!msg.read && <span className="mt-1.5 shrink-0 w-2 h-2 rounded-full" style={{ background: "#fde047" }} />}
                   <div className="flex-1 min-w-0">
