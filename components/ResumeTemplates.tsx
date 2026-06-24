@@ -282,7 +282,6 @@ function renderLines(
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function renderSection(doc: any, sec: ParsedSection, x: number, maxW: number, y: number, cfg: PdfCfg, isSidebar: boolean, pageH: number): number {
   const accentRgb = parseRgba(isSidebar ? cfg.sidebarShColor : cfg.accentColor);
-  const borderRgb = parseRgba(isSidebar ? cfg.sidebarShBorder : cfg.accentColor);
   const titleRgb = parseRgba(isSidebar ? cfg.sidebarTitleColor : cfg.mainTitleColor);
   const textRgb = parseRgba(isSidebar ? cfg.sidebarTextColor : cfg.mainTextColor);
   const shSize = 7.5;
@@ -297,13 +296,7 @@ function renderSection(doc: any, sec: ParsedSection, x: number, maxW: number, y:
   doc.setFontSize(shSize);
   doc.setTextColor(...accentRgb);
   doc.text(sec.header, x, y);
-  y += 3;
-
-  // Underline
-  doc.setDrawColor(...borderRgb);
-  doc.setLineWidth(0.5);
-  doc.line(x, y, x + maxW, y);
-  y += 6;
+  y += 9;
 
   // Content
   doc.setFont(cfg.font, "normal");
