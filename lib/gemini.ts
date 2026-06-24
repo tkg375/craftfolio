@@ -180,7 +180,7 @@ export async function extractEmploymentDates(
 ): Promise<EmploymentEntry[]> {
   if (!resumeText) throw new Error("Resume text is required.");
 
-  const prompt = `Extract all work experience entries from this resume. Respond with ONLY a raw JSON array (no markdown, no code fences) where each item has exactly these fields:
+  const prompt = `Extract all work experience entries from this resume. Return a JSON object with a single key "entries" whose value is an array. Each item in the array must have exactly these fields:
 {"company":"string","title":"string","startDate":"string","endDate":"string"}
 
 Rules:
@@ -190,14 +190,14 @@ Rules:
 - If a date is completely missing or unreadable, use "Unknown"
 - List entries in reverse chronological order (most recent first)
 - Include every job, internship, or work experience listed
-- Return an empty array [] if no work experience is found
-Return ONLY the JSON array. No explanation.
+- Return {"entries":[]} if no work experience is found
 
 Resume:
 ${resumeText}`;
 
   const raw = await callOpenAI(apiKey, prompt, true);
-  return parseJson<EmploymentEntry[]>(raw);
+  const parsed = parseJson<{ entries: EmploymentEntry[] }>(raw);
+  return parsed.entries ?? [];
 }
 
 export async function rewriteResume(
