@@ -151,16 +151,25 @@ function EntryTemplate({ r }: { r: ParsedResume }) {
 
 // ─── Exported preview renderer ────────────────────────────────────────────────
 
+import { useState, useEffect } from "react";
+
 export function ResumeTemplateRenderer({ text, templateId }: { text: string; templateId: string }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
+  const containerStyle: React.CSSProperties = {
+    borderRadius: 12,
+    border: "1px solid rgba(0,0,0,0.1)",
+    overflow: "auto",
+    maxHeight: 720,
+    background: "white",
+  };
+
+  if (!mounted) return <div style={containerStyle} />;
+
   const html = buildPrintDocument(parseResume(text), templateId ?? "classic");
   return (
-    <div style={{
-      borderRadius: 12,
-      border: "1px solid rgba(0,0,0,0.1)",
-      overflow: "auto",
-      maxHeight: 720,
-      background: "white",
-    }}>
+    <div style={containerStyle}>
       <iframe
         srcDoc={html}
         style={{ width: "816px", height: "1056px", border: "none", display: "block" }}
