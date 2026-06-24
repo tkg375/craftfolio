@@ -85,6 +85,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
   const [employmentDates, setEmploymentDates] = useState<{ company: string; title: string; startDate: string; endDate: string }[] | null>(null);
   const [datesLoading, setDatesLoading] = useState(false);
   const [datesConfirmed, setDatesConfirmed] = useState(false);
+  const [datesError, setDatesError] = useState<string | null>(null);
 
   // Rewrite
   const [rewriting, setRewriting] = useState(false);
@@ -177,6 +178,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
       setImprovedResume(null);
       setEmploymentDates(null);
       setDatesConfirmed(false);
+      setDatesError(null);
       setStep(3);
       setTimeout(() => scoresRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
       // Fetch employment dates in background (no credit cost)
@@ -187,10 +189,16 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
         body: JSON.stringify({ resumeText: resumeText || undefined, resumePdfBase64: resumePdfBase64 || undefined }),
       })
         .then(r => r.json())
-        .then((d: { entries?: { company: string; title: string; startDate: string; endDate: string }[] }) => {
-          if (d.entries && d.entries.length > 0) setEmploymentDates(d.entries);
+        .then((d: { entries?: { company: string; title: string; startDate: string; endDate: string }[]; error?: string }) => {
+          if (d.entries && d.entries.length > 0) {
+            setEmploymentDates(d.entries);
+          } else if (d.error) {
+            setDatesError(d.error);
+          } else {
+            setDatesError("No employment dates found in your resume.");
+          }
         })
-        .catch(() => {})
+        .catch(() => { setDatesError("Could not load employment dates. You can still generate your resume."); })
         .finally(() => setDatesLoading(false));
     } catch {
       setError("Something went wrong. Please try again.");
@@ -818,7 +826,7 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
             </div>
 
             {/* Employment Date Verification */}
-            {(datesLoading || employmentDates) && (
+            {(datesLoading || employmentDates || datesError) && (
               <div className="rounded-xl p-6" style={{ background: "var(--bg-alt)", border: datesConfirmed ? "1px solid rgba(34,197,94,0.35)" : "1px solid rgba(202,138,4,0.35)" }}>
                 <div className="flex items-center gap-2 mb-1">
                   {datesConfirmed ? (
@@ -834,6 +842,8 @@ export default function ResumeScorerClient({ isLoggedIn }: { isLoggedIn: boolean
                     <svg className="animate-spin h-4 w-4 text-yellow-400" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                     Reading employment dates from your resume...
                   </div>
+                ) : datesError ? (
+                  <p className="text-sm text-slate-400 mt-3">{datesError}</p>
                 ) : employmentDates && (
                   <>
                     <p className="text-xs text-slate-400 mb-4">We extracted these employment dates from your resume. Correct any that are wrong before generating your rewritten resume.</p>

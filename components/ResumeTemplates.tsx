@@ -151,37 +151,22 @@ function EntryTemplate({ r }: { r: ParsedResume }) {
 
 // ─── Exported preview renderer ────────────────────────────────────────────────
 
-// Letter page at 96 dpi = 816 × 1056 px. Scale it down to ~620px wide for the preview.
-const PREVIEW_W = 620;
-const PAGE_W = 816;
-const PAGE_H = 1056;
-const SCALE = PREVIEW_W / PAGE_W;
-
 export function ResumeTemplateRenderer({ text, templateId }: { text: string; templateId: string }) {
   const html = buildPrintDocument(parseResume(text), templateId ?? "classic");
   return (
     <div style={{
       borderRadius: 12,
-      overflow: "hidden",
       border: "1px solid rgba(0,0,0,0.1)",
-      width: PREVIEW_W,
-      height: Math.round(PAGE_H * SCALE),
-      position: "relative",
+      overflow: "auto",
+      maxHeight: 720,
+      background: "white",
     }}>
-      <div style={{
-        width: PAGE_W,
-        height: PAGE_H,
-        transform: `scale(${SCALE})`,
-        transformOrigin: "top left",
-        pointerEvents: "none",
-      }}>
-        <iframe
-          srcDoc={html}
-          style={{ width: PAGE_W, height: PAGE_H, border: "none", display: "block" }}
-          title="Resume preview"
-          sandbox="allow-same-origin"
-        />
-      </div>
+      <iframe
+        srcDoc={html}
+        style={{ width: "816px", height: "1056px", border: "none", display: "block" }}
+        title="Resume preview"
+        sandbox="allow-same-origin"
+      />
     </div>
   );
 }
