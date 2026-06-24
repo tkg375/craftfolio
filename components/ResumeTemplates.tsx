@@ -453,7 +453,7 @@ function buildLineHtml(lines: string[]): string {
 }
 
 function sections2html(sections: ParsedSection[]): string {
-  return sections.map(s => `<div><div class="sh">${esc(s.header)}</div><div style="height:10pt"></div>${buildLineHtml(s.lines)}</div>`).join("");
+  return sections.map(s => `<div><div class="sh">${esc(s.header)}</div>${buildLineHtml(s.lines)}</div>`).join("");
 }
 
 function sections2htmlPrefixed(sections: ParsedSection[], prefix: string): string {
@@ -471,35 +471,35 @@ function buildPrintDocument(r: ParsedResume, templateId: string): string {
     // ── Classic ATS ───────────────────────────────────────────────────────────
     case "classic":
     default: {
-      css = `${BASE_CSS} body{font-family:'Times New Roman',Times,serif;background:white;padding:48pt 72pt} .name{text-align:center;font-size:22pt;font-weight:700;color:#1e293b;margin-bottom:4pt} .contact{text-align:center;font-size:9.5pt;color:#475569;margin-bottom:8pt} .rule{border:none;border-top:1pt solid #1e293b;margin:8pt 0 12pt} .sh{font-size:8.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.5pt;color:#1e293b;border-bottom:.75pt solid #1e293b;padding-bottom:6pt;margin:18pt 0 0} .title{font-size:11pt;font-weight:700;color:#1e293b;margin:8pt 0 2pt} .text{font-size:10pt;color:#334155;margin:3pt 0} .bullet{font-size:10pt;color:#334155;margin:3pt 0 3pt 14pt}`;
+      css = `${BASE_CSS} body{font-family:'Times New Roman',Times,serif;background:white;padding:48pt 72pt} .name{text-align:center;font-size:22pt;font-weight:700;color:#1e293b;margin-bottom:4pt} .contact{text-align:center;font-size:9.5pt;color:#475569;margin-bottom:8pt} .rule{border:none;border-top:1pt solid #1e293b;margin:8pt 0 12pt} .sh{font-size:8.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.5pt;color:#1e293b;margin:18pt 0 8pt} .title{font-size:11pt;font-weight:700;color:#1e293b;margin:8pt 0 2pt} .text{font-size:10pt;color:#334155;margin:3pt 0} .bullet{font-size:10pt;color:#334155;margin:3pt 0 3pt 14pt}`;
       body = `<div class="name">${esc(r.name)}</div><p class="contact">${esc(r.contact)}</p><hr class="rule">${sections2html(r.sections)}`;
       break;
     }
 
     // ── Modern ATS ────────────────────────────────────────────────────────────
     case "modern": {
-      css = `${BASE_CSS} body{font-family:Arial,Helvetica,sans-serif;background:white} .header{background:#DC2626;padding:28pt 48pt 20pt} .name{font-size:26pt;font-weight:900;color:white;letter-spacing:-.5pt} .contact{font-size:9.5pt;color:rgba(255,255,255,.85);margin-top:4pt} .body{padding:18pt 48pt} .sh{font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:1.5pt;color:#DC2626;border-bottom:1pt solid #DC2626;padding-bottom:6pt;margin:16pt 0 0} .title{font-size:11pt;font-weight:700;color:#111827;margin:8pt 0 2pt} .text{font-size:10pt;color:#374151;margin:3pt 0} .bullet{font-size:10pt;color:#374151;margin:3pt 0 3pt 14pt}`;
+      css = `${BASE_CSS} body{font-family:Arial,Helvetica,sans-serif;background:white} .header{background:#DC2626;padding:28pt 48pt 20pt} .name{font-size:26pt;font-weight:900;color:white;letter-spacing:-.5pt} .contact{font-size:9.5pt;color:rgba(255,255,255,.85);margin-top:4pt} .body{padding:18pt 48pt} .sh{font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:1.5pt;color:#DC2626;margin:16pt 0 8pt} .title{font-size:11pt;font-weight:700;color:#111827;margin:8pt 0 2pt} .text{font-size:10pt;color:#374151;margin:3pt 0} .bullet{font-size:10pt;color:#374151;margin:3pt 0 3pt 14pt}`;
       body = `<div class="header"><div class="name">${esc(r.name)}</div><p class="contact">${esc(r.contact)}</p></div><div class="body">${sections2html(r.sections)}</div>`;
       break;
     }
 
     // ── Executive ATS ─────────────────────────────────────────────────────────
     case "executive-ats": {
-      css = `${BASE_CSS} body{font-family:Arial,Helvetica,sans-serif;background:white} .header{background:#1D4ED8;padding:28pt 48pt 20pt} .name{font-size:26pt;font-weight:900;color:white;letter-spacing:-.5pt} .contact{font-size:9.5pt;color:rgba(255,255,255,.8);margin-top:4pt} .body{padding:20pt 48pt} .sh{font-size:8.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.5pt;color:#1D4ED8;border-bottom:1pt solid #1D4ED8;padding-bottom:6pt;margin:16pt 0 0} .title{font-size:11pt;font-weight:700;color:#111827;margin:8pt 0 2pt} .text{font-size:10pt;color:#374151;margin:3pt 0} .bullet{font-size:10pt;color:#374151;margin:3pt 0 3pt 14pt}`;
+      css = `${BASE_CSS} body{font-family:Arial,Helvetica,sans-serif;background:white} .header{background:#1D4ED8;padding:28pt 48pt 20pt} .name{font-size:26pt;font-weight:900;color:white;letter-spacing:-.5pt} .contact{font-size:9.5pt;color:rgba(255,255,255,.8);margin-top:4pt} .body{padding:20pt 48pt} .sh{font-size:8.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.5pt;color:#1D4ED8;margin:16pt 0 8pt} .title{font-size:11pt;font-weight:700;color:#111827;margin:8pt 0 2pt} .text{font-size:10pt;color:#374151;margin:3pt 0} .bullet{font-size:10pt;color:#374151;margin:3pt 0 3pt 14pt}`;
       body = `<div class="header"><div class="name">${esc(r.name)}</div><p class="contact">${esc(r.contact)}</p></div><div class="body">${sections2html(r.sections)}</div>`;
       break;
     }
 
     // ── Technical ATS ─────────────────────────────────────────────────────────
     case "technical-ats": {
-      css = `${BASE_CSS} body{font-family:Arial,Helvetica,sans-serif;background:white} .accent{background:#059669;height:6pt} .nameblock{padding:18pt 48pt 10pt} .name{font-size:22pt;font-weight:800;color:#111827} .contact{font-size:9.5pt;color:#6b7280;margin-top:3pt} .body{padding:4pt 48pt 22pt} .sh{font-size:8.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.5pt;color:#059669;border-bottom:1pt solid #059669;padding-bottom:6pt;margin:16pt 0 0} .title{font-size:11pt;font-weight:700;color:#111827;margin:8pt 0 2pt} .text{font-size:10pt;color:#374151;margin:3pt 0} .bullet{font-size:10pt;color:#374151;margin:3pt 0 3pt 14pt}`;
+      css = `${BASE_CSS} body{font-family:Arial,Helvetica,sans-serif;background:white} .accent{background:#059669;height:6pt} .nameblock{padding:18pt 48pt 10pt} .name{font-size:22pt;font-weight:800;color:#111827} .contact{font-size:9.5pt;color:#6b7280;margin-top:3pt} .body{padding:4pt 48pt 22pt} .sh{font-size:8.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.5pt;color:#059669;margin:16pt 0 8pt} .title{font-size:11pt;font-weight:700;color:#111827;margin:8pt 0 2pt} .text{font-size:10pt;color:#374151;margin:3pt 0} .bullet{font-size:10pt;color:#374151;margin:3pt 0 3pt 14pt}`;
       body = `<div class="accent"></div><div class="nameblock"><div class="name">${esc(r.name)}</div><p class="contact">${esc(r.contact)}</p></div><div class="body">${sections2html(r.sections)}</div>`;
       break;
     }
 
     // ── Entry Level ATS ───────────────────────────────────────────────────────
     case "entry": {
-      css = `${BASE_CSS} body{font-family:Arial,Helvetica,sans-serif;background:white} .header{background:linear-gradient(135deg,#854d0e,#ca8a04);padding:28pt 48pt 20pt} .name{font-size:24pt;font-weight:800;color:white} .contact{font-size:9.5pt;color:rgba(255,255,255,.8);margin-top:4pt} .body{padding:18pt 48pt} .sh{font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:1.5pt;color:#ca8a04;border-bottom:1pt solid #ca8a04;padding-bottom:6pt;margin:16pt 0 0} .title{font-size:11pt;font-weight:700;color:#111827;margin:8pt 0 2pt} .text{font-size:10pt;color:#374151;margin:3pt 0} .bullet{font-size:10pt;color:#374151;margin:3pt 0 3pt 14pt}`;
+      css = `${BASE_CSS} body{font-family:Arial,Helvetica,sans-serif;background:white} .header{background:linear-gradient(135deg,#854d0e,#ca8a04);padding:28pt 48pt 20pt} .name{font-size:24pt;font-weight:800;color:white} .contact{font-size:9.5pt;color:rgba(255,255,255,.8);margin-top:4pt} .body{padding:18pt 48pt} .sh{font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:1.5pt;color:#ca8a04;margin:16pt 0 8pt} .title{font-size:11pt;font-weight:700;color:#111827;margin:8pt 0 2pt} .text{font-size:10pt;color:#374151;margin:3pt 0} .bullet{font-size:10pt;color:#374151;margin:3pt 0 3pt 14pt}`;
       body = `<div class="header"><div class="name">${esc(r.name)}</div><p class="contact">${esc(r.contact)}</p></div><div class="body">${sections2html(r.sections)}</div>`;
       break;
     }
