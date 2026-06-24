@@ -408,13 +408,15 @@ function buildPdf(doc: any, r: ParsedResume, templateId: string) {
   }
 }
 
-export async function downloadResumePdf(text: string, templateId: string) {
+export function downloadResumePdf(text: string, templateId: string) {
   const r = parseResume(text);
-  const { jsPDF } = await import("jspdf");
-  const doc = new jsPDF({ unit: "pt", format: "letter" });
-  buildPdf(doc, r, templateId);
-  const safeName = r.name.replace(/[^a-zA-Z0-9\s]/g, "").trim().replace(/\s+/g, "_") || "Resume";
-  doc.save(`${safeName}_Resume.pdf`);
+  const html = buildPrintDocument(r, templateId ?? "classic");
+  const win = window.open("", "_blank");
+  if (!win) { alert("Please allow popups to save as PDF."); return; }
+  win.document.write(html);
+  win.document.close();
+  // Small delay lets styles paint before the print dialog opens
+  setTimeout(() => { win.print(); }, 400);
 }
 
 // ─── HTML string helpers ──────────────────────────────────────────────────────
